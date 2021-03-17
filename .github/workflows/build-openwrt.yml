@@ -36,6 +36,7 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
+        docker rmi `docker images -q`
         sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -qq update
         sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-1804) screenfetch
@@ -60,6 +61,10 @@ jobs:
         git clone https://github.com/vernesong/OpenClash.git package/luci-app-openclash
         git clone https://github.com/tuanqing/install-program package/install-program
 
+    - name: Load custom configuration
+      run: |
+        mv $GITHUB_WORKSPACE/config-n1 openwrt/.config
+
     - name: Download mknop
       run: |
         cd openwrt
@@ -71,9 +76,7 @@ jobs:
     - name: Install feeds
       run: cd openwrt && ./scripts/feeds install -a
 
-    - name: Load custom configuration
-      run: |
-        mv $GITHUB_WORKSPACE/config-n1 openwrt/.config
+
 
     - name: Download package
       id: package
@@ -89,7 +92,7 @@ jobs:
       run: |
         cd openwrt
         echo -e "$(nproc) thread compile"
-        make -j$(nproc) || make -j1 || make -j1 V=s
+        make -j$(nproc) V=s || make -j1 V=s
         echo "::set-output name=status::success"
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
