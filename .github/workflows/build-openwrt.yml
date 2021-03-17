@@ -75,7 +75,7 @@ jobs:
         id: package
         run: |
           cd openwrt
-          echo "==> Update config" && make oldconfig
+          # echo "==> Update config" && make oldconfig
           make download -j8
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
@@ -101,7 +101,7 @@ jobs:
         run: |
           cd openwrt/bin/targets/*/*
           rm -rf packages
-          rm -fr !(openwrt*.gz)
+          shopt -s extglob&&rm -fr !(openwrt*.gz)
 
       - name: Organize files
         id: organize
