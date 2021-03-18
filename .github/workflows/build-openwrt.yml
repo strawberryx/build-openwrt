@@ -88,7 +88,7 @@ jobs:
         run: |
           cd openwrt
           echo -e "$(nproc) thread compile"
-          make -j$(nproc) V=s || make -j1 V=s
+          make -j$(nproc)
           echo "::set-output name=status::success"
           grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
           [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
@@ -98,6 +98,7 @@ jobs:
         run: neofetch && df -h
 
       - name: Delete useless files
+        if: steps.compile.outputs.status == 'success' && !cancelled
         run: |
           cd openwrt/bin/targets/*/*
           rm -rf packages
@@ -105,7 +106,7 @@ jobs:
 
       - name: Organize files
         id: organize
-        if: (!cancelled())
+        if: steps.compile.outputs.status == 'success' && !cancelled
         run: |
           cd openwrt/mknop
           sudo ./gen_openwrt -m phicomm-n1 -k latest -s 512
@@ -117,7 +118,7 @@ jobs:
 
       - name: Generate release tag
         id: tag
-        if: (!cancelled())
+        if: steps.compile.outputs.status == 'success' && !cancelled
         run: |
 
           touch release.txt
