@@ -65,6 +65,9 @@ jobs:
         run: |
           cp $GITHUB_WORKSPACE/config-n1 openwrt/.config
 
+      - name: SSH connection to Actions
+        uses: P3TERX/ssh2actions@v1.0.0
+
       - name: Update feeds
         run: cd openwrt && ./scripts/feeds update -a
 
@@ -75,7 +78,6 @@ jobs:
         id: package
         run: |
           cd openwrt
-          # echo "==> Update config" && make oldconfig
           make download -j8
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
