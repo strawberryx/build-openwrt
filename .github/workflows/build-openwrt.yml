@@ -15,9 +15,9 @@ on:
   workflow_dispatch:
     inputs:
       ssh:
-        description: 'SSH connection to Actions'
+        description: "SSH connection to Actions"
         required: false
-        default: 'false'
+        default: "false"
 
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
@@ -60,6 +60,15 @@ jobs:
           cd openwrt
           git clone https://github.com/vernesong/OpenClash.git package/luci-app-openclash
           git clone https://github.com/tuanqing/install-program package/install-program
+          cd package/lean  
+          rm -rf luci-theme-argon  
+          git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git
+
+      - name: Update feeds
+        run: cd openwrt && ./scripts/feeds update -a
+
+      - name: Install feeds
+        run: cd openwrt && ./scripts/feeds install -a
 
       - name: Load custom configuration
         run: |
@@ -68,12 +77,6 @@ jobs:
       - name: SSH connection to Actions
         if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
         uses: P3TERX/ssh2actions@v1.0.0
-
-      - name: Update feeds
-        run: cd openwrt && ./scripts/feeds update -a
-
-      - name: Install feeds
-        run: cd openwrt && ./scripts/feeds install -a
 
       - name: Download package
         id: package
