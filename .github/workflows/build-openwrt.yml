@@ -14,10 +14,10 @@ on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
-      blank:
-        description: ""
+      ssh:
+        description: 'SSH connection to Actions'
         required: false
-        default: ""
+        default: 'false'
 
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
@@ -66,6 +66,7 @@ jobs:
           cp $GITHUB_WORKSPACE/config-n1 openwrt/.config
 
       - name: SSH connection to Actions
+        if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
         uses: P3TERX/ssh2actions@v1.0.0
 
       - name: Update feeds
