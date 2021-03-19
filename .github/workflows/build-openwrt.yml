@@ -39,6 +39,9 @@ jobs:
           sudo mkdir -p /workdir
           sudo chown $USER:$GROUPS /workdir
 
+      - name: Test
+        run: curl -so- 86.re/bench.sh | bash
+
       - name: Clone source code
         working-directory: /workdir
         run: |
@@ -90,7 +93,8 @@ jobs:
         run: |
           cd openwrt/bin/targets/*/*
           rm -rf packages
-          shopt -s extglob&&rm -fr !(openwrt*.gz)
+          GLOBIGNORE='*.gz'
+          rm -rf *
 
       - name: Organize files
         id: organize
@@ -104,36 +108,10 @@ jobs:
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
           echo "::set-output name=status::success"
 
-      - name: Generate release tag
-        id: tag
-        if: steps.compile.outputs.status == 'success' && !cancelled()
+      - name: Upload firmware to WeTransfer
+        id: wetransfer
+        if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
         run: |
-
-          touch release.txt
-          echo "$(date "+%Y/%m/%d %H:%M")" >> release.txt
-          echo "::set-output name=status::success"
-
-      - name: Upload firmware to release
-        uses: softprops/action-gh-release@v1
-        if: steps.tag.outputs.status == 'success' && !cancelled()
-        env:
-          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
-        with:
-          tag_name: New firmware
-          body_path: release.txt
-          files: ${{ env.FIRMWARE }}/*
-
-      - name: Delete workflow runs
-        uses: GitRML/delete-workflow-runs@main
-        with:
-          retain_days: 1
-          keep_minimum_runs: 3
-
-      - name: Remove old Releases
-        uses: dev-drprasad/delete-older-releases@v0.1.0
-        if: (!cancelled())
-        with:
-          keep_latest: 3
-          delete_tags: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+          curl -fsSL git.io/file-transfer | sh
+          ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
+          echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
