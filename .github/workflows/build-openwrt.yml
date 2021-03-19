@@ -22,11 +22,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-      - name: Start
-        run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🔵 A new workflow :: Build OpenWrt" >> /dev/null
-
       - name: Checkout
         uses: actions/checkout@main
 
@@ -44,17 +39,11 @@ jobs:
           sudo mkdir -p /workdir
           sudo chown $USER:$GROUPS /workdir
 
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=✔️ Initialization environment" >> /dev/null
-
-
       - name: Clone source code
         working-directory: /workdir
         run: |
           git clone $REPO_URL -b $REPO_BRANCH openwrt
           ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=✔️ Clone source code" >> /dev/null
-          
 
       - name: Download packages
         run: |
@@ -63,27 +52,19 @@ jobs:
           git clone https://github.com/tuanqing/install-program package/install-program
           rm -rf package/lean/luci-theme-argon  
           git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
-
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=✔️ Download packages" >> /dev/null
+          git clone https://github.com/tuanqing/mknop
 
       - name: Update feeds
-        run: | 
+        run: |
           cd openwrt && ./scripts/feeds update -a
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=✔️ Update feeds" >> /dev/null
-
-
 
       - name: Install feeds
         run: |
           cd openwrt && ./scripts/feeds install -a
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=✔️ Install feeds" >> /dev/null
 
       - name: Load custom configuration
         run: |
           cp $GITHUB_WORKSPACE/config-n1 openwrt/.config
-
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=✔️ Load custom configuration" >> /dev/null
-          
 
       - name: Download package
         id: package
@@ -93,15 +74,9 @@ jobs:
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=✔️ Download package" >> /dev/null
-
-
       - name: Echo config
         run: |
           cat openwrt/.config
-
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=✔️ Echo config" >> /dev/null
-
 
       - name: Compile the firmware
         id: compile
@@ -114,10 +89,6 @@ jobs:
           [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
           echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
 
-
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=✔️ Compile the firmware" >> /dev/null
-
-
       - name: Delete useless files
         if: steps.compile.outputs.status == 'success' && !cancelled()
         run: |
@@ -125,9 +96,6 @@ jobs:
           rm -rf packages
           GLOBIGNORE='*.gz'
           rm -rf *
-
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=✔️ Delete useless files" >> /dev/null
-
 
       - name: Organize files
         id: organize
@@ -141,18 +109,19 @@ jobs:
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
           echo "::set-output name=status::success"
 
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=✔️ Organize files" >> /dev/null
-
-
       - name: Upload firmware to WeTransfer
+        id: wetransfer
         if: steps.organize.outputs.status == 'success' && !cancelled()
         run: |
           curl -fsSL git.io/file-transfer | sh
           ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
           echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+          echo "::set-output name=status::success"
 
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=✔️ Upload firmware to WeTransfer" >> /dev/null
-
+      #      - name: Send me download links
+      #        if: steps.wetransfer.outputs.status != 'success' && cancelled()
+      #        run: |
+      #          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=" >> /dev/null
 
       - name: Send me a message when build failed or cancelled
         if: steps.compile.outputs.status != 'success' && cancelled()
