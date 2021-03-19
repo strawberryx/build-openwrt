@@ -1,0 +1,113 @@
+#
+# Copyright (c) 2019-2020 P3TERX <https://p3terx.com>
+#
+# This is free software, licensed under the MIT License.
+# See /LICENSE for more information.
+#
+# https://github.com/P3TERX/Actions-OpenWrt
+# Description: Build OpenWrt using GitHub Actions
+#
+
+name: Build OpenWrt
+
+on: push
+
+env:
+  REPO_URL: https://github.com/immortalwrt/immortalwrt
+  REPO_BRANCH: openwrt-21.02
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Initialization environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          docker rmi `docker images -q`
+          sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+          sudo -E apt-get -qq update
+          sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-1804)
+          sudo -E apt-get -qq autoremove --purge
+          sudo -E apt-get -qq clean
+          sudo timedatectl set-timezone "$TZ"
+
+      - name: Clone source code
+        run: |
+          git clone $REPO_URL -b $REPO_BRANCH openwrt
+
+      - name: Download packages
+        run: |
+          cd openwrt
+          git clone https://github.com/vernesong/OpenClash.git package/luci-app-openclash
+          git clone https://github.com/tuanqing/install-program package/install-program
+          rm -rf package/lean/luci-theme-argon  
+          git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
+          git clone https://github.com/tuanqing/mknop
+
+      - name: Update feeds
+        run: |
+          cd openwrt && ./scripts/feeds update -a
+
+      - name: Install feeds
+        run: |
+          cd openwrt && ./scripts/feeds install -a
+
+      - name: Load custom configuration
+        run: |
+          cp $GITHUB_WORKSPACE/config-n1 openwrt/.config
+
+      - name: Download package
+        id: package
+        run: |
+          cd openwrt
+          make download -j8
+          find dl -size -1024c -exec ls -l {} \;
+          find dl -size -1024c -exec rm -f {} \;
+
+      - name: Echo config
+        run: |
+          cat openwrt/.config
+
+      - name: Compile the firmware
+        id: compile
+        run: |
+          cd openwrt
+          echo -e "$(nproc) thread compile"
+          make -j$(($(nproc) + 1))
+          echo "::set-output name=status::success"
+          grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
+          [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
+          echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
+
+      - name: move firmware to specified directory
+        if: steps.compile.outputs.status == 'success' && !cancelled()
+        run: |
+          cd openwrt/bin/targets/*/*
+          mv *.gz $GITHUB_WORKSPACE/openwrt/mknop/openwrt
+
+      - name: Organize files
+        id: organize
+        if: steps.compile.outputs.status == 'success' && !cancelled()
+        run: |
+          cd openwrt/mknop
+          sudo ./gen_openwrt -m phicomm-n1 -k latest -s 512
+
+          cd out
+
+          echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+          echo "::set-output name=status::success"
+
+      - name: Upload firmware to WeTransfer
+        id: wetransfer
+        if: steps.organize.outputs.status == 'success' && !cancelled()
+        run: |
+          curl -fsSL git.io/file-transfer | sh
+          ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
+          echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+          echo "::set-output name=status::success"
