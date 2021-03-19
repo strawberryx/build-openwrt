@@ -117,13 +117,3 @@ jobs:
           ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
           echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
           echo "::set-output name=status::success"
-
-      #      - name: Send me download links
-      #        if: steps.wetransfer.outputs.status != 'success' && cancelled()
-      #        run: |
-      #          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=" >> /dev/null
-
-      - name: Send me a message when build failed or cancelled
-        if: steps.compile.outputs.status != 'success' && cancelled()
-        run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=❌  Build failed or cancelled" >> /dev/null
