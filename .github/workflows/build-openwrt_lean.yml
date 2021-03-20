@@ -124,9 +124,9 @@ jobs:
       - name: Send me a message when the build failed or canceled
         if: steps.wetransfer.outputs.status != 'success' && cancelled()
         run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=Build failed or canceled" >> /dev/null
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🔴 Build failed or canceled" >> /dev/null
 
       - name: Send me a message include the download link
         if: steps.wetransfer.outputs.status == 'success' && !cancelled()
         run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=${{ DOWNLOAD_LINK }}" >> /dev/null
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🟢 ${{ DOWNLOAD_LINK }}" >> /dev/null
