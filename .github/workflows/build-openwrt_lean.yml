@@ -14,9 +14,9 @@ on:
   workflow_dispatch:
     inputs:
       _:
-        description: ''
+        description: ""
         required: false
-        default: ''
+        default: ""
 
   schedule:
     - cron: 20 0 * * *
@@ -118,5 +118,15 @@ jobs:
         run: |
           curl -fsSL git.io/file-transfer | sh
           ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
-          echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+          echo "DOWNLOAD_LINK=$(cat wetransfer.log | grep https)" >> $GITHUB_ENV
           echo "::set-output name=status::success"
+
+      - name: Send me a message when the build failed or canceled
+        if: steps.wetransfer.outputs.status != 'success' && cancelled()
+        run: |
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=Build failed or canceled" >> /dev/null
+
+      - name: Send me a message include the download link
+        if: steps.wetransfer.outputs.status == 'success' && !cancelled()
+        run: |
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=${{ DOWNLOAD_LINK }}" >> /dev/null
