@@ -11,6 +11,7 @@
 name: Build OpenWrt
 
 on:
+  push:
   workflow_dispatch:
     inputs:
       _:
@@ -31,6 +32,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: GO
+        run: |
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🔵 A new workflow" >> /dev/null
+
       - name: Checkout
         uses: actions/checkout@main
 
@@ -118,7 +123,7 @@ jobs:
         run: |
           curl -fsSL git.io/file-transfer | sh
           ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
-          echo "LINK=$(cat wetransfer.log | grep https)" >> $GITHUB_ENV
+          echo "DOWNLOAD_LINK=$(cat wetransfer.log | grep https)" >> $GITHUB_ENV
           echo "::set-output name=status::success"
 
       - name: Send me a message when the build failed or canceled
@@ -129,4 +134,4 @@ jobs:
       - name: Send me a message include the download link
         if: steps.wetransfer.outputs.status == 'success' && !cancelled()
         run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🟢 ${{ LINK }}" >> /dev/null
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🟢 ${ DOWNLOAD_LINK }" >> /dev/null
