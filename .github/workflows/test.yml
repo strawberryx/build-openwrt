@@ -24,6 +24,10 @@ jobs:
       - name: a
         run: |
           echo "aaa $DOWNLOAD_LINK"
+
+      - name: a
+        run: |
+          echo "aaa ${ DOWNLOAD_LINK }"
     
 
       
