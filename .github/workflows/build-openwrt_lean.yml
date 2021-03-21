@@ -134,3 +134,9 @@ jobs:
         if: steps.wetransfer.outputs.status == 'success' && !cancelled()
         run: |
           curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🟢 $DOWNLOAD_LINK" >> /dev/null
+
+      - name: Delete workflow runs
+        uses: GitRML/delete-workflow-runs@main
+        with:
+          retain_days: 1
+          keep_minimum_runs: 1
