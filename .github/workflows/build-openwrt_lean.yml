@@ -18,9 +18,6 @@ on:
         required: false
         default: ""
 
-  schedule:
-    - cron: 20 0 * * *
-
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
@@ -96,7 +93,6 @@ jobs:
           echo "::set-output name=status::success"
           grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
           [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
-          echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
 
       - name: Move firmware to specified directory
         if: steps.compile.outputs.status == 'success' && !cancelled()
@@ -134,9 +130,3 @@ jobs:
         if: steps.wetransfer.outputs.status == 'success' && !cancelled()
         run: |
           curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🟢 $DOWNLOAD_LINK" >> /dev/null
-
-      - name: Delete workflow runs
-        uses: GitRML/delete-workflow-runs@main
-        with:
-          retain_days: 1
-          keep_minimum_runs: 1
