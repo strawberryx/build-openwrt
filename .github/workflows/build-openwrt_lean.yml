@@ -18,9 +18,6 @@ on:
         required: false
         default: ""
 
-  schedule:
-    - cron: 0 00 3 * *
-
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
@@ -31,10 +28,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: GO
-        run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🔵 A new workflow::Build OpenWrt" >> /dev/null
-
       - name: Checkout
         uses: actions/checkout@main
 
