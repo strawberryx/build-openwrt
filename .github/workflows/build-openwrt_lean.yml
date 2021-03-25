@@ -43,6 +43,10 @@ jobs:
           sudo -E apt-get -qq clean
           sudo timedatectl set-timezone "$TZ"
 
+      - name: Get space usage
+        run: |
+          df -h
+
       - name: Clone source code
         run: |
           git clone $REPO_URL -b $REPO_BRANCH openwrt
@@ -89,6 +93,10 @@ jobs:
           echo "::set-output name=status::success"
           grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
           [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
+
+      - name: Get space usage
+        run: |
+          df -h
 
       - name: Move firmware to specified directory
         if: steps.compile.outputs.status == 'success' && !cancelled()
