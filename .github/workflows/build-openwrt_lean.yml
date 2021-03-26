@@ -35,20 +35,21 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
+          sudo timedatectl set-timezone "$TZ"
+
+          sudo -E swapoff -a
           docker rmi `docker images -q`
-          sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+          sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
           sudo -E apt-get -qq update
-          sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-1804) neofetch
+          sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-1804)
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
-          sudo timedatectl set-timezone "$TZ"
 
       - name: Get system information
         run: |
-          sudo neofetch
-
-      - name: Get space usage
-        run: |
+          sudo lshw
+          lscpu
+          lsblk -a
           df -h
 
       - name: Clone source code
@@ -80,7 +81,7 @@ jobs:
         id: package
         run: |
           cd openwrt
-          make download -j8
+          make download -j128
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
@@ -95,20 +96,20 @@ jobs:
           make -j$(($(nproc) + 1)) || make -j1 V=s
           echo "::set-output name=status::success"
 
-      - name: Get space usage
-        if: steps.compile.outputs.status == 'success' && !cancelled()
+      - name: Get system information
         run: |
+          sudo lshw
+          lscpu
+          lsblk -a
           df -h
 
       - name: Move firmware to specified directory
-        if: steps.compile.outputs.status == 'success' && !cancelled()
         run: |
           cd openwrt/bin/targets/*/*
           mv *.gz $GITHUB_WORKSPACE/openwrt/mknop/openwrt
 
       - name: Organize files
         id: organize
-        if: steps.compile.outputs.status == 'success' && !cancelled()
         run: |
           cd openwrt/mknop
           sudo ./gen_openwrt -m phicomm-n1 -k latest -s 512
@@ -120,7 +121,6 @@ jobs:
 
       - name: Upload firmware to WeTransfer
         id: wetransfer
-        if: steps.organize.outputs.status == 'success' && !cancelled()
         run: |
           curl -fsSL git.io/file-transfer | sh
           ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
@@ -128,11 +128,10 @@ jobs:
           echo "::set-output name=status::success"
 
       - name: Send me a message when the build failed or canceled
-        if: steps.wetransfer.outputs.status != 'success' && cancelled()
+        if: failure()
         run: |
           curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🔴 Build failed or canceled" >> /dev/null
 
       - name: Send me a message include the download link
-        if: steps.wetransfer.outputs.status == 'success' && !cancelled()
         run: |
           curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🟢 $DOWNLOAD_LINK" >> /dev/null
