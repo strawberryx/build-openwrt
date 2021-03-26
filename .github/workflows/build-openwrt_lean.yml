@@ -113,7 +113,7 @@ jobs:
           if [ ${{ matrix.platform }} == "n1" ]; then
             cd openwrt/bin/targets/*/*
             mv *.gz $GITHUB_WORKSPACE/openwrt/mknop/openwrt          
-            cd openwrt/mknop
+            cd $GITHUB_WORKSPACE/openwrt/mknop
             sudo ./gen_openwrt -m phicomm-n1 -k latest -s 512 
             cd out           
 
