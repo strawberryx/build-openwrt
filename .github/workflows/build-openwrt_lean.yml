@@ -11,7 +11,7 @@
 name: Build OpenWrt
 
 on:
-  #  push:
+  push:
   workflow_dispatch:
     inputs:
       ssh:
@@ -29,7 +29,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # platform: ["x86"]
         platform: ["x86", "n1"]
 
     steps:
@@ -52,11 +51,6 @@ jobs:
           sudo -E apt-get -qq clean
 
           curl -fsSL git.io/file-transfer | sh
-
-      - name: Get system information
-        run: |
-          lsblk -a
-          df -h $PWD
 
       - name: Clone source code
         run: |
@@ -86,8 +80,7 @@ jobs:
       - name: Upload config
         if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
         run: |
-          ./transfer wet -s -p 16 --no-progress openwrt/.config 2>&1 | tee wetransfer-config.log
-          echo "$(cat wetransfer-config.log | grep https)"
+          ./transfer wet -s -p 16 --no-progress openwrt/.config 2>&1
 
       - name: Load custom configuration
         run: |
@@ -111,24 +104,27 @@ jobs:
           make -j$(($(nproc) + 1)) || make -j1 V=s
           echo "::set-output name=status::success"
 
-      - name: Get system information
-        run: |
-          lsblk -a
-          df -h $PWD
-
       - name: Organize files
         id: organize
         run: |
-          cd openwrt/bin/targets/*/*
-          rm -rf packages
+
+
 
           if [ ${{ matrix.platform }} == "n1" ]; then
-            
+            cd openwrt/bin/targets/*/*
             mv *.gz $GITHUB_WORKSPACE/openwrt/mknop/openwrt          
             cd openwrt/mknop
             sudo ./gen_openwrt -m phicomm-n1 -k latest -s 512 
             cd out           
+
+          else
+
+            cd openwrt/bin/targets/*/*
+            
+
+
           fi      
+
 
             
 
@@ -140,8 +136,7 @@ jobs:
       - name: Upload firmware to WeTransfer
         run: |
 
-          ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
-          echo "$(cat wetransfer.log | grep https)"
+          ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1
 
       - name: Cleanup Workflow Runs
         if: always()
@@ -149,4 +144,4 @@ jobs:
         with:
           token: ${{ github.token }}
           repository: ${{ github.repository }}
-          retain_days: 7
+          retain_days: 1
