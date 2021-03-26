@@ -11,7 +11,7 @@
 name: Build OpenWrt
 
 on:
-  push:
+#  push:
   workflow_dispatch:
     inputs:
       ssh:
@@ -125,7 +125,7 @@ jobs:
         run: |
           cd openwrt/bin/targets/*/*
           rm -rf packages
-          
+
           if [ ${{ matrix.platform }} == "n1" ]; then
             
             mv *.gz $GITHUB_WORKSPACE/openwrt/mknop/openwrt          
