@@ -138,7 +138,7 @@ jobs:
           echo "FIRMWARE_DOWNLOAD_LINK=$(cat wetransfer.log | grep https)" >> $GITHUB_ENV
 
       - name: Send me a message when the build failed or canceled
-        if: failure()
+        if: failure() || canceled()
         run: |
           curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🔴 [${{ matrix.platform }}] Build failed or canceled" >> /dev/null
 
