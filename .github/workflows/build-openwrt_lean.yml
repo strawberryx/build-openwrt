@@ -87,7 +87,7 @@ jobs:
         if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
         run: |
           ./transfer wet -s -p 16 --no-progress openwrt/.config 2>&1 | tee wetransfer-config.log
-          echo "[${{ matrix.platform }}] $(cat wetransfer-config.log | grep https)"
+          echo "$(cat wetransfer-config.log | grep https)"
 
       - name: Load custom configuration
         run: |
@@ -118,16 +118,25 @@ jobs:
 
       - name: Move firmware to specified directory
         run: |
-          cd openwrt/bin/targets/*/*
-          mv *.gz $GITHUB_WORKSPACE/openwrt/mknop/openwrt
+
 
       - name: Organize files
         id: organize
         run: |
-          cd openwrt/mknop
-          sudo ./gen_openwrt -m phicomm-n1 -k latest -s 512
+          cd openwrt/bin/targets/*/*
+          rm -rf packages
+          
+          if [ ${{ matrix.platform }} == "n1" ]; then
+            
+            mv *.gz $GITHUB_WORKSPACE/openwrt/mknop/openwrt          
+            cd openwrt/mknop
+            sudo ./gen_openwrt -m phicomm-n1 -k latest -s 512 
+            cd out           
+          fi      
 
-          cd out
+            
+
+
 
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
           echo "::set-output name=status::success"
@@ -136,16 +145,7 @@ jobs:
         run: |
 
           ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
-          echo "FIRMWARE_DOWNLOAD_LINK=$(cat wetransfer.log | grep https)" >> $GITHUB_ENV
-
-      - name: Send me a message when the build failed or canceled
-        if: ${{ failure() || canceled() }}
-        run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🔴 [${{ matrix.platform }}] Build failed or canceled" >> /dev/null
-
-      - name: Send me a message include the download link
-        run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🟢 [${{ matrix.platform }}] $FIRMWARE_DOWNLOAD_LINK" >> /dev/null
+          echo "$(cat wetransfer.log | grep https)"
 
       - name: Cleanup Workflow Runs
         if: always()
