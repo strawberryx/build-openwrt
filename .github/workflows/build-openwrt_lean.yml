@@ -11,7 +11,7 @@
 name: Build OpenWrt
 
 on:
-#  push:
+  #  push:
   workflow_dispatch:
     inputs:
       ssh:
@@ -115,10 +115,6 @@ jobs:
         run: |
           lsblk -a
           df -h $PWD
-
-      - name: Move firmware to specified directory
-        run: |
-
 
       - name: Organize files
         id: organize
