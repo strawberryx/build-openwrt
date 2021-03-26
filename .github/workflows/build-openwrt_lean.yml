@@ -11,12 +11,13 @@
 name: Build OpenWrt
 
 on:
+  push:
   workflow_dispatch:
     inputs:
-      _:
-        description: ""
+      ssh:
+        description: "SSH connection to Actions"
         required: false
-        default: ""
+        default: "false"
 
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
@@ -26,6 +27,10 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: ["x86"]
+        # platform: ["x86", "n1"]
 
     steps:
       - name: Checkout
@@ -37,20 +42,21 @@ jobs:
         run: |
           sudo timedatectl set-timezone "$TZ"
 
-          sudo -E swapoff -a
           docker rmi `docker images -q`
+
+          sudo -E swapoff -a          
           sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
           sudo -E apt-get -qq update
-          sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-1804)
+          sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf wget swig rsync
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
 
+          curl -fsSL git.io/file-transfer | sh
+
       - name: Get system information
         run: |
-          sudo lshw
-          lscpu
           lsblk -a
-          df -h
+          df -h $PWD
 
       - name: Clone source code
         run: |
@@ -73,9 +79,22 @@ jobs:
         run: |
           cd openwrt && ./scripts/feeds install -a
 
+      - name: SSH connection to Actions
+        uses: P3TERX/ssh2actions@v1.0.0
+        if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+
+      - name: Upload config
+        if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+        run: |
+          ./transfer wet -s -p 16 --no-progress openwrt/.config 2>&1 | tee wetransfer-config.log
+          echo "[${{ matrix.platform }}] $(cat wetransfer-config.log | grep https)"
+
       - name: Load custom configuration
         run: |
-          cp $GITHUB_WORKSPACE/config-n1 openwrt/.config
+          if [ ! -f "openwrt/.config" ]; then
+            echo "==> .config does not exist"
+            cp $GITHUB_WORKSPACE/config-${{ matrix.platform }} openwrt/.config
+          fi
 
       - name: Download package
         id: package
@@ -84,10 +103,6 @@ jobs:
           make download -j128
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
-
-      - name: Echo config
-        run: |
-          cat openwrt/.config
 
       - name: Compile the firmware
         id: compile
@@ -98,10 +113,8 @@ jobs:
 
       - name: Get system information
         run: |
-          sudo lshw
-          lscpu
           lsblk -a
-          df -h
+          df -h $PWD
 
       - name: Move firmware to specified directory
         run: |
@@ -120,21 +133,19 @@ jobs:
           echo "::set-output name=status::success"
 
       - name: Upload firmware to WeTransfer
-        id: wetransfer
         run: |
-          curl -fsSL git.io/file-transfer | sh
+
           ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
-          echo "DOWNLOAD_LINK=$(cat wetransfer.log | grep https)" >> $GITHUB_ENV
-          echo "::set-output name=status::success"
+          echo "FIRMWARE_DOWNLOAD_LINK=$(cat wetransfer.log | grep https)" >> $GITHUB_ENV
 
       - name: Send me a message when the build failed or canceled
         if: failure()
         run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🔴 Build failed or canceled" >> /dev/null
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🔴 [${{ matrix.platform }}] Build failed or canceled" >> /dev/null
 
       - name: Send me a message include the download link
         run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🟢 $DOWNLOAD_LINK" >> /dev/null
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🟢 [${{ matrix.platform }}] $FIRMWARE_DOWNLOAD_LINK" >> /dev/null
 
       - name: Cleanup Workflow Runs
         if: always()
