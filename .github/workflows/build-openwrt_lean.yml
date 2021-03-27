@@ -89,7 +89,7 @@ jobs:
       - name: Upload diff config
         if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
         run: |
-          ./transfer wet -s -p 16 --no-progress openwrt/.config 2>&1
+          ./transfer wet -s -p 16 --no-progress openwrt/seed.config 2>&1
 
 
 
