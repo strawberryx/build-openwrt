@@ -120,7 +120,7 @@ jobs:
           else
 
             cd openwrt/bin/targets/*/*
-            
+            rm -rf packages
 
 
           fi      
