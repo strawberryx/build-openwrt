@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: ["n1"]
+        platform: ["x86","n1"]
 
     steps:
       - name: Checkout
@@ -79,7 +79,7 @@ jobs:
 
           # if [ ! -f "openwrt/.config" ]; then
           #   echo "==> .config does not exist"
-          #   cp $GITHUB_WORKSPACE/config-${{ matrix.platform }} openwrt/.config
+          #   cp $GITHUB_WORKSPACE/diffconfig-${{ matrix.platform }} openwrt/.config
           # fi
 
       - name: SSH connection to Actions
