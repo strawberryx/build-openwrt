@@ -73,21 +73,25 @@ jobs:
         run: |
           cd openwrt && ./scripts/feeds install -a
 
+      - name: Load custom configuration
+        run: |
+          cp $GITHUB_WORKSPACE/config-${{ matrix.platform }} openwrt/.config
+          
+          # if [ ! -f "openwrt/.config" ]; then
+          #   echo "==> .config does not exist"
+          #   cp $GITHUB_WORKSPACE/config-${{ matrix.platform }} openwrt/.config
+          # fi          
+
       - name: SSH connection to Actions
         uses: P3TERX/ssh2actions@v1.0.0
         if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
 
-      - name: Upload config
+      - name: Upload diff config
         if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
         run: |
           ./transfer wet -s -p 16 --no-progress openwrt/.config 2>&1
 
-      - name: Load custom configuration
-        run: |
-          if [ ! -f "openwrt/.config" ]; then
-            echo "==> .config does not exist"
-            cp $GITHUB_WORKSPACE/config-${{ matrix.platform }} openwrt/.config
-          fi
+
 
       - name: Download package
         id: package
