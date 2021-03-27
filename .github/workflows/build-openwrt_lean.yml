@@ -11,7 +11,7 @@
 name: Build OpenWrt
 
 on:
-  push:
+  # push:
   workflow_dispatch:
     inputs:
       ssh:
@@ -76,7 +76,7 @@ jobs:
       - name: Load custom configuration
         run: |
           cp $GITHUB_WORKSPACE/config-${{ matrix.platform }} openwrt/.config
-          
+
           # if [ ! -f "openwrt/.config" ]; then
           #   echo "==> .config does not exist"
           #   cp $GITHUB_WORKSPACE/config-${{ matrix.platform }} openwrt/.config
