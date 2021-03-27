@@ -29,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: ["x86", "n1"]
+        platform: ["n1"]
 
     steps:
       - name: Checkout
