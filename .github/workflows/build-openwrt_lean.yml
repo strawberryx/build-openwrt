@@ -11,6 +11,8 @@
 name: Build OpenWrt
 
 on:
+  schedule:
+    - cron: 0 3 * * *
   # push:
   workflow_dispatch:
     inputs:
@@ -29,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: ["x86","n1"]
+        platform: ["n1"]
 
     steps:
       - name: Checkout
@@ -67,29 +69,19 @@ jobs:
 
       - name: Update feeds
         run: |
-          cd openwrt && ./scripts/feeds update -a
-
-      - name: Install feeds
-        run: |
-          cd openwrt && ./scripts/feeds install -a
+          cd openwrt
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
 
       - name: Load custom configuration
         run: |
-          cp $GITHUB_WORKSPACE/config-${{ matrix.platform }} openwrt/.config
+          cp $GITHUB_WORKSPACE/seed-${{ matrix.platform }}.config openwrt/.config
+          make defconfig
 
           # if [ ! -f "openwrt/.config" ]; then
           #   echo "==> .config does not exist"
           #   cp $GITHUB_WORKSPACE/diffconfig-${{ matrix.platform }} openwrt/.config
           # fi
-
-      - name: SSH connection to Actions
-        uses: mxschmitt/action-tmate@v3
-        if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
-
-      - name: Upload diff config
-        if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
-        run: |
-          ./transfer wet -s -p 16 --no-progress openwrt/seed.config 2>&1
 
       - name: Download package
         id: package
