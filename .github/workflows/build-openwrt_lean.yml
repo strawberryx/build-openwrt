@@ -13,7 +13,7 @@ name: Build OpenWrt
 on:
   schedule:
     - cron: 0 3 * * *
-  # push:
+  push:
   workflow_dispatch:
     inputs:
       ssh:
@@ -76,7 +76,7 @@ jobs:
       - name: Load custom configuration
         run: |
           cd openwrt
-          cp $GITHUB_WORKSPACE/seed-${{ matrix.platform }}.config openwrt/.config
+          cp $GITHUB_WORKSPACE/seed-${{ matrix.platform }}.config .config
           make defconfig
 
           # if [ ! -f "openwrt/.config" ]; then
