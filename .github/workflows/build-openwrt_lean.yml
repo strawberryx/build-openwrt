@@ -75,6 +75,7 @@ jobs:
 
       - name: Load custom configuration
         run: |
+          cd openwrt
           cp $GITHUB_WORKSPACE/seed-${{ matrix.platform }}.config openwrt/.config
           make defconfig
 
