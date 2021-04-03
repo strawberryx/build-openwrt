@@ -19,7 +19,7 @@ on:
       ssh:
         description: "SSH connection to Actions"
         required: false
-        default: "false"
+        default: "true"
 
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
@@ -84,6 +84,7 @@ jobs:
       - name: Download packages
         run: |
           cd openwrt
+          git clone https://github.com/xiaorouji/openwrt-passwall.git package
           git clone https://github.com/vernesong/OpenClash.git package/luci-app-openclash
           rm -rf package/lean/luci-theme-argon  
           git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
@@ -95,16 +96,20 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
+      - name: SSH connection to Actions
+        uses: mxschmitt/action-tmate@master
+        if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+
       - name: Load configuration
         run: |
-          cd openwrt
-          cp $GITHUB_WORKSPACE/n1/seed-${{ matrix.platform }}.config .config
-          make defconfig
 
-          # if [ ! -f "openwrt/.config" ]; then
-          #   echo "==> .config does not exist"
-          #   cp $GITHUB_WORKSPACE/diffconfig-${{ matrix.platform }} openwrt/.config
-          # fi
+
+          if [ ! -f "$GITHUB_WORKSPACE/openwrt/.config" ]; then
+            echo "==> .config does not exist"
+            cp $GITHUB_WORKSPACE/${{ matrix.platform }}/seed-${{ matrix.platform }}.config $GITHUB_WORKSPACE/openwrt/.config
+            cd openwrt
+            make defconfig            
+          fi
 
       - name: Download package
         run: |
@@ -126,7 +131,7 @@ jobs:
           if [ ${{ matrix.platform }} == "n1" ]; then
             sudo mkdir -p /opt/imgs
             cd ./n1
-            # 这里要放armbian
+            curl -OL 'https://github.com/c3p7f2/files/releases/download/v1.0/Armbian_20.10_Aml-s9xxx_buster_5.10.26-flippy-56+.img'
             unxz ./Armbian*.img.xz
             mv ./Armbian*.img /opt/imgs/
 
