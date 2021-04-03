@@ -11,8 +11,8 @@
 name: Build OpenWrt
 
 on:
-  schedule:
-    - cron: 0 3 * * *
+  # schedule:
+  #   - cron: 0 3 * * *
   push:
   workflow_dispatch:
     inputs:
@@ -85,7 +85,6 @@ jobs:
         run: |
           cd openwrt
           git clone https://github.com/vernesong/OpenClash.git package/luci-app-openclash
-          git clone https://github.com/tuanqing/install-program package/install-program
           rm -rf package/lean/luci-theme-argon  
           git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
           git clone https://github.com/unifreq/openwrt_packit.git
@@ -127,23 +126,7 @@ jobs:
           if [ ${{ matrix.platform }} == "n1" ]; then
             sudo mkdir -p /opt/imgs
             cd ./n1
-            curl -O 'https://www6.zippyshare.com/d/zAAEGwuY/721852/Armbian_20.10_Aml-s9xxx_buster_5.10.26-flippy-56%2b.img.xz' \
-            -H 'Connection: keep-alive' \
-            -H 'Pragma: no-cache' \
-            -H 'Cache-Control: no-cache' \
-            -H 'sec-ch-ua: " Not;A Brand";v="99", "Google Chrome";v="91", "Chromium";v="91"' \
-            -H 'sec-ch-ua-mobile: ?0' \
-            -H 'Upgrade-Insecure-Requests: 1' \
-            -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4464.5 Safari/537.36' \
-            -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9' \
-            -H 'Sec-Fetch-Site: same-origin' \
-            -H 'Sec-Fetch-Mode: navigate' \
-            -H 'Sec-Fetch-User: ?1' \
-            -H 'Sec-Fetch-Dest: document' \
-            -H 'Referer: https://www6.zippyshare.com/v/zAAEGwuY/file.html' \
-            -H 'Accept-Language: zh-CN,zh;q=0.9' \
-            -H 'Cookie: JSESSIONID=9C366ECD38C2C820A70E0877FB71B7E8; zippyadb=0; zippop=2' \
-            --compressed
+            # 这里要放armbian
             unxz ./Armbian*.img.xz
             mv ./Armbian*.img /opt/imgs/
 
