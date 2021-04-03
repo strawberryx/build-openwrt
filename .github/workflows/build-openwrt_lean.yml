@@ -133,7 +133,7 @@ jobs:
 
 
 
-            cd openwrt/bin/targets/*/*
+            cd $GITHUB_WORKSPACE/openwrt/bin/targets/*/*
             mv *.gz $GITHUB_WORKSPACE/openwrt/openwrt_packit  
 
             cd $GITHUB_WORKSPACE/openwrt/openwrt_packit
