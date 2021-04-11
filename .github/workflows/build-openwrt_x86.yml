@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 
-name: Build OpenWrt | x86
+name: x86
 
 on:
   push:
@@ -64,7 +64,7 @@ jobs:
           cd openwrt
           patch -p0 < zzz-default-settings.patch
 
-      - name: Download packages
+      - name: Download package
         run: |
           cd openwrt
           git clone https://github.com/vernesong/OpenClash.git package/luci-app-openclash
@@ -84,48 +84,39 @@ jobs:
           cd openwrt
           make defconfig
 
-      - name: Download package
+      - name: Make download
         run: |
           cd openwrt
 
           # test
-          wget https://github.com/coolsnowwolf/lede/pull/6526.patch
+          curl -OL https://github.com/coolsnowwolf/lede/pull/6526.patch
           git apply 6526.patch
           # test
 
-
-          make download -j1 V=s
+          make download -j16
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
+
+      - name: openclash core
+        run: |
+          mkdir -p openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+          cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+          cd openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+          gzip -d *.gz
+          chmod +x *.gz
 
       - name: Compile the firmware
         run: |
           cd openwrt
-          make -j$(($(nproc) + 1)) V=s
+          make -j$(($(nproc) + 1))
 
       - name: Organize files
         run: |
-
-
-
-
-
-
-
           cd openwrt/bin/targets/*/*
           rm -rf packages
-
-
-
-
-
-            
-
-
 
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
       - name: Upload firmware to WeTransfer
         run: |
-
           ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1
