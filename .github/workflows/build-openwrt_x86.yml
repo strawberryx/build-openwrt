@@ -8,18 +8,10 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 
-name: Build OpenWrt
+name: Build OpenWrt | x86
 
 on:
-  # schedule:
-  #   - cron: 0 3 * * *
-  # push:
-  workflow_dispatch:
-    inputs:
-      ssh:
-        description: "SSH connection to Actions"
-        required: false
-        default: "true"
+  push:
 
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
@@ -40,9 +32,6 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        platform: ["n1"]
 
     steps:
       - name: Checkout
@@ -71,24 +60,16 @@ jobs:
 
       - name: Patch zzz-default-settings
         run: |
-
-          if [ ${{ matrix.platform }} == "n1" ]; then
-            cp ./n1/zzz-default-settings.patch ./openwrt
-            cd openwrt
-            patch -p0 < zzz-default-settings.patch 
-
-
-
-          fi
+          cp ./x86/zzz-default-settings.patch ./openwrt
+          cd openwrt
+          patch -p0 < zzz-default-settings.patch
 
       - name: Download packages
         run: |
           cd openwrt
-          git clone https://github.com/xiaorouji/openwrt-passwall.git package
           git clone https://github.com/vernesong/OpenClash.git package/luci-app-openclash
           rm -rf package/lean/luci-theme-argon  
           git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
-          git clone https://github.com/unifreq/openwrt_packit.git
 
       - name: Update feeds
         run: |
@@ -96,62 +77,38 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
-      - name: SSH connection to Actions
-        uses: mxschmitt/action-tmate@master
-        if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
-
       - name: Load configuration
         run: |
 
-
-          if [ ! -f "$GITHUB_WORKSPACE/openwrt/.config" ]; then
-            echo "==> .config does not exist"
-            cp $GITHUB_WORKSPACE/${{ matrix.platform }}/seed-${{ matrix.platform }}.config $GITHUB_WORKSPACE/openwrt/.config
-            cd openwrt
-            make defconfig            
-          fi
-
+          cp $GITHUB_WORKSPACE/x86/seed.config $GITHUB_WORKSPACE/openwrt/.config
+          cd openwrt
+          make defconfig
       - name: Download package
         run: |
           cd openwrt
-          make download -j128
+          make download -j8 V=s
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
       - name: Compile the firmware
         run: |
           cd openwrt
-          make -j$(($(nproc) + 1)) || make -j1 V=s
+          make -j$(($(nproc) + 1)) V=s
 
       - name: Organize files
         run: |
 
 
 
-          if [ ${{ matrix.platform }} == "n1" ]; then
-            sudo mkdir -p /opt/imgs
-            cd ./n1
-            curl -OL 'https://github.com/c3p7f2/files/releases/download/v1.0/Armbian_20.10_Aml-s9xxx_buster_5.10.26-flippy-56+.img'
-            unxz ./Armbian*.img.xz
-            mv ./Armbian*.img /opt/imgs/
 
 
+ 
+
+          cd openwrt/bin/targets/*/*
+          rm -rf packages
 
 
-            cd $GITHUB_WORKSPACE/openwrt/bin/targets/*/*
-            mv *.gz $GITHUB_WORKSPACE/openwrt/openwrt_packit  
-
-            cd $GITHUB_WORKSPACE/openwrt/openwrt_packit
-            sudo ./mk_s905d_n1.sh
-            cd tmp        
-
-          else
-
-            cd openwrt/bin/targets/*/*
-            rm -rf packages
-
-
-          fi      
+   
 
 
             
