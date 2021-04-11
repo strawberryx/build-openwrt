@@ -43,7 +43,7 @@ jobs:
         run: |
           sudo timedatectl set-timezone "$TZ"
 
-          # docker rmi `docker images -q`
+          docker rmi `docker images -q`
 
           sudo -E swapoff -a          
           sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
@@ -94,7 +94,7 @@ jobs:
           # test
 
 
-          make download -j8 V=s
+          make download -j1 V=s
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
