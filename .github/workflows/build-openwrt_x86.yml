@@ -43,12 +43,12 @@ jobs:
         run: |
           sudo timedatectl set-timezone "$TZ"
 
-          docker rmi `docker images -q`
+          # docker rmi `docker images -q`
 
           sudo -E swapoff -a          
           sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
           sudo -E apt-get -qq update
-          sudo -E apt-get -qq install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf wget swig rsync
+          sudo -E apt-get -qq install aria2 build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf wget swig rsync
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
 
@@ -83,9 +83,17 @@ jobs:
           cp $GITHUB_WORKSPACE/x86/seed.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
           make defconfig
+
       - name: Download package
         run: |
           cd openwrt
+
+          # test
+          wget https://github.com/coolsnowwolf/lede/pull/6526.patch
+          git apply 6526.patch
+          # test
+
+
           make download -j8 V=s
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
@@ -102,13 +110,13 @@ jobs:
 
 
 
- 
+
 
           cd openwrt/bin/targets/*/*
           rm -rf packages
 
 
-   
+
 
 
             
