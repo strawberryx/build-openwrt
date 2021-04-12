@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 
-name: x86
+name: Build OpenWrt
 
 on:
   push:
@@ -32,6 +32,9 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: ["x86", "pi3bp"]
 
     steps:
       - name: Checkout
@@ -62,7 +65,7 @@ jobs:
 
       - name: Patch zzz-default-settings
         run: |
-          cp ./x86/zzz-default-settings.patch ./openwrt
+          cp ./${{ matrix.platform }}/zzz-default-settings.patch ./openwrt
           cd openwrt
           patch -p0 < zzz-default-settings.patch
 
@@ -82,7 +85,7 @@ jobs:
       - name: Load configuration
         run: |
 
-          cp $GITHUB_WORKSPACE/x86/seed.config $GITHUB_WORKSPACE/openwrt/.config
+          cp $GITHUB_WORKSPACE/${{ matrix.platform }}/seed $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
           make defconfig
 
@@ -90,22 +93,30 @@ jobs:
         run: |
           cd openwrt
 
-          # test
-          curl -OL https://github.com/coolsnowwolf/lede/pull/6526.patch
-          git apply 6526.patch
-          # test
 
           make download -j8
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
-      - name: openclash core
+      - name: clash core
         run: |
           mkdir -p openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-          cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+          if [ ${{ matrix.platform }} == "x86" ]; then
+            cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+
+          else
+            
+            cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-armv8-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+
+
+          fi
+
+
+
           cd openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
           gzip -d *.gz
           chmod +x *
+          mv * clash_tun
 
       - name: Compile the firmware
         run: |
@@ -121,4 +132,6 @@ jobs:
 
       - name: Upload firmware to WeTransfer
         run: |
-          ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1
+
+          ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
+          echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
