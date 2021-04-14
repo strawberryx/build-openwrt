@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: ["x86", "pi3bp"]
+        platform: ["x86"]
 
     steps:
       - name: Checkout
@@ -98,11 +98,11 @@ jobs:
       - name: Make download
         run: |
           cd openwrt
-          
+
           curl -OL https://github.com/coolsnowwolf/lede/pull/6526.patch
           git apply 6526.patch
 
-          make download -j8
+          make download -j8 V=s
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
@@ -129,7 +129,7 @@ jobs:
       - name: Compile the firmware
         run: |
           cd openwrt
-          make -j$(($(nproc) + 1))
+          make -j$(($(nproc) + 1)) V=s
 
       - name: Organize files
         run: |
