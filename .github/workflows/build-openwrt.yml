@@ -91,17 +91,17 @@ jobs:
       - name: Load configuration
         run: |
 
-          #### cp $GITHUB_WORKSPACE/${{ matrix.platform }}/seed $GITHUB_WORKSPACE/openwrt/.config
+          cp $GITHUB_WORKSPACE/${{ matrix.platform }}/seed $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
           make defconfig
 
       - name: Make download
         run: |
           cd openwrt
-          # test
+          
           curl -OL https://github.com/coolsnowwolf/lede/pull/6526.patch
           git apply 6526.patch
-          # test
+
           make download -j8
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
@@ -135,6 +135,12 @@ jobs:
         run: |
           cd openwrt/bin/targets/*/*
           rm -rf packages
+
+          if [ ${{ matrix.platform }} == "x86" ]; then
+            mkdir -p vmdk
+            mv *.vmdk vmdk
+            cd vmdk
+          fi
 
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
