@@ -106,7 +106,7 @@ jobs:
           curl -OL https://github.com/coolsnowwolf/lede/pull/6526.patch
           git apply 6526.patch
 
-          make download -j8 V=s
+          make download -j8
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
@@ -133,7 +133,7 @@ jobs:
       - name: Compile the firmware
         run: |
           cd openwrt
-          make -j$(($(nproc) + 1)) V=s
+          make -j$(($(nproc) + 1))
 
       - name: Organize files
         run: |
