@@ -149,7 +149,7 @@ jobs:
 
           if [ ${{ matrix.platform }} == "n1" ]; then
             
-            aria2c -x32 'https://github.com/c3p7f2/files/releases/download/v1.0/Armbian_20.10_Aml-s9xxx_buster_5.10.26-flippy-56+.img'
+            aria2c -x16 'https://github.com/c3p7f2/files/releases/download/v1.0/Armbian_20.10_Aml-s9xxx_buster_5.10.26-flippy-56+.img'
             sudo mkdir -p /opt/imgs
             mv ./Armbian*.img /opt/imgs/
             mv *.gz $GITHUB_WORKSPACE/openwrt_packit  
