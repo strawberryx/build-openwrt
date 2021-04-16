@@ -130,25 +130,34 @@ jobs:
           chmod +x *
           mv * clash_tun
 
+      - name: 磁盘用量
+        run: |
+          df -h /
+
       - name: Compile the firmware
         run: |
           cd openwrt
           make -j$(($(nproc) + 1)) V=s
 
+      - name: 磁盘用量
+        run: |
+          df -h /
+
       - name: Organize files
         run: |
-          # 通用情况
           cd openwrt/bin/targets/*/*
           rm -rf packages
 
-          if [ ${{ matrix.platform }} == "x86" ]; then
+
+          if [ ${{ matrix.platform }} == "x86" ]; then  
             mkdir -p vmdk
             mv *.vmdk vmdk
             cd vmdk
-          fi
-
-          if [ ${{ matrix.platform }} == "n1" ]; then
-            
+          elif [ ${{ matrix.platform }} == "pi3bp" ]; then  
+            mkdir -p firmware
+            mv *.gz firmware
+            cd firmware
+          elif [ ${{ matrix.platform }} == "n1" ]; then
             aria2c -x32 'https://github.com/c3p7f2/files/releases/download/v1.0/Armbian_20.10_Aml-s9xxx_buster_5.10.26-flippy-56+.img'
             sudo mkdir -p /opt/imgs
             mv ./Armbian*.img /opt/imgs/
@@ -156,7 +165,11 @@ jobs:
             cd $GITHUB_WORKSPACE/openwrt_packit
             sudo ./mk_s905d_n1.sh
             cd tmp      
+          else  
+            #
           fi
+
+
 
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
