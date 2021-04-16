@@ -165,8 +165,7 @@ jobs:
             cd $GITHUB_WORKSPACE/openwrt_packit
             sudo ./mk_s905d_n1.sh
             cd tmp      
-          else  
-            #
+
           fi
 
 
