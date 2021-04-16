@@ -153,20 +153,12 @@ jobs:
             mkdir -p vmdk
             mv *.vmdk vmdk
             cd vmdk
-<<<<<<< HEAD
           elif [ ${{ matrix.platform }} == "pi3bp" ]; then  
             mkdir -p firmware
             mv *.gz firmware
             cd firmware
           elif [ ${{ matrix.platform }} == "n1" ]; then
             aria2c -x32 'https://github.com/c3p7f2/files/releases/download/v1.0/Armbian_20.10_Aml-s9xxx_buster_5.10.26-flippy-56+.img'
-=======
-          fi
-
-          if [ ${{ matrix.platform }} == "n1" ]; then
-            
-            aria2c -x16 'https://github.com/c3p7f2/files/releases/download/v1.0/Armbian_20.10_Aml-s9xxx_buster_5.10.26-flippy-56+.img'
->>>>>>> dfbd3bda68d4485a85845c28f6783d1c8f436a25
             sudo mkdir -p /opt/imgs
             mv ./Armbian*.img /opt/imgs/
             mv *.gz $GITHUB_WORKSPACE/openwrt_packit  
