@@ -25,22 +25,22 @@ env:
   TZ: Asia/Shanghai
 
 jobs:
-  cleanup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Cleanup Workflow Runs
-        if: always()
-        uses: GitRML/delete-workflow-runs@v1.2.1
-        with:
-          token: ${{ github.token }}
-          repository: ${{ github.repository }}
-          retain_days: 1
+#  cleanup:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Cleanup Workflow Runs
+#        if: always()
+#        uses: GitRML/delete-workflow-runs@v1.2.1
+#        with:
+#          token: ${{ github.token }}
+#          repository: ${{ github.repository }}
+#          retain_days: 1
 
   build:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        platform: ["x86", "n1", "pi3bp"]
+        platform: ["n1"]
 
     steps:
       - name: Checkout
@@ -78,6 +78,7 @@ jobs:
       - name: Download package
         run: |
           cd openwrt
+          git clone https://github.com/xiaorouji/openwrt-passwall.git package/passwall
           git clone https://github.com/vernesong/OpenClash.git package/luci-app-openclash
           rm -rf package/lean/luci-theme-argon  
           git clone https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
@@ -92,9 +93,9 @@ jobs:
 
             cd /opt/kernel
 
-            sudo aria2c -x16 'https://github.com/c3p7f2/files/releases/download/v1.0/boot-5.10.31-flippy-57+.tar.gz'
-            sudo aria2c -x16 'https://github.com/c3p7f2/files/releases/download/v1.0/dtb-amlogic-5.10.31-flippy-57+.tar.gz'
-            sudo aria2c -x16 'https://github.com/c3p7f2/files/releases/download/v1.0/modules-5.10.31-flippy-57+.tar.gz'
+            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/boot-5.4.113-flippy-57+o.tar.gz
+            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/dtb-amlogic-5.4.113-flippy-57+o.tar.gz
+            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/modules-5.4.113-flippy-57+o.tar.gz
           fi
 
       - name: Update feeds
@@ -160,16 +161,8 @@ jobs:
           rm -rf packages
 
 
-          if [ ${{ matrix.platform }} == "x86" ]; then  
-            # mkdir -p vmdk
-            # mv *.vmdk vmdk
-            # cd vmdk
-            echo "..."
-          elif [ ${{ matrix.platform }} == "pi3bp" ]; then  
-            mkdir -p firmware
-            mv *.gz firmware
-            cd firmware
-          elif [ ${{ matrix.platform }} == "n1" ]; then
+ 
+          if [ ${{ matrix.platform }} == "n1" ]; then
             
             mv *.gz $GITHUB_WORKSPACE/openwrt_packit  
             cd $GITHUB_WORKSPACE/openwrt_packit
