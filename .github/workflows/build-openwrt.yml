@@ -161,9 +161,9 @@ jobs:
 
 
           if [ ${{ matrix.platform }} == "x86" ]; then  
-            mkdir -p vmdk
-            mv *.vmdk vmdk
-            cd vmdk
+            # mkdir -p vmdk
+            # mv *.vmdk vmdk
+            # cd vmdk
           elif [ ${{ matrix.platform }} == "pi3bp" ]; then  
             mkdir -p firmware
             mv *.gz firmware
