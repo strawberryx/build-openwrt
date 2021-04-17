@@ -164,6 +164,7 @@ jobs:
             # mkdir -p vmdk
             # mv *.vmdk vmdk
             # cd vmdk
+            echo "..."
           elif [ ${{ matrix.platform }} == "pi3bp" ]; then  
             mkdir -p firmware
             mv *.gz firmware
