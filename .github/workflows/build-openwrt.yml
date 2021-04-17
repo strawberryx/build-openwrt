@@ -92,7 +92,9 @@ jobs:
 
             cd /opt/kernel
 
-            sudo aria2c -x16 'https://github.com/c3p7f2/files/releases/download/v1.0/boot-5.10.31-flippy-57+.tar.gz' 'https://github.com/c3p7f2/files/releases/download/v1.0/dtb-amlogic-5.10.31-flippy-57+.tar.gz' 'https://github.com/c3p7f2/files/releases/download/v1.0/modules-5.10.31-flippy-57+.tar.gz'
+            sudo aria2c -x16 'https://github.com/c3p7f2/files/releases/download/v1.0/boot-5.10.31-flippy-57+.tar.gz'
+            sudo aria2c -x16 'https://github.com/c3p7f2/files/releases/download/v1.0/dtb-amlogic-5.10.31-flippy-57+.tar.gz'
+            sudo aria2c -x16 'https://github.com/c3p7f2/files/releases/download/v1.0/modules-5.10.31-flippy-57+.tar.gz'
           fi
 
       - name: Update feeds
