@@ -25,16 +25,16 @@ env:
   TZ: Asia/Shanghai
 
 jobs:
-#  cleanup:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Cleanup Workflow Runs
-#        if: always()
-#        uses: GitRML/delete-workflow-runs@v1.2.1
-#        with:
-#          token: ${{ github.token }}
-#          repository: ${{ github.repository }}
-#          retain_days: 1
+  #  cleanup:
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - name: Cleanup Workflow Runs
+  #        if: always()
+  #        uses: GitRML/delete-workflow-runs@v1.2.1
+  #        with:
+  #          token: ${{ github.token }}
+  #          repository: ${{ github.repository }}
+  #          retain_days: 1
 
   build:
     runs-on: ubuntu-18.04
@@ -43,6 +43,10 @@ jobs:
         platform: ["n1"]
 
     steps:
+      - name: GO
+        run: |
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🔵 A new workflow::Build OpenWrt -> ${{ matrix.platform }}" >> /dev/null
+
       - name: Checkout
         uses: actions/checkout@main
 
@@ -161,7 +165,7 @@ jobs:
           rm -rf packages
 
 
- 
+
           if [ ${{ matrix.platform }} == "n1" ]; then
             
             mv *.gz $GITHUB_WORKSPACE/openwrt_packit  
@@ -176,7 +180,20 @@ jobs:
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
       - name: Upload firmware to WeTransfer
+        id: wetransfer
         run: |
 
           ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
           echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+          echo "DOWNLOAD_LINK=$(cat wetransfer.log | grep https)" >> $GITHUB_ENV
+          echo "::set-output name=status::success"
+
+      - name: Send me a message when the build failed or canceled
+        if: steps.wetransfer.outputs.status != 'success' && cancelled()
+        run: |
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🔴 Build failed or canceled" >> /dev/null
+
+      - name: Send me a message include the download link
+        if: steps.wetransfer.outputs.status == 'success' && !cancelled()
+        run: |
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=🟢 $DOWNLOAD_LINK" >> /dev/null
