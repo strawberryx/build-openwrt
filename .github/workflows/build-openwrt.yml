@@ -157,6 +157,11 @@ jobs:
 
       - name: Compile the firmware
         run: |
+        
+          curl -OL https://gist.github.com/samueljon/e7818edeb218f5e2f1e3e258949d04c8/raw/e803df8c95b5657cb490c079be97a2681636ef4b/toggleHT.sh
+          chmod +x toggleHT.sh
+          sudo ./toggleHT.sh
+          d
           cd openwrt
           make -j$(($(nproc) + 1))
 
