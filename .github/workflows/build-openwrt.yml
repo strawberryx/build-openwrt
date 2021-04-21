@@ -12,7 +12,7 @@ name: Build OpenWrt
 
 on:
   schedule:
-    - cron: "55 3 * * *"
+    - cron: "0 19 * * *"
   workflow_dispatch:
     inputs:
       ssh:
@@ -27,16 +27,16 @@ env:
   TZ: Asia/Shanghai
 
 jobs:
-  #  cleanup:
-  #    runs-on: ubuntu-latest
-  #    steps:
-  #      - name: Cleanup Workflow Runs
-  #        if: always()
-  #        uses: GitRML/delete-workflow-runs@v1.2.1
-  #        with:
-  #          token: ${{ github.token }}
-  #          repository: ${{ github.repository }}
-  #          retain_days: 1
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup Workflow Runs
+        if: always()
+        uses: GitRML/delete-workflow-runs@v1.2.1
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 1
 
   build:
     runs-on: ubuntu-18.04
@@ -47,7 +47,7 @@ jobs:
     steps:
       - name: GO
         run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=A new workflow::Build OpenWrt -> ${{ matrix.platform }}" >> /dev/null
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ matrix.platform }}] 开始编译OpenWrt！" >> /dev/null
 
       - name: Checkout
         uses: actions/checkout@main
@@ -195,11 +195,11 @@ jobs:
           echo "DOWNLOAD_LINK=$(cat wetransfer.log | grep https)" >> $GITHUB_ENV
 
       - name: Send me a message when the build failed or canceled
-        if: ${{ failure() }}
+        if: ${{ failure() }} || ${{ cancelled() }}
         run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=Build failed or canceled" >> /dev/null
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ matrix.platform }}] Build failed or canceled" >> /dev/null
 
       - name: Send me a message include the download link
         if: ${{ success() }}
         run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=$DOWNLOAD_LINK" >> /dev/null
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ matrix.platform }}] $DOWNLOAD_LINK" >> /dev/null
