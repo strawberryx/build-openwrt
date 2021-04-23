@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-=======
+
 #
 # Copyright (c) 2019-2020 P3TERX <https://p3terx.com>
 #
@@ -89,8 +88,8 @@ jobs:
           git clone https://github.com/xiaorouji/openwrt-passwall.git package/passwall
           git clone https://github.com/vernesong/OpenClash.git package/luci-app-openclash
           rm -rf package/lean/luci-theme-argon  
-          git clone https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
-
+          git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
+          git clone https://github.com/jerrykuku/luci-app-argon-config.git package/luci-app-argon-config
       - name: Download tools
         run: |
           if [ ${{ matrix.platform }} == "n1" ]; then
@@ -205,4 +204,4 @@ jobs:
         if: ${{ success() }}
         run: |
           curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ matrix.platform }}] $DOWNLOAD_LINK" >> /dev/null
->>>>>>> parent of ff44932 (+)
+
