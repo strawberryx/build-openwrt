@@ -43,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ["n1", "x86"]
+        platform: ["n1", "x86", "pi3bp"]
 
     steps:
       - name: GO
