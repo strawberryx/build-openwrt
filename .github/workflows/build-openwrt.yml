@@ -137,11 +137,19 @@ jobs:
         run: |
           mkdir -p openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
           if [ ${{ matrix.platform }} == "x86" ]; then
+<<<<<<< HEAD
             cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
 
           else
             
             cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-armv8-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+=======
+            cp openwrt/package/OpenClash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+
+          else
+            
+            cp openwrt/package/OpenClash/core-lateset/premium/clash-linux-armv8-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+>>>>>>> parent of 0345e4c (l)
 
 
           fi
