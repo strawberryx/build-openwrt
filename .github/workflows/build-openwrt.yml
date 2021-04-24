@@ -83,12 +83,12 @@ jobs:
 
       - name: Download package
         run: |
-          cd openwrt/package
-          git clone https://github.com/xiaorouji/openwrt-passwall.git
-          git clone https://github.com/vernesong/OpenClash.git
-          rm -rf lean/luci-theme-argon  
-          git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git
-          git clone https://github.com/jerrykuku/luci-app-argon-config.git
+          cd openwrt
+          git clone https://github.com/xiaorouji/openwrt-passwall.git package/passwall
+          git clone https://github.com/vernesong/OpenClash.git package/luci-app-openclash
+          rm -rf package/lean/luci-theme-argon  
+          git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
+          git clone https://github.com/jerrykuku/luci-app-argon-config.git package/luci-app-argon-config
 
       - name: Download tools
         run: |
@@ -137,19 +137,11 @@ jobs:
         run: |
           mkdir -p openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
           if [ ${{ matrix.platform }} == "x86" ]; then
-<<<<<<< HEAD
             cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
 
           else
             
             cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-armv8-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-=======
-            cp openwrt/package/OpenClash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-
-          else
-            
-            cp openwrt/package/OpenClash/core-lateset/premium/clash-linux-armv8-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
->>>>>>> parent of 0345e4c (l)
 
 
           fi
