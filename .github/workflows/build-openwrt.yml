@@ -154,17 +154,14 @@ jobs:
           chmod +x *
           mv * clash_tun
 
-
-
       - name: Compile the firmware
         run: |
 
           cd openwrt
           make -j$(($(nproc) + 1))
 
-
-
       - name: Organize files
+        if: ${{ matrix.platform }} != "n1"
         run: |
           cd openwrt/bin/targets/*/*
           rm -rf packages
@@ -176,6 +173,14 @@ jobs:
 
 
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+
+      - name: Package Armvirt as OpenWrt
+        if: ${{ matrix.platform }} == "n1"
+        uses: ophub/flippy-openwrt-actions@main
+        env:
+          OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
+          PACKAGE_SOC: s905d
+          KERNEL_VERSION_NAME: 5.10.33.TF_5.9.16
 
       - name: Upload firmware to WeTransfer
         run: |
