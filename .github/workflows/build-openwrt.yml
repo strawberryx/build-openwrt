@@ -91,24 +91,24 @@ jobs:
           git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
           git clone https://github.com/jerrykuku/luci-app-argon-config.git package/luci-app-argon-config
 
-      - name: Download tools
-        run: |
-          if [ ${{ matrix.platform }} == "n1" ]; then
-
-            git clone https://github.com/unifreq/openwrt_packit.git
-
-            sudo mkdir -p /opt/kernel
-
-            cd /opt/kernel
-
-            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/boot-5.10.32-flippy-58+.tar.gz
-            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/boot-5.4.114-flippy-58+o.tar.gz
-            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/dtb-amlogic-5.10.32-flippy-58+.tar.gz
-            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/dtb-amlogic-5.4.114-flippy-58+o.tar.gz
-            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/modules-5.10.32-flippy-58+.tar.gz
-            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/modules-5.4.114-flippy-58+o.tar.gz
-
-          fi
+      #- name: Download tools
+      #  run: |
+      #    if [ ${{ matrix.platform }} == "n1" ]; then
+      #
+      #      git clone https://github.com/unifreq/openwrt_packit.git
+      #
+      #      sudo mkdir -p /opt/kernel
+      #
+      #      cd /opt/kernel
+      #
+      #      sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/boot-5.10.32-flippy-58+.tar.gz
+      #      sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/boot-5.4.114-flippy-58+o.tar.gz
+      #      sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/dtb-amlogic-5.10.32-flippy-58+.tar.gz
+      #      sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/dtb-amlogic-5.4.114-flippy-58+o.tar.gz
+      #      sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/modules-5.10.32-flippy-58+.tar.gz
+      #      sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/modules-5.4.114-flippy-58+o.tar.gz
+      #
+      #    fi
 
       - name: Update feeds
         run: |
