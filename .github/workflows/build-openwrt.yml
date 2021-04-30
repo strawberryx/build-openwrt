@@ -127,8 +127,8 @@ jobs:
         run: |
           cd openwrt
 
-          # curl -OL https://github.com/coolsnowwolf/lede/pull/6526.patch
-          # git apply 6526.patch
+          curl -OL https://github.com/coolsnowwolf/lede/pull/6526.patch
+          git apply 6526.patch
 
           make download -j8
           find dl -size -1024c -exec ls -l {} \;
