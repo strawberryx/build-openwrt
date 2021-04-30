@@ -72,6 +72,8 @@ jobs:
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
 
+          echo "PLATFORM=${{ matrix.platform }}" >> $GITHUB_ENV
+
       - name: Clone source code
         run: |
           git clone $REPO_URL -b $REPO_BRANCH openwrt
@@ -161,7 +163,7 @@ jobs:
           make -j$(($(nproc) + 1))
 
       - name: Organize files
-        if: ${{ matrix.platform != "n1" }}
+        if: ${{ PLATFORM }} != "n1"
         run: |
           cd openwrt/bin/targets/*/*
           rm -rf packages
@@ -175,7 +177,7 @@ jobs:
           echo "PACKAGED_OUTPUTPATH=$PWD" >> $GITHUB_ENV
 
       - name: Package Armvirt as OpenWrt
-        if: ${{ matrix.platform == "n1" }}
+        if: ${{ PLATFORM }} == "n1"
         uses: ophub/flippy-openwrt-actions@main
         env:
           OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
