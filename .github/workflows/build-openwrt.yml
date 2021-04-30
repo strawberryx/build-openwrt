@@ -161,7 +161,7 @@ jobs:
           make -j$(($(nproc) + 1))
 
       - name: Organize files
-        if: ${{ matrix.platform }} != "n1"
+        if: ${{ matrix.platform }} == "n1"
         run: |
           cd openwrt/bin/targets/*/*
           rm -rf packages
