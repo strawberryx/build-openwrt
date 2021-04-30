@@ -170,9 +170,9 @@ jobs:
 
 
 
+ 
 
-
-          echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+          echo "PACKAGED_OUTPUTPATH=$PWD" >> $GITHUB_ENV
 
       - name: Package Armvirt as OpenWrt
         if: ${{ matrix.platform }} == "n1"
@@ -185,7 +185,7 @@ jobs:
       - name: Upload firmware to WeTransfer
         run: |
 
-          ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
+          ./transfer wet -s -p 16 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee wetransfer.log
           echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
           echo "DOWNLOAD_LINK=$(cat wetransfer.log | grep https)" >> $GITHUB_ENV
 
