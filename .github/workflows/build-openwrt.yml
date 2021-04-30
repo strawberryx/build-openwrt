@@ -171,14 +171,7 @@ jobs:
 
 
 
-          if [ ${{ matrix.platform }} == "n1" ]; then
-            
-            mv *.gz $GITHUB_WORKSPACE/openwrt_packit  
-            cd $GITHUB_WORKSPACE/openwrt_packit
-            sudo ./mk_s905d_n1.sh
-            cd tmp      
 
-          fi
 
 
 
