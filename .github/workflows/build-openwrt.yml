@@ -154,9 +154,7 @@ jobs:
           chmod +x *
           mv * clash_tun
 
-      - name: 磁盘用量
-        run: |
-          df -h /
+
 
       - name: Compile the firmware
         run: |
@@ -164,9 +162,7 @@ jobs:
           cd openwrt
           make -j$(($(nproc) + 1))
 
-      - name: 磁盘用量
-        run: |
-          df -h /
+
 
       - name: Organize files
         run: |
