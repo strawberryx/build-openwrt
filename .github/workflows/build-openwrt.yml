@@ -15,8 +15,8 @@ on:
     - cron: "0 19 * * *"
   workflow_dispatch:
     inputs:
-      ssh:
-        description: "SSH connection to Actions"
+      unknow:
+        description: "只是想加个手动触发按钮"
         required: false
         default: "true"
   # push:
