@@ -19,7 +19,7 @@ on:
         description: "只是想加个手动触发按钮"
         required: false
         default: "true"
-  # push:
+  push:
 
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
