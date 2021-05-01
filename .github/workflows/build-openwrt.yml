@@ -29,17 +29,6 @@ env:
   TZ: Asia/Shanghai
 
 jobs:
-  cleanup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Cleanup Workflow Runs
-        if: always()
-        uses: GitRML/delete-workflow-runs@v1.2.1
-        with:
-          token: ${{ github.token }}
-          repository: ${{ github.repository }}
-          retain_days: 1
-
   build:
     runs-on: ubuntu-18.04
     strategy:
@@ -48,6 +37,16 @@ jobs:
         platform: ["n1", "x86", "pi3bp"]
 
     steps:
+      - name: 测试
+        if: ${{ matrix.platform }} != "n1"
+        run: |
+          echo "这不是n1"
+
+      - name: 测试
+        if: ${{ matrix.platform }} != "n1"
+        run: |
+          echo "这是n1"
+
       - name: GO
         run: |
           curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ matrix.platform }}] 开始编译OpenWrt！" >> /dev/null
@@ -93,25 +92,6 @@ jobs:
           git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
           git clone https://github.com/jerrykuku/luci-app-argon-config.git package/luci-app-argon-config
 
-      - name: Download tools
-        run: |
-          if [ ${{ matrix.platform }} == "n1" ]; then
-
-            git clone https://github.com/unifreq/openwrt_packit.git
-
-            sudo mkdir -p /opt/kernel
-
-            cd /opt/kernel
-
-            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/boot-5.10.32-flippy-58+.tar.gz
-            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/boot-5.4.114-flippy-58+o.tar.gz
-            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/dtb-amlogic-5.10.32-flippy-58+.tar.gz
-            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/dtb-amlogic-5.4.114-flippy-58+o.tar.gz
-            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/modules-5.10.32-flippy-58+.tar.gz
-            sudo aria2c -x16 https://github.com/c3p7f2/files/releases/download/v1.0/modules-5.4.114-flippy-58+o.tar.gz
-
-          fi
-
       - name: Update feeds
         run: |
           cd openwrt
@@ -121,7 +101,7 @@ jobs:
       - name: Load configuration
         run: |
 
-          cp $GITHUB_WORKSPACE/${{ matrix.platform }}/seed $GITHUB_WORKSPACE/openwrt/.config
+          cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
           make defconfig
 
@@ -136,20 +116,15 @@ jobs:
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
-      - name: 预先放入clash tun core
+      - name: clash core
         run: |
           mkdir -p openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+
           if [ ${{ matrix.platform }} == "x86" ]; then
             cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-
           else
-            
             cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-armv8-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-
-
           fi
-
-
 
           cd openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
           gzip -d *.gz
@@ -158,34 +133,29 @@ jobs:
 
       - name: Compile the firmware
         run: |
-
           cd openwrt
           make -j$(($(nproc) + 1))
 
       - name: Organize files
+        if: ${{ matrix.platform }} != "n1"
         run: |
           cd openwrt/bin/targets/*/*
           rm -rf packages
 
+          echo "PACKAGED_OUTPUTPATH=$PWD" >> $GITHUB_ENV
 
-
-          if [ ${{ matrix.platform }} == "n1" ]; then
-            
-            mv *.gz $GITHUB_WORKSPACE/openwrt_packit  
-            cd $GITHUB_WORKSPACE/openwrt_packit
-            sudo ./mk_s905d_n1.sh
-            cd tmp      
-
-          fi
-
-
-
-          echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+      - name: Package Armvirt as OpenWrt
+        if: ${{ matrix.platform }} == "n1"
+        uses: ophub/flippy-openwrt-actions@main
+        env:
+          OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
+          PACKAGE_SOC: s905d
+          KERNEL_VERSION_NAME: 5.10.33.TF_5.9.16
 
       - name: Upload firmware to WeTransfer
         run: |
 
-          ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
+          ./transfer wet -s -p 16 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee wetransfer.log
           echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
           echo "DOWNLOAD_LINK=$(cat wetransfer.log | grep https)" >> $GITHUB_ENV
 
