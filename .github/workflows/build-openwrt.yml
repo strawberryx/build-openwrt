@@ -15,11 +15,13 @@ on:
     - cron: "0 19 * * *"
   workflow_dispatch:
     inputs:
-      ssh:
-        description: "SSH connection to Actions"
+      manual:
+        description: "手动触发"
         required: false
         default: "true"
-  # push:
+  push:
+    branches-ignore:
+      - main
 
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
