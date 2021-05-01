@@ -161,21 +161,14 @@ jobs:
           make -j$(($(nproc) + 1))
 
       - name: Organize files
-        if: ${{ matrix.platform == "n1" }}
+        if: matrix.platform == 'n1'
         run: |
           cd openwrt/bin/targets/*/*
           rm -rf packages
-
-
-
-
-
-
-
           echo "PACKAGED_OUTPUTPATH=$PWD" >> $GITHUB_ENV
 
       - name: Package Armvirt as OpenWrt
-        if: ${{ matrix.platform == "n1" }}
+        if: matrix.platform == 'n1'
         uses: ophub/flippy-openwrt-actions@main
         env:
           OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
