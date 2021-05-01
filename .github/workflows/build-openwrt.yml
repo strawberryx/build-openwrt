@@ -134,7 +134,7 @@ jobs:
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
-      - name: clash core
+      - name: 预先放入clash tun core
         run: |
           mkdir -p openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
           if [ ${{ matrix.platform }} == "x86" ]; then
