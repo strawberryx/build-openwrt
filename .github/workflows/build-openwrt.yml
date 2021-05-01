@@ -38,9 +38,10 @@ jobs:
 
     steps:
       - name: 测试
-        if: contains(matrix.platform, 'n1')
+        if:  ${{ !contains(matrix.platform, 'n1') }}
         run: |
           echo "这不是n1"
+          exit 1
 
       - name: 测试
         if: contains(matrix.platform, 'n1')
