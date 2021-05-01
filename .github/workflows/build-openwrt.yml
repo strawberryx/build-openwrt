@@ -38,12 +38,12 @@ jobs:
 
     steps:
       - name: 测试
-        if: ${{ matrix.platform[0] }} != "n1"
+        if: (matrix.platform == "n1")
         run: |
           echo "这不是n1"
 
       - name: 测试
-        if: ${{ matrix.platform[0] }} == "n1"
+        if: (matrix.platform == "n1")
         run: |
           echo "这是n1"
           exit 1
