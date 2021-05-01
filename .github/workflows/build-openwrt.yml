@@ -37,18 +37,6 @@ jobs:
         platform: ["n1", "x86", "pi3bp"]
 
     steps:
-      - name: 测试
-        if:  ${{ !contains(matrix.platform, 'n1') }}
-        run: |
-          echo "这不是n1"
-          exit 1
-
-      - name: 测试
-        if: contains(matrix.platform, 'n1')
-        run: |
-          echo "这是n1"
-          exit 1
-
       - name: GO
         run: |
           curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ matrix.platform }}] 开始编译OpenWrt！" >> /dev/null
@@ -139,7 +127,7 @@ jobs:
           make -j$(($(nproc) + 1))
 
       - name: Organize files
-        if: ${{ matrix.platform }} != "n1"
+        if: ${{ !contains(matrix.platform, 'n1') }}
         run: |
           cd openwrt/bin/targets/*/*
           rm -rf packages
@@ -147,7 +135,7 @@ jobs:
           echo "PACKAGED_OUTPUTPATH=$PWD" >> $GITHUB_ENV
 
       - name: Package Armvirt as OpenWrt
-        if: ${{ matrix.platform }} == "n1"
+        if: contains(matrix.platform, 'n1')
         uses: ophub/flippy-openwrt-actions@main
         env:
           OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
