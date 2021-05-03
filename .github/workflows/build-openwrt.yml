@@ -124,7 +124,7 @@ jobs:
       - name: Compile the firmware
         run: |
           cd openwrt
-          make -j$(($(nproc) + 1))
+          make -j$(($(nproc) + 1)) || make -j1 V=s
 
       - name: Organize files
         if: ${{ !contains(matrix.platform, 'n1') }}
