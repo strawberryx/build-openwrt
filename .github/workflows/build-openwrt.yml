@@ -34,12 +34,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ["n1", "x86", "pi3bp"]
+        platform: ["N1", "X86", "PI-3B-PLUS"]
 
     steps:
       - name: GO
         run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ matrix.platform }}] 开始编译OpenWrt！" >> /dev/null
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ github.ref }}][${{ matrix.platform }}] Building OpenWrt..." >> /dev/null
 
       - name: Checkout
         uses: actions/checkout@main
@@ -106,7 +106,7 @@ jobs:
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
 
-      - name: clash core
+      - name: Place clash-core
         run: |
           mkdir -p openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
 
@@ -152,9 +152,9 @@ jobs:
       - name: Send me a message when the build failed or canceled
         if: ${{ !success() }}
         run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ matrix.platform }}] Build failed or canceled" >> /dev/null
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ github.ref }}][${{ matrix.platform }}] Build failed or canceled" >> /dev/null
 
       - name: Send me a message include the download link
         if: ${{ success() }}
         run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ matrix.platform }}] $DOWNLOAD_LINK" >> /dev/null
+          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ github.ref }}][${{ matrix.platform }}] $DOWNLOAD_LINK" >> /dev/null
