@@ -39,7 +39,7 @@ jobs:
     steps:
       - name: GO
         run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ github.ref }}][${{ matrix.platform }}] Building OpenWrt..." >> /dev/null
+          curl -sg "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ github.ref }}][${{ matrix.platform }}] Building OpenWrt..." >> /dev/null
 
       - name: Checkout
         uses: actions/checkout@main
@@ -152,9 +152,9 @@ jobs:
       - name: Send me a message when the build failed or canceled
         if: ${{ !success() }}
         run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ github.ref }}][${{ matrix.platform }}] Build failed or canceled" >> /dev/null
+          curl -sg "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ github.ref }}][${{ matrix.platform }}] Build failed or canceled" >> /dev/null
 
       - name: Send me a message include the download link
         if: ${{ success() }}
         run: |
-          curl -s "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ github.ref }}][${{ matrix.platform }}] $DOWNLOAD_LINK" >> /dev/null
+          curl -sg "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage?chat_id=${{ secrets.TELEGRAM_CHAT_ID }}&text=[${{ github.ref }}][${{ matrix.platform }}] $DOWNLOAD_LINK" >> /dev/null
