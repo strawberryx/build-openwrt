@@ -60,6 +60,10 @@ jobs:
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
 
+      - name: Storage Spaces
+        run: |
+          df -h /
+
       - name: Clone source code
         run: |
           git clone $REPO_URL -b $REPO_BRANCH openwrt
@@ -122,6 +126,10 @@ jobs:
         run: |
           cd openwrt
           make -j$(($(nproc) + 1)) || make -j1 V=s
+
+      - name: Storage Spaces
+        run: |
+          df -h /
 
       - name: Organize files
         if: ${{ !contains(matrix.platform, 'n1') }}
