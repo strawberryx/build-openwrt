@@ -27,7 +27,7 @@ jobs:
       matrix:
         platform: ["n1", "x86", "pi-3b-plus"]
     env:
-      MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n"
+      MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
       REPO_URL: https://github.com/coolsnowwolf/lede
       REPO_BRANCH: master
       TZ: Asia/Shanghai
