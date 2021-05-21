@@ -37,7 +37,7 @@ jobs:
         run: |
           curl -sX POST \
           -H 'Content-Type: application/json' \
-          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} Building OpenWrt..."}' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} 🎉 Building OpenWrt..."}' \
           https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
 
       - name: Checkout
@@ -161,7 +161,7 @@ jobs:
         run: |
           curl -sX POST \
           -H 'Content-Type: application/json' \
-          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} Build failed or canceled"}' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} ❌ Build failed or canceled"}' \
           https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
 
       - name: Send me a message include the download link
@@ -169,5 +169,5 @@ jobs:
         run: |
           curl -sX POST \
           -H 'Content-Type: application/json' \
-          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} $DOWNLOAD_LINK"}' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} ✔️ $DOWNLOAD_LINK"}' \
           https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
