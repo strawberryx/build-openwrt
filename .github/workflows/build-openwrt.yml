@@ -56,8 +56,6 @@ jobs:
           sudo -E apt-get -qq -y upgrade
           sudo -E apt-get -qq install aria2 build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf wget swig rsync
 
-          curl -fsSL git.io/file-transfer | sh
-
           docker rmi `docker images -q`
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
           sudo -E apt-get -qq autoremove --purge
@@ -150,11 +148,11 @@ jobs:
           PACKAGE_SOC: s905d
           KERNEL_VERSION_NAME: 5.10.33.TF_5.9.16
 
-      - name: Upload firmware to WeTransfer
+      - name: Upload firmware
         run: |
-
-          ./transfer wet -s -p 16 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee wetransfer.log
-          echo "DOWNLOAD_LINK=$(cat wetransfer.log | grep https)" >> $GITHUB_ENV
+          curl -fsSL git.io/file-transfer | sh
+          ./transfer cow --block 2621440 -s -p 64 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee cowtransfer.log
+          echo "DOWNLOAD_LINK=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
 
       - name: Send me a message when the build failed or canceled
         if: ${{ !success() }}
