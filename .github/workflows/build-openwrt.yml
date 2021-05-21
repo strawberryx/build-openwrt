@@ -1,27 +1,14 @@
-#
-# Copyright (c) 2019-2020 P3TERX <https://p3terx.com>
-#
-# This is free software, licensed under the MIT License.
-# See /LICENSE for more information.
-#
-# https://github.com/P3TERX/Actions-OpenWrt
-# Description: Build OpenWrt using GitHub Actions
-#
-
-name: Build OpenWrt
+name: OpenWrt CI
 
 on:
-  schedule:
-    - cron: "0 19 * * *"
   workflow_dispatch:
     inputs:
       manual:
-        description: "手动触发"
+        description: "Manual trigger"
         required: false
         default: "true"
-  push:
-    branches-ignore:
-      - main
+    env:
+      MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n"
 
 env:
   REPO_URL: https://github.com/coolsnowwolf/lede
@@ -29,6 +16,17 @@ env:
   TZ: Asia/Shanghai
 
 jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup Workflow Runs
+        if: always()
+        uses: GitRML/delete-workflow-runs@v1.2.1
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 0
+
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -37,6 +35,13 @@ jobs:
         platform: ["n1", "x86", "pi-3b-plus"]
 
     steps:
+      - name: GO
+        run: |
+          curl -sX POST \
+          -H 'Content-Type: application/json' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} Building OpenWrt..."}' \
+          https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
+
       - name: Checkout
         uses: actions/checkout@main
 
@@ -151,4 +156,20 @@ jobs:
         run: |
 
           ./transfer wet -s -p 16 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee wetransfer.log
-          echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+          echo "DOWNLOAD_LINK=$(cat wetransfer.log | grep https)" >> $GITHUB_ENV
+
+      - name: Send me a message when the build failed or canceled
+        if: ${{ !success() }}
+        run: |
+          curl -sX POST \
+          -H 'Content-Type: application/json' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} Build failed or canceled"}' \
+          https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
+
+      - name: Send me a message include the download link
+        if: ${{ success() }}
+        run: |
+          curl -sX POST \
+          -H 'Content-Type: application/json' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} $DOWNLOAD_LINK"}' \
+          https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
