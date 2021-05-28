@@ -123,6 +123,12 @@ jobs:
           chmod +x *
           mv * clash_tun
 
+      - name: Support USB flash disk boot
+        if: contains(matrix.platform, 'pi-3b-plus')
+        run: |
+          cd openwrt          
+          git apply $GITHUB_WORKSPACE/${{ matrix.platform }}/0001-support-USB-flash-disk-boot.patch
+
       - name: Compile the firmware
         run: |
           cd openwrt
