@@ -1,6 +1,8 @@
 name: OpenWrt CI
 
 on:
+  schedule:
+    - cron: "0 19 * * *"
   workflow_dispatch:
     inputs:
       manual:
