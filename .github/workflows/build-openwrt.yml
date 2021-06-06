@@ -77,14 +77,20 @@ jobs:
           cd openwrt
           patch -p0 < zzz-default-settings.patch
 
-      - name: Download package
+      - name: Clone package
         run: |
-          cd openwrt
-          git clone https://github.com/xiaorouji/openwrt-passwall.git package/passwall
-          git clone https://github.com/vernesong/OpenClash.git package/luci-app-openclash
-          rm -rf package/lean/luci-theme-argon  
-          git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon
-          git clone https://github.com/jerrykuku/luci-app-argon-config.git package/luci-app-argon-config
+          cd openwrt/package
+          git clone https://github.com/xiaorouji/openwrt-passwall.git
+
+          git clone https://github.com/jerrykuku/luci-app-vssr.git
+          git clone https://github.com/jerrykuku/lua-maxminddb.git
+          
+          git clone https://github.com/fw876/helloworld.git
+
+          git clone https://github.com/vernesong/OpenClash.git
+          rm -rf lean/luci-theme-argon  
+          git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git
+          git clone https://github.com/jerrykuku/luci-app-argon-config.git
 
       - name: Update feeds
         run: |
