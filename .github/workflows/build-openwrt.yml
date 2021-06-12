@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ["x86", "pi-3b-plus"]
+        platform: ["x86", "pi-3b-plus", "n1"]
     env:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\n\n"
       REPO_URL: https://github.com/coolsnowwolf/lede
@@ -162,7 +162,7 @@ jobs:
         env:
           OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
           PACKAGE_SOC: s905d
-          KERNEL_VERSION_NAME: 5.10.33.TF_5.9.16
+          KERNEL_VERSION_NAME: 5.12.10
 
       - name: Upload firmware
         run: |
