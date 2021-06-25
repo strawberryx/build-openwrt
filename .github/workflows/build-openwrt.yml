@@ -1,7 +1,7 @@
 name: Build OpenWrt
 
 on:
-  # push:
+  push:
   schedule:
     - cron: "0 19 * * *"
   workflow_dispatch:
@@ -78,7 +78,7 @@ jobs:
 
           rm -rf lean/luci-theme-argon  
 
-          git clone https://github.com/jerrykuku/luci-theme-argon.git --depth 1
+          git clone https://github.com/jerrykuku/luci-theme-argon.git --depth 1 -b 18.06
           git clone https://github.com/jerrykuku/luci-app-argon-config.git --depth 1
 
       - name: Update feeds
@@ -148,7 +148,7 @@ jobs:
         env:
           OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
           PACKAGE_SOC: s905d
-          KERNEL_VERSION_NAME: 5.4.126
+          KERNEL_VERSION_NAME: 5.4.128
 
       - name: Upload firmware
         run: |
