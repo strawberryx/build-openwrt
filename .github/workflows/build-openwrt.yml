@@ -78,7 +78,7 @@ jobs:
 
           rm -rf lean/luci-theme-argon  
 
-          git clone https://github.com/jerrykuku/luci-theme-argon.git --depth 1
+          git clone https://github.com/jerrykuku/luci-theme-argon.git --depth 1 -b 18.06
           git clone https://github.com/jerrykuku/luci-app-argon-config.git --depth 1
 
       - name: Update feeds
