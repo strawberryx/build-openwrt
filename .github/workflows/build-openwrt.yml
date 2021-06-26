@@ -92,7 +92,7 @@ jobs:
 
           cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
-          make defconfig
+          # make defconfig
 
       - name: Make download
         run: |
