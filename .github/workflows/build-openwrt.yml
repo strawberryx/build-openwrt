@@ -81,6 +81,8 @@ jobs:
           git clone https://github.com/jerrykuku/luci-theme-argon.git --depth 1 -b 18.06
           git clone https://github.com/jerrykuku/luci-app-argon-config.git --depth 1
 
+          git clone https://github.com/destan19/OpenAppFilter.git --depth 1
+
       - name: Update feeds
         run: |
           cd openwrt
@@ -92,7 +94,7 @@ jobs:
 
           cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
-          make defconfig
+          # make defconfig
 
       - name: Make download
         run: |
@@ -152,6 +154,9 @@ jobs:
 
       - name: Upload firmware
         run: |
+          # 删除tar.gz
+          rm -f openwrt/bin/targets/*/*/*.tar.gz
+
           curl -fsSL git.io/file-transfer | sh
           ./transfer cow --block 2621440 -s -p 64 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee cowtransfer.log
           echo "DOWNLOAD_LINK=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
