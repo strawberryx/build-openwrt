@@ -64,21 +64,26 @@ jobs:
           source ~/.bashrc
 
 
-      - name: Debug
-        uses: mxschmitt/action-tmate@v3
-        if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
 
       - name: 下载编译缓存
         run: |
           
-          rclone -P copy github-action:/openwrt/n1/op-build-cache.tar .
+          rclone copy github-action:/openwrt/n1/op-build-cache.tar .
 
-          tar xvf op-build-cache.tar
+          tar xf op-build-cache.tar
           rm -f op-build-cache.tar
+
+
 
       - name: Storage Spaces
         run: |
           df -h /
+
+
+      - name: Debug
+        uses: mxschmitt/action-tmate@v3
+        if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+
 
       - name: Compile the firmware
         run: |
