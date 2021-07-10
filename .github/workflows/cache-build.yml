@@ -71,9 +71,9 @@ jobs:
       - name: 下载编译缓存
         run: |
           
-          rclone copy github-action:/openwrt/n1/op-build-cache.tar .
+          rclone -P copy github-action:/openwrt/n1/op-build-cache.tar .
 
-          tar xf op-build-cache.tar
+          tar xvf op-build-cache.tar
           rm -f op-build-cache.tar
 
       - name: Storage Spaces
