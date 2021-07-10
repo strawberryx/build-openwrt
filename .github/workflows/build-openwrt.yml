@@ -19,7 +19,7 @@ jobs:
       matrix:
         platform: ["n1"]
     env:
-      MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\n\n"
+      MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
       REPO_URL: https://github.com/coolsnowwolf/lede
       REPO_BRANCH: master
       TZ: Asia/Shanghai
@@ -58,6 +58,12 @@ jobs:
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
+
+          echo "==> 安装starship"
+          curl -fsSLO https://starship.rs/install.sh  && bash ./install.sh --yes
+          rm ./install.sh
+          echo "==> 写入bash配置文件"
+          echo 'eval "$(starship init bash)"' >> ~/.bashrc
 
       - name: Clone source code
         run: |
