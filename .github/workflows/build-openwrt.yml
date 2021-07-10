@@ -6,10 +6,10 @@ on:
     - cron: "0 19 * * *"
   workflow_dispatch:
     inputs:
-      manual:
-        description: "Manual trigger"
-        required: false
-        default: "true"
+      debug:
+        description: "Debug Mode"
+        required: true
+        default: "false"
 
 jobs:
   build:
@@ -132,6 +132,10 @@ jobs:
       - name: Storage Spaces
         run: |
           df -h /
+
+      - name: Debug
+        uses: mxschmitt/action-tmate@v3
+        if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
 
       - name: Compile the firmware
         run: |
