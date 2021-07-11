@@ -37,8 +37,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-      #- name: Setup tmate session
-      #  uses: mxschmitt/action-tmate@v3        
+      
 
       - name: Debug
         # if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
@@ -55,8 +54,10 @@ jobs:
           unzip ./ngrok*.zip
           chmod +x ./ngrok
           ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
-          ./ngrok tcp 22
+          ./ngrok tcp 22 &
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3  
 
       - name: Initialization environment
         env:
