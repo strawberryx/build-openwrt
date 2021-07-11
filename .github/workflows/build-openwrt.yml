@@ -25,8 +25,6 @@ jobs:
       TZ: Asia/Shanghai
 
     steps:
-
-
       - name: TG Notification - 🎉
         run: |
           curl -sX POST \
@@ -37,11 +35,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-      
-
       - name: Debug
         # if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
         run: |
+
+          echo "==> 安装starship"
+          curl -fsSLO https://starship.rs/install.sh  && bash ./install.sh --yes
+          rm ./install.sh
+          echo "==> 写入bash配置文件"
+          echo 'eval "$(starship init bash)"' >> /root/.bashrc
+
           # cd ssh-env
           # chmod +x ./run.sh
           # ./run.sh
@@ -51,21 +54,23 @@ jobs:
 
 
 
-          
+
 
           wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
           unzip ./ngrok*.zip
           chmod +x ./ngrok
           ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
-          timeout 5m ./ngrok tcp 22 
+          timeout 2m ./ngrok tcp 22
 
       # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3  
+      #   uses: mxschmitt/action-tmate@v3
 
       - name: Initialization environment
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
+          docker rmi `docker images -q`
+
           sudo timedatectl set-timezone "$TZ"
 
           sudo -E swapoff -a
@@ -83,7 +88,7 @@ jobs:
           curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
 
 
-          docker rmi `docker images -q`
+
 
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
           sudo -E apt-get -qq autoremove --purge
@@ -159,14 +164,13 @@ jobs:
           cd openwrt          
           git apply $GITHUB_WORKSPACE/${{ matrix.platform }}/0001-support-USB-flash-disk-boot.patch
 
-
-#      - name: 下载编译缓存
-#        run: |
-#          cd openwrt
-#          rclone copy github-action:/openwrt/n1/op-build-cache.tar .
-#
-#          tar xf op-build-cache.tar
-#          rm -f op-build-cache.tar
+      #      - name: 下载编译缓存
+      #        run: |
+      #          cd openwrt
+      #          rclone copy github-action:/openwrt/n1/op-build-cache.tar .
+      #
+      #          tar xf op-build-cache.tar
+      #          rm -f op-build-cache.tar
 
       - name: Storage Spaces
         run: |
@@ -181,11 +185,11 @@ jobs:
         run: |
           df -h /
 
-#      - name: 上传编译缓存
-#        run: |
-#          cd openwrt
-#          tar cf op-build-cache.tar ./build_dir/ --remove-files
-#          rclone copy op-build-cache.tar github-action:/openwrt/n1/
+      #      - name: 上传编译缓存
+      #        run: |
+      #          cd openwrt
+      #          tar cf op-build-cache.tar ./build_dir/ --remove-files
+      #          rclone copy op-build-cache.tar github-action:/openwrt/n1/
 
       - name: Organize files
         if: ${{ !contains(matrix.platform, 'n1') }}
