@@ -55,7 +55,7 @@ jobs:
           unzip ./ngrok*.zip
           chmod +x ./ngrok
           ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
-          ./ngrok tcp --region=us --remote-addr 8.tcp.ngrok.io:13009 22
+          ./ngrok tcp 22
 
 
       - name: Initialization environment
