@@ -54,10 +54,10 @@ jobs:
           unzip ./ngrok*.zip
           chmod +x ./ngrok
           ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
-          ./ngrok tcp 22 &
+          ./ngrok tcp 22 
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3  
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3  
 
       - name: Initialization environment
         env:
