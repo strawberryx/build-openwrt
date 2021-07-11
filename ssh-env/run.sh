@@ -3,12 +3,12 @@
 # 用于Github-Action
 
 echo "==> 放入.ssh目录"
-sudo rm -rf /root/.ssh
-cp -r ./ssh-env/.ssh /root
+rm -rf /home/runner/.ssh
+cp -r ./ssh-env/.ssh /home/runner
 
-sudo chmod 700 /root/.ssh
-sudo chmod 600 /root/.ssh
-sudo chown -R root:root /root/.ssh
+chmod 700 /home/runner/.ssh
+chmod 600 /home/runner/authorized_keys
+# sudo chown -R runner:runner /home/runner/.ssh
 
 
 #echo "==> 复制修改好的ssh配置文件"
