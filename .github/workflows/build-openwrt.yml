@@ -44,7 +44,7 @@ jobs:
           rm ./install.sh
           echo "==> 写入bash配置文件"
 
-          sudo bash -c "echo 'eval "$(starship init bash)"' >> /root/.bashrc && source /root/.bashrc"
+          sudo bash -c 'echo 'eval "$(starship init bash)"' >> /root/.bashrc && source /root/.bashrc'
           # sudo 
 
           # cd ssh-env
