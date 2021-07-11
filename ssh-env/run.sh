@@ -19,5 +19,3 @@ curl -fsSLO https://starship.rs/install.sh  && bash ./install.sh --yes
 rm ./install.sh
 echo "==> 写入bash配置文件"
 echo 'eval "$(starship init bash)"' >> ~/.bashrc
-
-source ~/.bashrc

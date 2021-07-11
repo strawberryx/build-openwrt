@@ -1,7 +1,7 @@
 name: Build OpenWrt
 
 on:
-  # push:
+  push:
   schedule:
     - cron: "0 19 * * *"
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
       ssh:
         description: "Debug Mode"
         required: true
-        default: "false"
+        default: "true"
 
 jobs:
   build:
