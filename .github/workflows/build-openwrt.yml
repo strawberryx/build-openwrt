@@ -56,18 +56,11 @@ jobs:
           curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
 
 
-          # docker rmi `docker images -q`
+          docker rmi `docker images -q`
 
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
-
-          echo "==> 安装starship"
-          curl -fsSLO https://starship.rs/install.sh  && bash ./install.sh --yes
-          rm ./install.sh
-          echo "==> 写入bash配置文件"
-          echo 'eval "$(starship init bash)"' >> ~/.bashrc
-          source ~/.bashrc
 
       - name: Clone source code
         run: |
@@ -140,16 +133,25 @@ jobs:
           git apply $GITHUB_WORKSPACE/${{ matrix.platform }}/0001-support-USB-flash-disk-boot.patch
 
       - name: Debug
-        uses: mxschmitt/action-tmate@v3
         if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
-
-      - name: 下载编译缓存
         run: |
-          cd openwrt
-          rclone copy github-action:/openwrt/n1/op-build-cache.tar .
+          cd ssh-env
+          chmox +x ./run.sh
+          ./run.sh
 
-          tar xf op-build-cache.tar
-          rm -f op-build-cache.tar
+          wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+          unzip ./ngrok*.zip
+          chmod +x ./ngrok
+          ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
+          ./ngrok tcp 22
+
+#      - name: 下载编译缓存
+#        run: |
+#          cd openwrt
+#          rclone copy github-action:/openwrt/n1/op-build-cache.tar .
+#
+#          tar xf op-build-cache.tar
+#          rm -f op-build-cache.tar
 
       - name: Storage Spaces
         run: |
@@ -164,11 +166,11 @@ jobs:
         run: |
           df -h /
 
-      - name: 上传编译缓存
-        run: |
-          cd openwrt
-          tar cf op-build-cache.tar ./build_dir/ --remove-files
-          rclone copy op-build-cache.tar github-action:/openwrt/n1/
+#      - name: 上传编译缓存
+#        run: |
+#          cd openwrt
+#          tar cf op-build-cache.tar ./build_dir/ --remove-files
+#          rclone copy op-build-cache.tar github-action:/openwrt/n1/
 
       - name: Organize files
         if: ${{ !contains(matrix.platform, 'n1') }}
