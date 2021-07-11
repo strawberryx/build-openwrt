@@ -43,12 +43,13 @@ jobs:
       - name: Debug
         # if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
         run: |
-          # cd ssh-env
-          # chmod +x ./run.sh
-          # ./run.sh
+          cd ssh-env
+          chmod +x ./run.sh
+          ./run.sh
 
-          rm -rf /home/runner/.ssh
-          cp -r ./ssh-env/.ssh /home/runner
+
+
+          
 
           wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
           unzip ./ngrok*.zip
