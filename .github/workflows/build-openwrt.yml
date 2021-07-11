@@ -41,11 +41,13 @@ jobs:
 
           echo "==> 安装starship"
           curl -fsSLO https://starship.rs/install.sh  && sudo bash ./install.sh --yes
-          
+
           rm ./install.sh
           echo "==> 写入bash配置文件"
 
-          sudo bash -c 'echo 'eval "$(starship init bash)"' >> /root/.bashrc && source /root/.bashrc'
+          # echo 'eval "$(starship init bash)"' >> /root/.bashrc
+          sudo echo /root/.bashrc | sudo tee -a 'eval "$(starship init bash)"'
+          sudo source /root/.bashrc
           # sudo 
 
           # cd ssh-env
