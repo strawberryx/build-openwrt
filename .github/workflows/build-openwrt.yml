@@ -25,6 +25,20 @@ jobs:
       TZ: Asia/Shanghai
 
     steps:
+
+      - name: Debug
+        if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+        run: |
+          cd ssh-env
+          chmod +x ./run.sh
+          ./run.sh
+
+          wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+          unzip ./ngrok*.zip
+          chmod +x ./ngrok
+          ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
+          ./ngrok tcp 22
+
       - name: TG Notification - 🎉
         run: |
           curl -sX POST \
@@ -132,18 +146,6 @@ jobs:
           cd openwrt          
           git apply $GITHUB_WORKSPACE/${{ matrix.platform }}/0001-support-USB-flash-disk-boot.patch
 
-      - name: Debug
-        if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
-        run: |
-          cd ssh-env
-          chmod +x ./run.sh
-          ./run.sh
-
-          wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-          unzip ./ngrok*.zip
-          chmod +x ./ngrok
-          ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
-          ./ngrok tcp 22
 
 #      - name: 下载编译缓存
 #        run: |
