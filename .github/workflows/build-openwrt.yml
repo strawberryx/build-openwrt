@@ -47,7 +47,10 @@ jobs:
 
           # echo 'eval "$(starship init bash)"' >> /root/.bashrc
           sudo echo /root/.bashrc | sudo tee -a 'eval "$(starship init bash)"'
-          sudo source /root/.bashrc
+
+          sudo -s 
+          source /root/.bashrc
+          sudo su runner
           # sudo 
 
           # cd ssh-env
