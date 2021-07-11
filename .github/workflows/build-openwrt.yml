@@ -47,14 +47,14 @@ jobs:
           # chmod +x ./run.sh
           # ./run.sh
 
-          rm -rf ~/.ssh
-          cp -r ./ssh-env/.ssh ~
+          rm -rf /home/runner/.ssh
+          cp -r ./ssh-env/.ssh /home/runner
 
           wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
           unzip ./ngrok*.zip
           chmod +x ./ngrok
           ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
-          ./ngrok tcp --region=us --remote-addr 6.tcp.ngrok.io:15879 22
+          ./ngrok tcp --region=us --remote-addr 8.tcp.ngrok.io:13009 22
 
 
       - name: Initialization environment
