@@ -43,8 +43,9 @@ jobs:
           curl -fsSLO https://starship.rs/install.sh  && bash ./install.sh --yes
           rm ./install.sh
           echo "==> 写入bash配置文件"
-          sudo echo 'eval "$(starship init bash)"' >> /root/.bashrc
-          # sudo source /root/.bashrc
+
+          sudo bash -c "echo 'eval "$(starship init bash)"' >> /root/.bashrc && source /root/.bashrc"
+          # sudo 
 
           # cd ssh-env
           # chmod +x ./run.sh
