@@ -216,7 +216,7 @@ jobs:
           # ./transfer cow --block 2621440 -s -p 64 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee cowtransfer.log
           # echo "DOWNLOAD_LINK=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
 
-          rclone copy ${{ env.PACKAGED_OUTPUTPATH }}/* github-action:/openwrt/${{ matrix.platform }}/
+          rclone copy ${{ env.PACKAGED_OUTPUTPATH }} github-action:/openwrt/${{ matrix.platform }}/
 
       - name: TG Notification - ❌
         if: ${{ !success() }}
