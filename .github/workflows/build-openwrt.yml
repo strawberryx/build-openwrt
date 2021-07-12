@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ["n1", "x86","pi-3b-plus"]
+        platform: ["n1", "x86", "pi-3b-plus"]
     env:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
       REPO_URL: https://github.com/coolsnowwolf/lede
@@ -34,7 +34,6 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@main
-
 
       # - name: Setup tmate session
       #   uses: mxschmitt/action-tmate@v3
@@ -151,7 +150,6 @@ jobs:
         run: |
           df -h /
 
-
       - name: Debug
         if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
         run: |
@@ -178,9 +176,8 @@ jobs:
           unzip ./ngrok*.zip
           chmod +x ./ngrok
           ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
-          
+
           ./ngrok tcp 22 || exit 0
-      
 
       - name: Compile the firmware
         run: |
