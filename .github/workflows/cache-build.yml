@@ -2,8 +2,8 @@ name: 使用缓存编译
 
 on:
   # push:
-  schedule:
-    - cron: "0 19 * * *"
+  # schedule:
+  #   - cron: "0 19 * * *"
   workflow_dispatch:
     inputs:
       ssh:
