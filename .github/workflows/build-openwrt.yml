@@ -217,11 +217,11 @@ jobs:
           # 删除tar.gz
           rm -f /opt/openwrt_packit/tmp/openwrt-armvirt-64-default-rootfs.tar.gz
 
-          curl -fsSL git.io/file-transfer | sh
-          ./transfer cow --block 2621440 -s -p 64 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee cowtransfer.log
-          echo "DOWNLOAD_LINK=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
+          # curl -fsSL git.io/file-transfer | sh
+          # ./transfer cow --block 2621440 -s -p 64 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee cowtransfer.log
+          # echo "DOWNLOAD_LINK=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
 
-          rclone copy ${{ env.PACKAGED_OUTPUTPATH }}/* github-action:/openwrt/n1/
+          rclone copy ${{ env.PACKAGED_OUTPUTPATH }}/* github-action:/openwrt/${{ matrix.platform }}/
 
       - name: TG Notification - ❌
         if: ${{ !success() }}
@@ -236,5 +236,5 @@ jobs:
         run: |
           curl -sX POST \
           -H 'Content-Type: application/json' \
-          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} ✔️ ${{ env.DOWNLOAD_LINK }}"}' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} ✔️ Done"}' \
           https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
