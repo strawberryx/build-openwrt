@@ -112,6 +112,10 @@ jobs:
         run: |
           cd openwrt
 
+          wget https://github.com/coolsnowwolf/lede/pull/6526.patch
+          git apply 6526.patch
+
+
           make download -j8
 
       - name: Place clash-core
@@ -176,10 +180,18 @@ jobs:
       #
       #          ./ngrok tcp 22 || exit 0
 
+      - name: 上传编译环境
+        run: |
+          7za a op-env.7z ./openwrt
+          
+          rclone copy op-env.7z github-action:/openwrt/${{ matrix.platform }}/
+
+          rm -f op-env.7z
+
       - name: Compile the firmware
         run: |
           cd openwrt
-          make -j$(($(nproc) + 1)) || make -j$(($(nproc) + 1)) V=s
+          make -j$(($(nproc) + 1)) || make -j1 V=s
 
       - name: Storage Spaces
         run: |
