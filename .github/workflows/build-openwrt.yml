@@ -35,9 +35,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-      # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3
-
       - name: Initialization environment
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -57,9 +54,6 @@ jobs:
           mkdir -p ~/.config/rclone
           # 下载配置
           curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
-
-
-
 
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
           sudo -E apt-get -qq autoremove --purge
@@ -141,51 +135,14 @@ jobs:
           cd openwrt          
           git apply $GITHUB_WORKSPACE/${{ matrix.platform }}/0001-support-USB-flash-disk-boot.patch
 
-      #      - name: 下载编译缓存
-      #        run: |
-      #          cd openwrt
-      #          rclone copy github-action:/openwrt/n1/op-build-cache.tar .
-      #
-      #          tar xf op-build-cache.tar
-      #          rm -f op-build-cache.tar
-
       - name: Storage Spaces
         run: |
           df -h /
 
-      #      - name: Debug
-      #        if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
-      #        run: |
-      #
-      #
-      #
-      #          # echo 'eval "$(starship init bash)"' >> /root/.bashrc
-      #          # sudo echo /root/.bashrc | sudo tee -a 'eval "$(starship init bash)"'
-      #
-      #          # sudo
-      #
-      #          # cd ssh-env
-      #          # chmod +x ./run.sh
-      #          # ./run.sh
-      #
-      #          sudo rm -rf /root/.ssh
-      #          sudo cp -r ./ssh-env/.ssh /root/
-      #
-      #
-      #
-      #
-      #
-      #          curl -OL https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-      #          unzip ./ngrok*.zip
-      #          chmod +x ./ngrok
-      #          ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
-      #
-      #          ./ngrok tcp 22 || exit 0
-
       - name: 上传编译环境
         run: |
           7za a op-env.7z ./openwrt
-          
+
           rclone copy op-env.7z github-action:/openwrt/${{ matrix.platform }}/
 
           rm -f op-env.7z
@@ -198,12 +155,6 @@ jobs:
       - name: Storage Spaces
         run: |
           df -h /
-
-      #      - name: 上传编译缓存
-      #        run: |
-      #          cd openwrt
-      #          tar cf op-build-cache.tar ./build_dir/ --remove-files
-      #          rclone copy op-build-cache.tar github-action:/openwrt/n1/
 
       - name: Organize files
         if: ${{ !contains(matrix.platform, 'n1') }}
