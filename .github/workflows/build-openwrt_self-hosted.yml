@@ -137,6 +137,7 @@ jobs:
       - name: Compile the firmware
         run: |
           cd openwrt
+          export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
           make -j$(($(nproc) + 1)) || make -j1 V=s
 
       - name: Storage Spaces
