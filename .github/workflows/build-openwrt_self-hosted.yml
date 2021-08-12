@@ -106,7 +106,7 @@ jobs:
           git apply 6526.patch
 
 
-          make download -j8
+          make download -j8 || make download -j8 V=s
 
       - name: Place clash-core
         run: |
