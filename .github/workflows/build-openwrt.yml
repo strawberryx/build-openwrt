@@ -141,14 +141,14 @@ jobs:
         run: |
           df -h /
 
-      - name: 上传编译环境
-        run: |
-          7za a op-env.7z ./openwrt
-
-          rclone copy op-env.7z gd:/openwrt/${{ matrix.platform }}/
-          rclone copy op-env.7z od:/openwrt/${{ matrix.platform }}/
-
-          rm -f op-env.7z
+#      - name: 上传编译环境
+#        run: |
+#          7za a op-env.7z ./openwrt
+#
+#          rclone copy op-env.7z gd:/openwrt/${{ matrix.platform }}/
+#          rclone copy op-env.7z od:/openwrt/${{ matrix.platform }}/
+#
+#          rm -f op-env.7z
 
       - name: Compile the firmware
         run: |
