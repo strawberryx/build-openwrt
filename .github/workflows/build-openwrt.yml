@@ -171,7 +171,7 @@ jobs:
         env:
           OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
           PACKAGE_SOC: s905d
-          KERNEL_VERSION_NAME: 5.4.139_5.13.11
+          KERNEL_VERSION_NAME: 5.13.12
 
       - name: Upload firmware
         run: |
