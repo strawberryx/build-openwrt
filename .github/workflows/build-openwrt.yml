@@ -56,7 +56,8 @@ jobs:
           curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
 
           # 检查云盘是否正常
-          rclone mkdir github-action:/check-status-for-github-action
+          rclone mkdir gd:/check-status-for-github-action
+          rclone mkdir od:/check-status-for-github-action
 
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
           sudo -E apt-get -qq autoremove --purge
@@ -144,7 +145,8 @@ jobs:
         run: |
           7za a op-env.7z ./openwrt
 
-          rclone copy op-env.7z github-action:/openwrt/${{ matrix.platform }}/
+          rclone copy op-env.7z gd:/openwrt/${{ matrix.platform }}/
+          rclone copy op-env.7z od:/openwrt/${{ matrix.platform }}/
 
           rm -f op-env.7z
 
@@ -182,7 +184,8 @@ jobs:
           # ./transfer cow --block 2621440 -s -p 64 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee cowtransfer.log
           # echo "DOWNLOAD_LINK=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
 
-          rclone copy ${{ env.PACKAGED_OUTPUTPATH }} github-action:/openwrt/${{ matrix.platform }}/
+          rclone copy ${{ env.PACKAGED_OUTPUTPATH }} gd:/openwrt/${{ matrix.platform }}/
+          rclone copy ${{ env.PACKAGED_OUTPUTPATH }} od:/openwrt/${{ matrix.platform }}/
 
       - name: TG Notification - ❌
         if: ${{ !success() }}
