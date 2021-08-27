@@ -56,8 +56,8 @@ jobs:
           curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
 
           # 检查云盘是否正常
-          rclone mkdir gd:/check-status-for-github-action
-          rclone mkdir od:/check-status-for-github-action
+          rclone mkdir gd:/openwrt/check-status-for-github-action
+          rclone mkdir od:/openwrt/check-status-for-github-action
 
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
           sudo -E apt-get -qq autoremove --purge
