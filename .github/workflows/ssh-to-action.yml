@@ -31,7 +31,7 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          docker rmi `docker images -q`
+          # docker rmi `docker images -q`
 
           sudo timedatectl set-timezone "$TZ"
 
