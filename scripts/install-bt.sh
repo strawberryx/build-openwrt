@@ -130,7 +130,7 @@ get_node_url(){
 	
 	echo '---------------------------------------------';
 	echo "Selected download node...";	
-	download_Url='v7.hostcli.com'
+	download_Url='https://v7.hostcli.com'
 	echo "Download node: $download_Url";
 	echo '---------------------------------------------';
 }
