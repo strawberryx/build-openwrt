@@ -89,5 +89,6 @@ jobs:
           sudo ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
 
           sudo bash ./scripts/install-bt.sh
+          sudo rm -f /www/server/panel/data/admin_path.pl
           sudo ./ngrok http 8888
           ping -q 127.0.0.1
