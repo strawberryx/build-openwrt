@@ -4,9 +4,9 @@
  uci set fstab.@global[0].anon_mount=1
  uci commit fstab
  
-+uci set network.lan.ipaddr=192.168.233.115
-+uci set network.lan.gateway=192.168.233.1
-+uci set network.lan.dns=192.168.233.115
++uci set network.lan.ipaddr=192.168.0.110
++uci set network.lan.gateway=192.168.0.1
++uci set network.lan.dns=192.168.0.110
 +uci commit network
 +ifup lan
 +
