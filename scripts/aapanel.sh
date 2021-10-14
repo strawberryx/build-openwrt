@@ -753,25 +753,6 @@ Install_Main(){
 	Setup_Count ${IDC_CODE}
 }
 
-echo "
-+----------------------------------------------------------------------
-| aaPanel 6.0 FOR CentOS/Ubuntu/Debian
-+----------------------------------------------------------------------
-| Copyright © 2015-2099 BT-SOFT(http://www.aapanel.com) All rights reserved.
-+----------------------------------------------------------------------
-| The WebPanel URL will be http://SERVER_IP:8888 when installed.
-+----------------------------------------------------------------------
-"
-
-while [ "$go" != 'y' ] && [ "$go" != 'n' ]
-do
-	read -p "Do you want to install aaPanel to the $setup_path directory now?(y/n): " go;
-done
-
-if [ "$go" == 'n' ];then
-	exit;
-fi
-
 Install_Main
 intenal_ip=$(ip addr | grep -E -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -E -v "^127\.|^255\.|^0\." | head -n 1)
 echo -e "=================================================================="
