@@ -92,6 +92,5 @@ jobs:
           sudo rm -f /www/server/panel/data/admin_path.pl
           sudo ./ngrok http 8888 &
 
-      - uses: actions/checkout@v2
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3          
