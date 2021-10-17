@@ -88,7 +88,10 @@ jobs:
           chmod +x ./ngrok
           sudo ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
 
-          sudo bash ./scripts/aapanel.sh
+          sudo bash ./scripts/install-bt.sh
           sudo rm -f /www/server/panel/data/admin_path.pl
-          sudo ./ngrok http 8888
-          ping -q 127.0.0.1
+          sudo ./ngrok http 8888 &
+
+      - uses: actions/checkout@v2
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3          
