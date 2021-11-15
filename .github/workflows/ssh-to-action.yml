@@ -88,9 +88,9 @@ jobs:
           chmod +x ./ngrok
           sudo ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
 
-          sudo bash ./scripts/install-bt.sh
+          sudo bash ./scripts/bt-kxb.sh
           sudo rm -f /www/server/panel/data/admin_path.pl
           sudo ./ngrok tcp 8888
 
 #      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v3          
+#        uses: mxschmitt/action-tmate@v3
