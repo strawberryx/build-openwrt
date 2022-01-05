@@ -162,7 +162,15 @@ jobs:
         if: ${{ !contains(matrix.platform, 'n1') }}
         run: |
           cd openwrt/bin/targets/*/*
-          rm -rf packages
+          
+          mv \
+          packages \
+          sha256* \
+          *manifest \
+          *rootfs* \
+          *info \
+          *bin \
+          -t ..
 
           echo "PACKAGED_OUTPUTPATH=$PWD" >> $GITHUB_ENV
 
