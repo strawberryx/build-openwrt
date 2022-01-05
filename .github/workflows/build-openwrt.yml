@@ -162,7 +162,7 @@ jobs:
         if: ${{ !contains(matrix.platform, 'n1') }}
         run: |
           cd openwrt/bin/targets/*/*
-          
+
           mv \
           packages \
           sha256* \
@@ -184,7 +184,7 @@ jobs:
 
       - name: Organize files
         if: ${{ contains(matrix.platform, 'n1') }}
-        run: |          
+        run: |
           rm -f ${{ env.PACKAGED_OUTPUTPATH }}/*.tar.gz
 
       - name: Upload firmware
