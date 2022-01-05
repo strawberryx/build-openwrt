@@ -174,10 +174,13 @@ jobs:
           PACKAGE_SOC: s905d
           KERNEL_VERSION_NAME: 5.15.1
 
+      - name: Organize files
+        if: ${{ contains(matrix.platform, 'n1') }}
+        run: |          
+          rm -f ${{ env.PACKAGED_OUTPUTPATH }}/*.tar.gz
+
       - name: Upload firmware
         run: |
-          # 删除tar.gz
-          rm -f ${{ env.PACKAGED_OUTPUTPATH }}/*.tar.gz
 
           # curl -fsSL git.io/file-transfer | sh
           # ./transfer cow --block 2621440 -s -p 64 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee cowtransfer.log
