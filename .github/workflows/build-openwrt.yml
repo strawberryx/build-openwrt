@@ -6,10 +6,10 @@ on:
     - cron: "0 19 * * *"
   workflow_dispatch:
     inputs:
-      ssh:
-        description: "Debug Mode"
-        required: true
-        default: "true"
+      debug_enabled:
+        description: "Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)"
+        required: false
+        default: false
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ["n1-docker", "n1", "x86"]
+        platform: ["n1", "x86"]
     env:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
       REPO_URL: https://github.com/coolsnowwolf/lede
@@ -108,11 +108,6 @@ jobs:
       - name: Make download
         run: |
           cd openwrt
-
-          wget https://github.com/coolsnowwolf/lede/pull/6526.patch
-          git apply 6526.patch
-
-
           make download -j8
 
       - name: Place clash-core
@@ -148,6 +143,10 @@ jobs:
       #          rclone copy op-env.7z od:/openwrt/${{ matrix.platform }}/
       #
       #          rm -f op-env.7z
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
 
       - name: Compile the firmware
         run: |
