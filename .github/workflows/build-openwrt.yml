@@ -188,19 +188,10 @@ jobs:
 
       - name: Generate release tag
         id: tag
-        if: contains(matrix.platform, 'n1')
         run: |
-          echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M"-n1)"
+          echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M"-${{ matrix.platform }})"
           touch release.txt
-          echo "N1" >> release.txt
-
-      - name: Generate release tag
-        id: tag
-        if: contains(matrix.platform, 'x86')
-        run: |
-          echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M"-x86)"
-          touch release.txt
-          echo "X86" >> release.txt
+          echo ${{ matrix.platform }} >> release.txt
 
       - name: Upload firmware to release
         uses: softprops/action-gh-release@v1
