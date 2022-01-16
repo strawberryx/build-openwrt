@@ -153,10 +153,6 @@ jobs:
           cd openwrt          
           git apply $GITHUB_WORKSPACE/${{ matrix.platform }}/0001-support-USB-flash-disk-boot.patch
 
-      - name: Storage Spaces
-        run: |
-          df -h /
-
       #      - name: 上传编译环境
       #        run: |
       #          7za a op-env.7z ./openwrt
@@ -174,10 +170,6 @@ jobs:
         run: |
           cd openwrt
           make -j$(($(nproc) + 1)) || make -j1 V=s
-
-      - name: Storage Spaces
-        run: |
-          df -h /
 
       - name: Organize files
         if: ${{ !contains(matrix.platform, 'n1') }}
@@ -203,10 +195,34 @@ jobs:
           PACKAGE_SOC: s905d
           KERNEL_VERSION_NAME: 5.15.1
 
+      - name: Build armbian
+        if: ${{ contains(matrix.platform, 'n1') }}
+        run: |
+          df -h /
+
+          git clone --depth 1 https://github.com/yunsur/phicomm-n1.git
+          cd phicomm-n1
+
+
+          ./compile.sh \
+          BOARD=arm-64 \
+          BRANCH=current \
+          RELEASE=bullseye \
+          BUILD_MINIMAL=no \
+          BUILD_DESKTOP=no \
+          KERNEL_ONLY=no \
+          KERNEL_CONFIGURE=no \
+          COMPRESS_OUTPUTIMAGE=sha,img \
+          USE_TORRENT=yes
+
+          ls -l
+          df -h /
+
       - name: Organize files
         if: ${{ contains(matrix.platform, 'n1') }}
         run: |
           rm -f ${{ env.PACKAGED_OUTPUTPATH }}/*.tar.gz
+          mv phicomm-n1/.tmp/image-*/Armbian*.img ${{ env.PACKAGED_OUTPUTPATH }}
 
       - name: Generate release tag
         id: tag
@@ -224,14 +240,14 @@ jobs:
           body_path: release.txt
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
-      - name: Upload firmware to owncloud
-        run: |
-
-          # curl -fsSL git.io/file-transfer | sh
-          # ./transfer cow --block 2621440 -s -p 64 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee cowtransfer.log
-          # echo "DOWNLOAD_LINK=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
-
-          rclone copy ${{ env.PACKAGED_OUTPUTPATH }} od:/openwrt/${{ matrix.platform }}/$(date "+%Y-%m-%d_%H%M%S")
+      #      - name: Upload firmware to owncloud
+      #        run: |
+      #
+      #          # curl -fsSL git.io/file-transfer | sh
+      #          # ./transfer cow --block 2621440 -s -p 64 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee cowtransfer.log
+      #          # echo "DOWNLOAD_LINK=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
+      #
+      #          rclone copy ${{ env.PACKAGED_OUTPUTPATH }} od:/openwrt/${{ matrix.platform }}/$(date "+%Y-%m-%d_%H%M%S")
 
       - name: TG Notification - ❌
         if: ${{ !success() }}
@@ -258,7 +274,7 @@ jobs:
       - name: Remove old Releases
         uses: dev-drprasad/delete-older-releases@v0.1.0
         with:
-          keep_latest: 2
+          keep_latest: 3
           delete_tags: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
