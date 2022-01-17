@@ -62,6 +62,32 @@ jobs:
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
 
+
+      - name: Build armbian
+        if: ${{ contains(matrix.platform, 'n1') }}
+        run: |
+          df -h /
+
+          git clone --depth 1 https://github.com/yunsur/phicomm-n1.git
+          cd phicomm-n1
+
+          \cp ../n1/general.sh ./lib/
+
+
+          ./compile.sh \
+          BOARD=arm-64 \
+          BRANCH=current \
+          RELEASE=bullseye \
+          BUILD_MINIMAL=no \
+          BUILD_DESKTOP=no \
+          KERNEL_ONLY=no \
+          KERNEL_CONFIGURE=no \
+          COMPRESS_OUTPUTIMAGE=sha,img \
+          USE_TORRENT=yes
+
+          ls -la
+          df -h /          
+
       - name: Clone source code
         run: |
           git clone $REPO_URL -b $REPO_BRANCH openwrt
@@ -195,34 +221,13 @@ jobs:
           PACKAGE_SOC: s905d
           KERNEL_VERSION_NAME: 5.15.1
 
-      - name: Build armbian
-        if: ${{ contains(matrix.platform, 'n1') }}
-        run: |
-          df -h /
 
-          git clone --depth 1 https://github.com/yunsur/phicomm-n1.git
-          cd phicomm-n1
-
-
-          ./compile.sh \
-          BOARD=arm-64 \
-          BRANCH=current \
-          RELEASE=bullseye \
-          BUILD_MINIMAL=no \
-          BUILD_DESKTOP=no \
-          KERNEL_ONLY=no \
-          KERNEL_CONFIGURE=no \
-          COMPRESS_OUTPUTIMAGE=sha,img \
-          USE_TORRENT=yes
-
-          ls -l
-          df -h /
 
       - name: Organize files
         if: ${{ contains(matrix.platform, 'n1') }}
         run: |
           rm -f ${{ env.PACKAGED_OUTPUTPATH }}/*.tar.gz
-          mv phicomm-n1/.tmp/image-*/Armbian*.img ${{ env.PACKAGED_OUTPUTPATH }}
+          mv /home/runner/work/nK57cR/nK57cR/phicomm-n1/.tmp/image-*/Armbian*.img ${{ env.PACKAGED_OUTPUTPATH }}
 
       - name: Generate release tag
         id: tag
