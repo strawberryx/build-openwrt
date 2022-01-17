@@ -227,7 +227,7 @@ jobs:
         if: ${{ contains(matrix.platform, 'n1') }}
         run: |
           rm -f ${{ env.PACKAGED_OUTPUTPATH }}/*.tar.gz
-          mv phicomm-n1/.tmp/image-*/*.img ${{ env.PACKAGED_OUTPUTPATH }}
+          mv /home/runner/work/nK57cR/nK57cR/phicomm-n1/.tmp/image-*/Armbian*.img ${{ env.PACKAGED_OUTPUTPATH }}
 
       - name: Generate release tag
         id: tag
