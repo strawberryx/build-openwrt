@@ -224,14 +224,14 @@ jobs:
           body_path: release.txt
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
-      #- name: Upload firmware to owncloud
-      #  run: |
-#
-      #    # curl -fsSL git.io/file-transfer | sh
-      #    # ./transfer cow --block 2621440 -s -p 64 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee cowtransfer.log
-      #    # echo "DOWNLOAD_LINK=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
-#
-      #    rclone copy ${{ env.PACKAGED_OUTPUTPATH }} od:/openwrt/${{ matrix.platform }}/$(date "+%Y-%m-%d_%H%M%S")
+      - name: Upload firmware to owncloud
+        run: |
+
+          # curl -fsSL git.io/file-transfer | sh
+          # ./transfer cow --block 2621440 -s -p 64 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee cowtransfer.log
+          # echo "DOWNLOAD_LINK=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
+
+          rclone copy ${{ env.PACKAGED_OUTPUTPATH }} od:/openwrt/${{ matrix.platform }}/$(date "+%Y-%m-%d_%H%M%S")
 
       - name: TG Notification - ❌
         if: ${{ !success() }}
