@@ -95,7 +95,7 @@ jobs:
         uses: mxschmitt/action-tmate@v3
 
       - name: Upload config
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@v2.3.1
         with:
           name: OpenWrt_Config
           path: /home/runner/work/nK57cR/nK57cR/openwrt/.config
