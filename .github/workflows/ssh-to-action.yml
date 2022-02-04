@@ -33,7 +33,7 @@ jobs:
 
           sudo timedatectl set-timezone "$TZ"
 
-          sudo -E swapoff -a
+          # sudo -E swapoff -a
 
           sudo rm -rf /etc/apt/sources.list.d/*
 
@@ -52,22 +52,21 @@ jobs:
         run: |
           cd openwrt/package
 
-          git clone https://github.com/vernesong/OpenClash.git luci-app-openclash --depth 1
-          svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic package/luci-app-amlogic
+          git clone https://github.com/vernesong/OpenClash.git luci-app-openclash
 
-#         git clone https://github.com/xiaorouji/openwrt-passwall.git --depth 1
-#
-          #git clone https://github.com/jerrykuku/luci-app-vssr.git --depth 1
-          #git clone https://github.com/jerrykuku/lua-maxminddb.git --depth 1
-#
-          #git clone https://github.com/fw876/helloworld.git --depth 1
-#
-          #rm -rf lean/luci-theme-argon  
-#
-          #git clone https://github.com/jerrykuku/luci-theme-argon.git --depth 1 -b 18.06
-          #git clone https://github.com/jerrykuku/luci-app-argon-config.git --depth 1
-#
-          #git clone https://github.com/destan19/OpenAppFilter.git --depth 1
+          git clone https://github.com/xiaorouji/openwrt-passwall.git
+
+          git clone https://github.com/jerrykuku/luci-app-vssr.git
+          git clone https://github.com/jerrykuku/lua-maxminddb.git
+
+          git clone https://github.com/fw876/helloworld.git
+
+          rm -rf lean/luci-theme-argon && git clone https://github.com/jerrykuku/luci-theme-argon.git -b 18.06
+          git clone https://github.com/jerrykuku/luci-app-argon-config.git
+
+          git clone https://github.com/destan19/OpenAppFilter.git
+
+          svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic package/luci-app-amlogic
 
 
       - name: Update feeds
@@ -80,17 +79,23 @@ jobs:
         run: |
           df -h /
 
-      - name: Debug
-        if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
-        run: |
-          curl -OL https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-          unzip ./ngrok*.zip
-          chmod +x ./ngrok
-          sudo ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
+  #    - name: Debug
+  #      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+  #      run: |
+  #        curl -OL https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+  #        unzip ./ngrok*.zip
+  #        chmod +x ./ngrok
+  #        sudo ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
+#
+  #        sudo bash ./scripts/bt-kxb.sh
+  #        sudo rm -f /www/server/panel/data/admin_path.pl
+  #        sudo ./ngrok tcp 8888
 
-          sudo bash ./scripts/bt-kxb.sh
-          sudo rm -f /www/server/panel/data/admin_path.pl
-          sudo ./ngrok tcp 8888
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
-#      - name: Setup tmate session
-#        uses: mxschmitt/action-tmate@v3
+      - name: Upload config
+        uses: actions/upload-artifact@main
+        with:
+          name: OpenWrt_Config
+          path: $GITHUB_WORKSPACE/openwrt/.config
