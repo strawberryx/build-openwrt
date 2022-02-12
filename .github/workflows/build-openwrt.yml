@@ -76,7 +76,7 @@ jobs:
         run: |
           cd openwrt/package
 
-          git clone https://github.com/vernesong/OpenClash.git luci-app-openclash
+          git clone https://github.com/vernesong/OpenClash.git -b dev luci-app-openclash
 
           git clone https://github.com/xiaorouji/openwrt-passwall.git
 
