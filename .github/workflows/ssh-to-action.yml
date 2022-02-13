@@ -68,7 +68,6 @@ jobs:
 
           svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic package/luci-app-amlogic
 
-
       - name: Update feeds
         run: |
           cd openwrt
@@ -79,34 +78,23 @@ jobs:
         run: |
           df -h /
 
-  #    - name: Debug
-  #      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
-  #      run: |
-  #        curl -OL https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-  #        unzip ./ngrok*.zip
-  #        chmod +x ./ngrok
-  #        sudo ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
-#
-  #        sudo bash ./scripts/bt-kxb.sh
-  #        sudo rm -f /www/server/panel/data/admin_path.pl
-  #        sudo ./ngrok tcp 8888
+      #    - name: Debug
+      #      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+      #      run: |
+      #        curl -OL https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+      #        unzip ./ngrok*.zip
+      #        chmod +x ./ngrok
+      #        sudo ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
+      #
+      #        sudo bash ./scripts/bt-kxb.sh
+      #        sudo rm -f /www/server/panel/data/admin_path.pl
+      #        sudo ./ngrok tcp 8888
 
-      # - name: Setup tmate session
-      #   uses: mxschmitt/action-tmate@v3
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
 
-      - name: test
-        run: |
-          cd openwrt
-          make defconfig
-
-          cp .config ..
-          git add .
-          git commit -m +
-          git push
-      
-
-      # - name: Upload config
-      #   uses: actions/upload-artifact@v2.3.1
-      #   with:
-      #     name: OpenWrt_Config
-      #     path: /home/runner/work/nK57cR/nK57cR/openwrt/.config
+      - name: Upload config
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: OpenWrt_Config
+          path: /home/runner/work/nK57cR/nK57cR/openwrt/.config
