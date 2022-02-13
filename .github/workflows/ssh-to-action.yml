@@ -91,11 +91,22 @@ jobs:
   #        sudo rm -f /www/server/panel/data/admin_path.pl
   #        sudo ./ngrok tcp 8888
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
 
-      - name: Upload config
-        uses: actions/upload-artifact@v2.3.1
-        with:
-          name: OpenWrt_Config
-          path: /home/runner/work/nK57cR/nK57cR/openwrt/.config
+      - name: test
+        run: |
+          cd openwrt
+          make defconfig
+
+          cp .config ..
+          git add .
+          git commit -m +
+          git push
+      
+
+      # - name: Upload config
+      #   uses: actions/upload-artifact@v2.3.1
+      #   with:
+      #     name: OpenWrt_Config
+      #     path: /home/runner/work/nK57cR/nK57cR/openwrt/.config
