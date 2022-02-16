@@ -7,7 +7,7 @@ on:
       platform:
         description: "什么机型"
         required: true
-        default: "test-platform"
+        default: "n1"
 
       debug_enabled:
         description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'     
