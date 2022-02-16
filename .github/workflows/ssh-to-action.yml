@@ -1,4 +1,4 @@
-name: SSH 连接
+name: 更新配置
 
 on:
   # push:
