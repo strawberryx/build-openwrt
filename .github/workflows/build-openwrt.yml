@@ -104,7 +104,7 @@ jobs:
 
           cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
-          make defconfig
+          # make defconfig
 
       - name: 输出选择插件列表
         run: |
