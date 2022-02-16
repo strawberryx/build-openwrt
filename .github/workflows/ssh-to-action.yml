@@ -2,8 +2,8 @@ name: 更新配置
 
 on:
   # push:
-  schedule:
-    - cron: "0 10 * * *"
+  # schedule:
+  #   - cron: "0 10 * * *"
   workflow_dispatch:
     inputs:
       platform:
@@ -89,13 +89,13 @@ jobs:
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}              
 
-      - name: diff 配置
-        run: |
-          cd openwrt
-          ./scripts/diffconfig.sh > diffconfig
-          rm .config
-          cp diffconfig .config 
-          make defconfig
+      # - name: diff 配置
+      #   run: |
+      #     cd openwrt
+      #     ./scripts/diffconfig.sh > diffconfig
+      #     rm .config
+      #     cp diffconfig .config 
+      #     make defconfig
 
       - name: Upload config
         uses: actions/upload-artifact@v2.3.1
