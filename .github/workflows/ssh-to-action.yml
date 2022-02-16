@@ -4,10 +4,10 @@ on:
   # push:
   workflow_dispatch:
     inputs:
-      ssh:
-        description: "Debug Mode"
+      platform:
+        description: "什么机型"
         required: true
-        default: "true"
+        default: "test-platform"
 
 jobs:
   ssh:
@@ -35,7 +35,7 @@ jobs:
 
           # sudo -E swapoff -a
 
-          sudo rm -rf /etc/apt/sources.list.d/*
+          # sudo rm -rf /etc/apt/sources.list.d/*
 
           #sudo -E apt-get -qq update
           #sudo -E apt-get -qq install rclone build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf wget swig rsync
@@ -78,23 +78,29 @@ jobs:
         run: |
           df -h /
 
-      #    - name: Debug
-      #      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
-      #      run: |
-      #        curl -OL https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-      #        unzip ./ngrok*.zip
-      #        chmod +x ./ngrok
-      #        sudo ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
-      #
-      #        sudo bash ./scripts/bt-kxb.sh
-      #        sudo rm -f /www/server/panel/data/admin_path.pl
-      #        sudo ./ngrok tcp 8888
+      #- name: Setup tmate session
+      #  uses: mxschmitt/action-tmate@v3
+#
+      #- name: Upload config
+      #  uses: actions/upload-artifact@v2.3.1
+      #  with:
+      #    name: OpenWrt_Config
+      #    path: /home/runner/work/nK57cR/nK57cR/openwrt/.config
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
+      - name: 变更测试
+        run: |    
+          cd openwrt && make defconfig
+            
 
-      - name: Upload config
-        uses: actions/upload-artifact@v2.3.1
-        with:
-          name: OpenWrt_Config
-          path: /home/runner/work/nK57cR/nK57cR/openwrt/.config
+      - name: 提交
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+          mkdir -p ${{github.event.inputs.platform}}
+
+          cp openwrt/.config ./${{github.event.inputs.platform}}
+          mv openwrt ..
+          git add .
+          git commit -m "${{github.event.inputs.platform}}: 配置更新"
+          git push --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/c3p7f2/nK57cR.git" HEAD:main
