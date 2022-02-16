@@ -74,9 +74,9 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
-      - name: Storage Spaces
+      - name: 复制配置
         run: |
-          df -h /
+          cp ${{github.event.inputs.platform}}/.config openwrt/
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
