@@ -52,7 +52,7 @@ jobs:
         run: |
           cd openwrt/package
 
-          git clone https://github.com/vernesong/OpenClash.git luci-app-openclash --deepth=1
+          git clone https://github.com/vernesong/OpenClash.git luci-app-openclash --depth=1
 
           git clone https://github.com/xiaorouji/openwrt-passwall.git
 
