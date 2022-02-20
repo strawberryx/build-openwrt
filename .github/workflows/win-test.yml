@@ -1,0 +1,37 @@
+name: win测试
+
+on:
+  # push:
+  # schedule:
+  #   - cron: "0 10 * * *"
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "什么机型"
+        required: true
+        default: "n1"
+
+jobs:
+  b:
+    runs-on: windows-latest
+
+    env:
+      REPO_URL: https://github.com/coolsnowwolf/lede
+      REPO_BRANCH: master
+      TZ: Asia/Shanghai
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Ngrok debugging on failure
+        env:
+          NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
+        run: |
+          choco install --yes --no-progress ngrok
+          ngrok.exe authtoken $env:NGROK_TOKEN
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+          Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+          Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "$env:NGROK_TOKEN" -Force)
+          ngrok.exe tcp 3389        
