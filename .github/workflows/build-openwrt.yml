@@ -185,14 +185,13 @@ jobs:
         run: |
           cd openwrt/bin/targets/*/*
 
-          mv \
+          rm -rf \
           packages \
           sha256* \
           *manifest \
           *rootfs* \
           *info \
-          *bin \
-          -t ..
+          *bin
 
           echo "PACKAGED_OUTPUTPATH=$PWD" >> $GITHUB_ENV
 
