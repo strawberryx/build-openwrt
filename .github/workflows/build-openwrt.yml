@@ -48,7 +48,7 @@ jobs:
           # # sudo rm -f /www/server/panel/data/admin_path.pl
           # sudo nohup ./ngrok tcp 22
 
-          docker run -d -it -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine tcp 22
+          docker run --net=host -d -it -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine tcp 22
 
 
       - name: Initialization environment
