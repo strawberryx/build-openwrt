@@ -43,8 +43,8 @@ jobs:
           unzip ./ngrok*.zip
           chmod +x ./ngrok
           sudo ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
-          sudo bash ./scripts/bt-kxb.sh
-          sudo rm -f /www/server/panel/data/admin_path.pl
+          # sudo bash ./scripts/bt-kxb.sh
+          # sudo rm -f /www/server/panel/data/admin_path.pl
           sudo nohup ./ngrok tcp 22
 
 
