@@ -40,13 +40,10 @@ jobs:
       - name: Debug
         if: ${{ contains(matrix.platform, 'n1') }}
         run: |
-          # curl -OL https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
-          # unzip ./ngrok*.zip
-          # chmod +x ./ngrok
-          # sudo ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
-          # # sudo bash ./scripts/bt-kxb.sh
-          # # sudo rm -f /www/server/panel/data/admin_path.pl
-          # sudo nohup ./ngrok tcp 22
+          sudo bash ./scripts/install-ubuntu_6.0.sh
+          sudo rm -f /www/server/panel/data/admin_path.pl
+
+
 
           docker run --net=host -d -it -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine tcp 22
 

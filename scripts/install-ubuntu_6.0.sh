@@ -130,7 +130,7 @@ get_node_url(){
 	
 	echo '---------------------------------------------';
 	echo "Selected download node...";	
-	download_Url='https://v7.hostcli.com'
+	download_Url='v7.hostcli.com'
 	echo "Download node: $download_Url";
 	echo '---------------------------------------------';
 }
@@ -673,7 +673,6 @@ Setup_Count(){
 Install_Main(){
 	startTime=`date +%s`
 	Lock_Clear
-	# System_Check
 	Get_Pack_Manager
 	get_node_url
 
@@ -700,15 +699,7 @@ Install_Main(){
 	Setup_Count ${IDC_CODE}
 }
 
-echo "
-+----------------------------------------------------------------------
-| Bt-WebPanel FOR CentOS/Ubuntu/Debian
-+----------------------------------------------------------------------
-| 自动安装
-+----------------------------------------------------------------------
-| The WebPanel URL will be http://SERVER_IP:8888 when installed.
-+----------------------------------------------------------------------
-"
+
 
 Install_Main
 echo > /www/server/panel/data/bind.pl
