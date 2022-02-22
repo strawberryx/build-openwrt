@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ["n1", "x86", "k2p", "pi-3b-plus"]
+        platform: ["n1", "x86",  "pi-3b-plus"]
     env:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
       REPO_URL: https://github.com/coolsnowwolf/lede
@@ -25,6 +25,8 @@ jobs:
       TZ: Asia/Shanghai
 
     steps:
+
+
       - name: TG Notification - 🎉
         run: |
           curl -sX POST \
@@ -34,6 +36,17 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@main
+
+      - name: Debug
+        run: |
+          curl -OL https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+          unzip ./ngrok*.zip
+          chmod +x ./ngrok
+          sudo ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
+          sudo bash ./scripts/bt-kxb.sh
+          sudo rm -f /www/server/panel/data/admin_path.pl
+          sudo nohup ./ngrok tcp 22
+
 
       - name: Initialization environment
         env:
@@ -202,7 +215,7 @@ jobs:
           OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
           PACKAGE_SOC: s905d
           KERNEL_VERSION_NAME: 5.16.1_5.4.1
-          GZIP_IMGS: .7z
+          # GZIP_IMGS: .7z
           WHOAMI: c3p7f2
 
       - name: Organize files
