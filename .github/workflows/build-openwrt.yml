@@ -45,7 +45,7 @@ jobs:
 
 
 
-          docker run --net=host -d -it -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine tcp 22
+          docker run --net=host -d -it -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine http 8888
 
 
       - name: Initialization environment
