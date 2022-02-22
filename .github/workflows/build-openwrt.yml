@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@main
 
       - name: Debug
-        if: ${{ !contains(matrix.platform, 'n1') }}
+        if: ${{ contains(matrix.platform, 'n1') }}
         run: |
           # curl -OL https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
           # unzip ./ngrok*.zip
