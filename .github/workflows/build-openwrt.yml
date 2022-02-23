@@ -37,16 +37,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-      - name: Debug
-        if: ${{ contains(matrix.platform, 'n1') }}
-        run: |
-          sudo bash ./scripts/install-ubuntu_6.0.sh
-          sudo rm -f /www/server/panel/data/admin_path.pl
-
-
-
-          docker run --net=host -d -it -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine http 8888
-
 
       - name: Initialization environment
         env:
