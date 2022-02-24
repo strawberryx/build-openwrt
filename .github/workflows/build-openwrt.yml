@@ -254,11 +254,11 @@ jobs:
           -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} ✔️ Done"}' \
           https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
 
-      #- name: Delete workflow runs
-      #  uses: GitRML/delete-workflow-runs@main
-      #  with:
-      #    retain_days: 1
-      #    keep_minimum_runs: 2
+      - name: Delete workflow runs
+        uses: GitRML/delete-workflow-runs@main
+        with:
+          retain_days: 3
+          keep_minimum_runs: 2
 
       - name: Remove old Releases
         uses: dev-drprasad/delete-older-releases@v0.1.0
