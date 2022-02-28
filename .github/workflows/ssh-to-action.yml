@@ -80,9 +80,15 @@ jobs:
         run: |
           cp ${{github.event.inputs.platform}}/.config openwrt/
 
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}              
+      #- name: Setup tmate session
+      #  uses: mxschmitt/action-tmate@v3
+        # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}           
+        
+      - name: 策士
+        run: |
+          
+          docker run --net=host -d -it -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine http 7681        
+          docker run --net=host tsl0922/ttyd
 
       # - name: diff 配置
       #   run: |
