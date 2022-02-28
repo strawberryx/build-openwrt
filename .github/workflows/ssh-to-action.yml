@@ -70,11 +70,11 @@ jobs:
 
           svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic package/luci-app-amlogic
 
-      - name: Update feeds
-        run: |
-          cd openwrt
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
+      # - name: Update feeds
+      #   run: |
+      #     cd openwrt
+      #     ./scripts/feeds update -a
+      #     ./scripts/feeds install -a
 
       - name: 复制配置
         run: |
@@ -88,7 +88,9 @@ jobs:
         run: |
           
           docker run --net=host -d -it -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine http 7681        
-          docker run --net=host tsl0922/ttyd
+          curl -o ttyd -Lv https://github.com/tsl0922/ttyd/releases/download/1.6.3/ttyd.x86_64
+          chmod +x ttyd
+          ttyd bash
 
       # - name: diff 配置
       #   run: |
