@@ -86,11 +86,11 @@ jobs:
         
       - name: 策士
         run: |
-          
+          cd openwrt
           docker run --net=host -d -it -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine http 7681        
           curl -o ttyd -L https://github.com/tsl0922/ttyd/releases/download/1.6.3/ttyd.x86_64
           chmod +x ttyd
-          cd openwrt
+          
           ./ttyd bash
 
       # - name: diff 配置
