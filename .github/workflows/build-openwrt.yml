@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ["n1", "x86",  "pi-3b-plus"]
+        platform: ["n1"]
     env:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
       REPO_URL: https://github.com/coolsnowwolf/lede
@@ -36,6 +36,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@main
+        with:
+          fetch-depth: 0          
 
 
       - name: Initialization environment
@@ -69,6 +71,12 @@ jobs:
         run: |
           git clone $REPO_URL -b $REPO_BRANCH openwrt
 
+      - name: Cache
+        uses: klever1988/cachewrtbuild@main
+        with:
+          ccache: 'true'
+          prefix: ${{ github.workspace }}/openwrt          
+
       - name: Patch zzz-default-settings
         run: |
           cp ./${{ matrix.platform }}/zzz-default-settings.patch ./openwrt
@@ -92,6 +100,7 @@ jobs:
 
           cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
+          echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config; make defconfig
           # make defconfig
 
       - name: 输出选择插件列表
