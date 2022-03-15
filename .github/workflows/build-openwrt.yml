@@ -121,20 +121,20 @@ jobs:
           cd openwrt
           make download -j8
 
-      - name: Place clash-core
-        run: |
-          mkdir -p openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-
-          if [ ${{ matrix.platform }} == "x86" ]; then
-            cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-          else
-            cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-armv8-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-          fi
-
-          cd openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-          gzip -d *.gz
-          chmod +x *
-          mv * clash_tun
+#      - name: Place clash-core
+#        run: |
+#          mkdir -p openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+#
+#          if [ ${{ matrix.platform }} == "x86" ]; then
+#            cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+#          else
+#            cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-armv8-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+#          fi
+#
+#          cd openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+#          gzip -d *.gz
+#          chmod +x *
+#          mv * clash_tun
 
       - name: Support USB flash disk boot
         if: contains(matrix.platform, 'pi-3b-plus')

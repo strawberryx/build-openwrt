@@ -16,5 +16,5 @@ svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic luci-app
 # 另外增加
 git clone https://github.com/mingxiaoyu/luci-app-cloudflarespeedtest.git
 
-rm -rf luci-app-openclash
-git clone https://github.com/vernesong/OpenClash.git
+# rm -rf luci-app-openclash
+# git clone https://github.com/vernesong/OpenClash.git
