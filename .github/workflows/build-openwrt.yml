@@ -25,8 +25,6 @@ jobs:
       TZ: Asia/Shanghai
 
     steps:
-
-
       - name: TG Notification - 🎉
         run: |
           curl -sX POST \
@@ -37,13 +35,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
         with:
-          fetch-depth: 0          
-
+          fetch-depth: 0
 
       - name: Initialization environment
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
+          ulimit -u 10000
+          ulimit -n 4096
+          ulimit -d unlimited
+          ulimit -m unlimited
+          ulimit -s unlimited
+          ulimit -t unlimited
+          ulimit -v unlimited
+
           docker rmi `docker images -q`
 
           sudo timedatectl set-timezone "$TZ"
@@ -74,8 +79,8 @@ jobs:
       - name: Cache
         uses: klever1988/cachewrtbuild@main
         with:
-          ccache: 'true'
-          prefix: ${{ github.workspace }}/openwrt          
+          ccache: "true"
+          prefix: ${{ github.workspace }}/openwrt
 
       - name: Patch zzz-default-settings
         run: |
@@ -130,20 +135,20 @@ jobs:
           cd openwrt
           make download -j8
 
-#      - name: Place clash-core
-#        run: |
-#          mkdir -p openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-#
-#          if [ ${{ matrix.platform }} == "x86" ]; then
-#            cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-#          else
-#            cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-armv8-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-#          fi
-#
-#          cd openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-#          gzip -d *.gz
-#          chmod +x *
-#          mv * clash_tun
+      #      - name: Place clash-core
+      #        run: |
+      #          mkdir -p openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+      #
+      #          if [ ${{ matrix.platform }} == "x86" ]; then
+      #            cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+      #          else
+      #            cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-armv8-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+      #          fi
+      #
+      #          cd openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+      #          gzip -d *.gz
+      #          chmod +x *
+      #          mv * clash_tun
 
       - name: Support USB flash disk boot
         if: contains(matrix.platform, 'pi-3b-plus')
@@ -226,11 +231,11 @@ jobs:
 
       #- name: Upload firmware to owncloud
       #  run: |
-#
+      #
       #    # curl -fsSL git.io/file-transfer | sh
       #    # ./transfer cow --block 2621440 -s -p 64 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee cowtransfer.log
       #    # echo "DOWNLOAD_LINK=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
-#
+      #
       #    rclone copy ${{ env.PACKAGED_OUTPUTPATH }} od:/openwrt/${{ matrix.platform }}/$(date "+%Y-%m-%d_%H%M%S")
 
       - name: TG Notification - ❌
