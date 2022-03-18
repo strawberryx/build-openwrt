@@ -1,4 +1,4 @@
-name: 草 OpenWrt
+name: OpenWrt Stable
 
 on:
   # push:
@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     strategy:
       fail-fast: false
       matrix:
@@ -226,7 +226,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: "固件仓库"
-          tag_name: "openwrt"
+          tag_name: "openwrt-stable"
           body_path: release.txt
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
