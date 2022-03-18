@@ -1,4 +1,4 @@
-name: OpenWrt
+name: 草 OpenWrt
 
 on:
   # push:
@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ["n1"]
+        platform: ["n1", "x86",  "pi-3b-plus"]
     env:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
       REPO_URL: https://github.com/coolsnowwolf/lede
@@ -25,6 +25,8 @@ jobs:
       TZ: Asia/Shanghai
 
     steps:
+
+
       - name: TG Notification - 🎉
         run: |
           curl -sX POST \
@@ -34,22 +36,13 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@main
-        with:
-          fetch-depth: 0
+
 
       - name: Initialization environment
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          ulimit -u 10000
-          ulimit -n 4096
-          ulimit -d unlimited
-          ulimit -m unlimited
-          ulimit -s unlimited
-          ulimit -t unlimited
-          ulimit -v unlimited
-
-          docker rmi `docker images -q`
+          # docker rmi `docker images -q`
 
           sudo timedatectl set-timezone "$TZ"
 
@@ -63,7 +56,7 @@ jobs:
           rm -rf ~/.config/rclone
           mkdir -p ~/.config/rclone
           # 下载配置
-          # curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
+          curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
 
           # 检查云盘是否正常
           # rclone mkdir od:/openwrt/check-status-for-github-action
@@ -76,12 +69,6 @@ jobs:
         run: |
           git clone $REPO_URL -b $REPO_BRANCH openwrt
 
-      - name: Cache
-        uses: klever1988/cachewrtbuild@main
-        with:
-          ccache: "true"
-          prefix: ${{ github.workspace }}/openwrt
-
       - name: Patch zzz-default-settings
         run: |
           cp ./${{ matrix.platform }}/zzz-default-settings.patch ./openwrt
@@ -90,9 +77,24 @@ jobs:
 
       - name: Clone package
         run: |
-          cd openwrt
-          chmod +x $GITHUB_WORKSPACE/add-package.sh
-          $GITHUB_WORKSPACE/add-package.sh
+          cd openwrt/package
+
+          # git clone https://github.com/vernesong/OpenClash.git -b dev luci-app-openclash
+          git clone https://github.com/vernesong/OpenClash.git luci-app-openclash
+
+          git clone https://github.com/xiaorouji/openwrt-passwall.git
+
+          git clone https://github.com/jerrykuku/luci-app-vssr.git
+          git clone https://github.com/jerrykuku/lua-maxminddb.git
+
+          git clone https://github.com/fw876/helloworld.git
+
+          rm -rf lean/luci-theme-argon && git clone https://github.com/jerrykuku/luci-theme-argon.git -b 18.06
+          git clone https://github.com/jerrykuku/luci-app-argon-config.git
+
+          git clone https://github.com/destan19/OpenAppFilter.git
+
+          svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic package/luci-app-amlogic
 
       - name: Update feeds
         run: |
@@ -105,7 +107,6 @@ jobs:
 
           cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
-          echo -e 'CONFIG_DEVEL=y\nCONFIG_CCACHE=y' >> .config; make defconfig
           # make defconfig
 
       - name: 输出选择插件列表
@@ -135,20 +136,20 @@ jobs:
           cd openwrt
           make download -j8
 
-      #      - name: Place clash-core
-      #        run: |
-      #          mkdir -p openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-      #
-      #          if [ ${{ matrix.platform }} == "x86" ]; then
-      #            cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-      #          else
-      #            cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-armv8-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-      #          fi
-      #
-      #          cd openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-      #          gzip -d *.gz
-      #          chmod +x *
-      #          mv * clash_tun
+      - name: Place clash-core
+        run: |
+          mkdir -p openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+
+          if [ ${{ matrix.platform }} == "x86" ]; then
+            cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+          else
+            cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-armv8-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+          fi
+
+          cd openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
+          gzip -d *.gz
+          chmod +x *
+          mv * clash_tun
 
       - name: Support USB flash disk boot
         if: contains(matrix.platform, 'pi-3b-plus')
@@ -203,7 +204,7 @@ jobs:
         env:
           OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
           PACKAGE_SOC: s905d
-          KERNEL_VERSION_NAME: 5.16.1
+          KERNEL_VERSION_NAME: 5.16.1_5.4.1
           # GZIP_IMGS: .7z
           WHOAMI: c3p7f2
 
@@ -231,11 +232,11 @@ jobs:
 
       #- name: Upload firmware to owncloud
       #  run: |
-      #
+#
       #    # curl -fsSL git.io/file-transfer | sh
       #    # ./transfer cow --block 2621440 -s -p 64 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee cowtransfer.log
       #    # echo "DOWNLOAD_LINK=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
-      #
+#
       #    rclone copy ${{ env.PACKAGED_OUTPUTPATH }} od:/openwrt/${{ matrix.platform }}/$(date "+%Y-%m-%d_%H%M%S")
 
       - name: TG Notification - ❌

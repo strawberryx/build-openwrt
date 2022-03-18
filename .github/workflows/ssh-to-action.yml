@@ -1,4 +1,4 @@
-name: 在线调整配置
+name: 更新配置
 
 on:
   # push:
@@ -52,10 +52,23 @@ jobs:
 
       - name: Clone package
         run: |
-          cd openwrt
-          chmod +x $GITHUB_WORKSPACE/add-package.sh
-          $GITHUB_WORKSPACE/add-package.sh
+          cd openwrt/package
 
+          git clone https://github.com/vernesong/OpenClash.git luci-app-openclash --depth=1
+
+          git clone https://github.com/xiaorouji/openwrt-passwall.git
+
+          git clone https://github.com/jerrykuku/luci-app-vssr.git
+          git clone https://github.com/jerrykuku/lua-maxminddb.git
+
+          git clone https://github.com/fw876/helloworld.git
+
+          rm -rf lean/luci-theme-argon && git clone https://github.com/jerrykuku/luci-theme-argon.git -b 18.06
+          git clone https://github.com/jerrykuku/luci-app-argon-config.git
+
+          git clone https://github.com/destan19/OpenAppFilter.git
+
+          svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic package/luci-app-amlogic
 
       - name: Update feeds
         run: |
