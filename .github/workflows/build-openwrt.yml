@@ -13,11 +13,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        platform: ["n1", "x86",  "pi-3b-plus"]
+        platform: ["n1", "x86", "pi-3b-plus"]
     env:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
       REPO_URL: https://github.com/coolsnowwolf/lede
@@ -25,8 +25,6 @@ jobs:
       TZ: Asia/Shanghai
 
     steps:
-
-
       - name: TG Notification - 🎉
         run: |
           curl -sX POST \
@@ -37,12 +35,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-
       - name: Initialization environment
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          # docker rmi `docker images -q`
+          docker rmi `docker images -q`
 
           sudo timedatectl set-timezone "$TZ"
 
@@ -56,7 +53,7 @@ jobs:
           rm -rf ~/.config/rclone
           mkdir -p ~/.config/rclone
           # 下载配置
-          curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
+          # curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
 
           # 检查云盘是否正常
           # rclone mkdir od:/openwrt/check-status-for-github-action
@@ -139,13 +136,13 @@ jobs:
       #- name: Place clash-core
       #  run: |
       #    mkdir -p openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
-#
+      #
       #    if [ ${{ matrix.platform }} == "x86" ]; then
       #      cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-amd64-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
       #    else
       #      cp openwrt/package/luci-app-openclash/core-lateset/premium/clash-linux-armv8-*.gz openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
       #    fi
-#
+      #
       #    cd openwrt/package/luci-app-openclash/luci-app-openclash/root/etc/openclash/core
       #    gzip -d *.gz
       #    chmod +x *
@@ -232,11 +229,11 @@ jobs:
 
       #- name: Upload firmware to owncloud
       #  run: |
-#
+      #
       #    # curl -fsSL git.io/file-transfer | sh
       #    # ./transfer cow --block 2621440 -s -p 64 --no-progress ${PACKAGED_OUTPUTPATH} 2>&1 | tee cowtransfer.log
       #    # echo "DOWNLOAD_LINK=$(cat cowtransfer.log | grep https | cut -f3 -d" ")" >> $GITHUB_ENV
-#
+      #
       #    rclone copy ${{ env.PACKAGED_OUTPUTPATH }} od:/openwrt/${{ matrix.platform }}/$(date "+%Y-%m-%d_%H%M%S")
 
       - name: TG Notification - ❌
