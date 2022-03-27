@@ -92,7 +92,7 @@ jobs:
           chmod +x ttyd
         
           cd openwrt
-          ../ttyd make menuconfig
+          ../ttyd bash
 
       # - name: diff 配置
       #   run: |
