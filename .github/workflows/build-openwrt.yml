@@ -34,11 +34,21 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@main
+        with:
+          fetch-depth: 0
 
       - name: Initialization environment
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
+          ulimit -u 10000
+          ulimit -n 4096
+          ulimit -d unlimited
+          ulimit -m unlimited
+          ulimit -s unlimited
+          ulimit -t unlimited
+          ulimit -v unlimited
+
           docker rmi `docker images -q`
 
           sudo timedatectl set-timezone "$TZ"
@@ -65,6 +75,13 @@ jobs:
       - name: Clone source code
         run: |
           git clone $REPO_URL -b $REPO_BRANCH openwrt
+
+      - name: Cache
+        if: contains(matrix.platform, 'n1')
+        uses: klever1988/cachewrtbuild@main
+        with:
+          ccache: "true"
+          prefix: ${{ github.workspace }}/openwrt
 
       - name: Patch zzz-default-settings
         run: |
@@ -222,9 +239,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: "稳定版"
-          tag_name: "openwrt-stable"
-          body_path: release.txt
+          name: "OP 固件"
+          tag_name: "openwrt"
+          # body_path: release.txt
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       #- name: Upload firmware to owncloud
@@ -258,10 +275,10 @@ jobs:
           retain_days: 3
           keep_minimum_runs: 2
 
-      - name: Remove old Releases
-        uses: dev-drprasad/delete-older-releases@v0.1.0
-        with:
-          keep_latest: 1
-          delete_tags: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Remove old Releases
+      #   uses: dev-drprasad/delete-older-releases@v0.1.0
+      #   with:
+      #     keep_latest: 1
+      #     delete_tags: true
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
