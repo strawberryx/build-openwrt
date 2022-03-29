@@ -1,0 +1,110 @@
+name: 更新配置test
+
+on:
+  # push:
+  # schedule:
+  #   - cron: "0 10 * * *"
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "什么机型"
+        required: true
+        default: "n1"
+
+jobs:
+  ssh:
+    runs-on: ubuntu-latest
+
+    env:
+      REPO_URL: https://github.com/coolsnowwolf/lede
+      REPO_BRANCH: master
+      TZ: Asia/Shanghai
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
+
+      - name: Initialization environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          # docker rmi `docker images -q`
+
+          sudo timedatectl set-timezone "$TZ"
+
+          # sudo -E swapoff -a
+
+          # sudo rm -rf /etc/apt/sources.list.d/*
+
+          #sudo -E apt-get -qq update
+          #sudo -E apt-get -qq install rclone build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf wget swig rsync
+
+          # sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
+          # sudo -E apt-get -qq autoremove --purge
+          # sudo -E apt-get -qq clean
+
+      - name: Clone source code
+        run: |
+          git clone $REPO_URL -b $REPO_BRANCH openwrt
+
+      - name: Clone package
+        run: |
+          cd openwrt
+          chmod +x $GITHUB_WORKSPACE/add-package.sh
+          $GITHUB_WORKSPACE/add-package.sh
+
+      - name: Update feeds
+        run: |
+          cd openwrt
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      - name: 复制配置
+        run: |
+          cp ${{github.event.inputs.platform}}/.config openwrt/
+
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
+        # if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}           
+        
+      - name: 策士
+        run: |
+          
+          docker run --net=host -d -it -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine http 7681        
+          curl -o ttyd -L https://github.com/tsl0922/ttyd/releases/download/1.6.3/ttyd.x86_64
+          chmod +x ttyd
+        
+          cd openwrt
+          ../ttyd bash
+
+      # - name: diff 配置
+      #   run: |
+      #     cd openwrt
+      #     ./scripts/diffconfig.sh > diffconfig
+      #     rm .config
+      #     cp diffconfig .config 
+      #     make defconfig
+
+      - name: Upload config
+        uses: actions/upload-artifact@v2.3.1
+        with:
+          name: OpenWrt_Config
+          path: /home/runner/work/nK57cR/nK57cR/openwrt/.config
+
+      - name: 提交
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+          mkdir -p ${{github.event.inputs.platform}}
+
+          cp openwrt/.config ./${{github.event.inputs.platform}}
+          mv openwrt ..
+
+          git pull
+          git add .
+          git commit -m "${{github.event.inputs.platform}}: 配置更新"
+          git push --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/c3p7f2/nK57cR.git" HEAD:main
