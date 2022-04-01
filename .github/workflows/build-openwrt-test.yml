@@ -224,7 +224,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: "测试版"
+          name: "f大配置 N1 Openwrt"
           tag_name: "openwrt-test"
           body_path: release.txt
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
