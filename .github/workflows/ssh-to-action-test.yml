@@ -9,7 +9,7 @@ on:
       platform:
         description: "什么机型"
         required: true
-        default: "n1"
+        default: "n1-full"
 
 jobs:
   ssh:
