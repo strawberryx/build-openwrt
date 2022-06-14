@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ["n1", "x86", "pi-3b-plus"]
+        platform: ["x86"]
     env:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
       REPO_URL: https://github.com/coolsnowwolf/lede
@@ -118,9 +118,11 @@ jobs:
 
       - name: Load configuration
         run: |
-
-          cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
+          
+          # cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
+          rm -f .config*
+          curl -Lo .config https://github.com/gd0772/AutoBuild-OpenWrt/raw/main/build/Lede_source/5.4.config
           # make defconfig
 
       - name: 输出选择插件列表
