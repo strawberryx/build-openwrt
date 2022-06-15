@@ -1,7 +1,7 @@
 name: OpenWrt
 
 on:
-  # push:
+  push:
   schedule:
     - cron: "0 19 * * *"
   workflow_dispatch:
@@ -89,8 +89,9 @@ jobs:
           cd openwrt
           patch -p0 < zzz-default-settings.patch
 
-      - name: Clone package
+      - name: Add packages
         run: |
+          cd openwrt          
           chmod +x $GITHUB_WORKSPACE/add-package.sh
           $GITHUB_WORKSPACE/add-package.sh
 
