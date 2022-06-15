@@ -108,7 +108,7 @@ jobs:
           # cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
           rm -f .config*
-          curl -Lo .config https://github.com/Hyy2001X/AutoBuild-Actions/raw/master/Configs/x86_64
+          curl -Lo .config https://github.com/zhangguanzhang/Actions-OpenWrt/raw/main/build/x86_64/config/config.buildinfo
           #make defconfig
 
       - name: 输出选择插件列表
