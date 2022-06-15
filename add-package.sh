@@ -9,6 +9,6 @@ echo "src-git cdnspeedtest https://github.com/immortalwrt-collections/openwrt-cd
 # 零散小包
 cd package
 
-git clone https://github.com/mingxiaoyu/luci-app-cloudflarespeedtest.git
+# git clone https://github.com/mingxiaoyu/luci-app-cloudflarespeedtest.git
 # N1
 svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic luci-app-amlogic
