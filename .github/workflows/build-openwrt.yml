@@ -109,7 +109,7 @@ jobs:
           cd openwrt
           rm -f .config*
           curl -Lo .config https://github.com/Hyy2001X/AutoBuild-Actions/raw/master/Configs/x86_64
-          make defconfig
+          #make defconfig
 
       - name: 输出选择插件列表
         run: |
