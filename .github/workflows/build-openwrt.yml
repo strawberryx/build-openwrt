@@ -107,8 +107,11 @@ jobs:
           # cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
           rm -f .config*
-          curl -Lo .config https://github.com/zhangguanzhang/Actions-OpenWrt/raw/main/build/x86_64/config/config.buildinfo
+          curl -Lo .config https://github.com/xiangfeidexiaohuo/OpenWrt_Build/raw/master/configs/X86/x86_515.config
           make defconfig
+
+      - name: 最终配置
+        run: cat $GITHUB_WORKSPACE/openwrt/.config          
 
       - name: 输出选择插件列表
         run: |
