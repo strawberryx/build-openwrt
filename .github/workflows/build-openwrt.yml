@@ -104,10 +104,9 @@ jobs:
       - name: Load configuration
         run: |
           
-          # cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
+          cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
           rm -f .config*
-          curl -Lo .config https://github.com/xiangfeidexiaohuo/OpenWrt_Build/raw/master/configs/X86/x86_515.config
           make defconfig
 
       - name: 最终配置
