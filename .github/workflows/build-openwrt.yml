@@ -105,9 +105,9 @@ jobs:
         run: |
           
           cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
-          cd openwrt
-          rm -f .config*
-          make defconfig
+          # cd openwrt
+          # rm -f .config*
+          # make defconfig
 
       - name: 最终配置
         run: cat $GITHUB_WORKSPACE/openwrt/.config          
