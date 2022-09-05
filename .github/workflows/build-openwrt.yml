@@ -83,11 +83,11 @@ jobs:
           ccache: "true"
           prefix: ${{ github.workspace }}/openwrt
 
-      - name: Patch zzz-default-settings
-        run: |
-          cp ./${{ matrix.platform }}/zzz-default-settings.patch ./openwrt
-          cd openwrt
-          patch -p0 < zzz-default-settings.patch
+      # - name: Patch zzz-default-settings
+      #   run: |
+      #     cp ./${{ matrix.platform }}/zzz-default-settings.patch ./openwrt
+      #     cd openwrt
+      #     patch -p0 < zzz-default-settings.patch
 
       - name: Add packages
         run: |
