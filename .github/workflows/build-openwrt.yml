@@ -105,9 +105,9 @@ jobs:
         run: |
           
           cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
-          # cd openwrt
-          # rm -f .config*
-          # make defconfig
+          cd openwrt
+          rm -f .config*
+          make defconfig
 
       - name: 最终配置
         run: cat $GITHUB_WORKSPACE/openwrt/.config          
@@ -180,7 +180,7 @@ jobs:
       - name: Compile the firmware
         run: |
           cd openwrt
-          make -j$(($(nproc) + 1)) || make -j1 V=s
+          make -j$(($(nproc) + 1)) -i || make -j1 V=s
 
       - name: Storage Spaces
         run: |
