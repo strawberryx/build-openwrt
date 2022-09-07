@@ -77,7 +77,7 @@ jobs:
           git clone $REPO_URL -b $REPO_BRANCH openwrt
 
       - name: Cache
-        # if: contains(matrix.platform, 'n1')
+        if: contains(matrix.platform, 'x86')
         uses: klever1988/cachewrtbuild@main
         with:
           ccache: "true"
@@ -106,7 +106,7 @@ jobs:
           
           cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
-          rm -f .config*
+          # rm -f .config*
           make defconfig
 
       - name: 最终配置
