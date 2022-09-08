@@ -6,9 +6,11 @@
 
 <br/>
 
-| 设备       | 默认登陆 IP | 默认账号 | 默认密码 | 备注     |
-| ---------- | ----------- | -------- | -------- | -------- |
-| x86        | 192.168.1.1 | root     | password | /        |
-| n1         | 192.168.1.1 | root     | password | /        |
-| pi-3b-plus | 192.168.1.1 | root     | password | USB 启动 |
-| k2p        | 192.168.1.1 | root     | password | /        |
+| 设备          | 默认登陆 IP | 默认账号 | 默认密码 | 备注     |
+| ------------- | ----------- | -------- | -------- | -------- |
+| x86           | 192.168.1.1 | root     | password | /        |
+| n1            | 192.168.1.1 | root     | password | /        |
+| pi-3b-plus    | 192.168.1.1 | root     | password | USB 启动 |
+| k2p           | 192.168.1.1 | root     | password | /        |
+| xiaomi-cr660x | 192.168.1.1 | root     | password | /        |
+| redmi-ax6     | 192.168.1.1 | root     | password | /        |
