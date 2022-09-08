@@ -17,7 +17,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: ["x86","n1","pi-3b-plus","k2p","xiaomi-cr660x","redmi-ax6"]
+        platform:
+          ["x86", "n1", "pi-3b-plus", "k2p", "xiaomi-cr660x", "redmi-ax6"]
     env:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
       REPO_URL: https://github.com/coolsnowwolf/lede
@@ -103,14 +104,14 @@ jobs:
 
       - name: Load configuration
         run: |
-          
+
           cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
           # rm -f .config*
           make defconfig
 
       - name: 最终配置
-        run: cat $GITHUB_WORKSPACE/openwrt/.config          
+        run: cat $GITHUB_WORKSPACE/openwrt/.config
 
       - name: 输出选择插件列表
         run: |
@@ -196,8 +197,9 @@ jobs:
           sha256* \
           *manifest \
           *rootfs* \
-          *info \
-          *bin
+          *info
+
+          # *bin
 
           echo "PACKAGED_OUTPUTPATH=$PWD" >> $GITHUB_ENV
 
