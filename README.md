@@ -23,6 +23,6 @@
 
 <div align="right">
 
-<img  src="https://avatars.githubusercontent.com/u/101233611?u=099e445f0a045ce4253185c868cdf1bd99f2dcb7&v=4" height="50px" style="vertical-align: middle;"> <b>Moe Orange</b>
+<img  src="https://avatars.githubusercontent.com/u/101233611?u=099e445f0a045ce4253185c868cdf1bd99f2dcb7&v=4" height="50px" style="vertical-align: middle;"> <b style="vertical-align: middle;">Moe Orange</b>
 
 </div>
