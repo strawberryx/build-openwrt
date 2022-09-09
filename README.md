@@ -1,6 +1,6 @@
-# OpenWrt TEST [![OpenWrt CI](https://github.com/c3p7f2/nK57cR/actions/workflows/build-openwrt.yml/badge.svg)](https://github.com/c3p7f2/nK57cR/actions/workflows/build-openwrt.yml)
+# OpenWrt [![OpenWrt CI](https://github.com/c3p7f2/nK57cR/actions/workflows/build-openwrt.yml/badge.svg)](https://github.com/c3p7f2/nK57cR/actions/workflows/build-openwrt.yml)
 
-> 每夜自动编译固件
+> 每夜自动编译并上传至 Release
 
 ### [固件下载](https://github.com/c3p7f2/build-openwrt/releases/tag/openwrt)
 
@@ -18,3 +18,11 @@
 | k2p                   |
 | xiaomi-cr660x         |
 | redmi-ax6             |
+
+<hr/>
+
+<div style="float:right">
+
+<img  src="https://avatars.githubusercontent.com/u/101233611?u=099e445f0a045ce4253185c868cdf1bd99f2dcb7&v=4" height="50px" style="vertical-align: middle;"> <span style="font-weight:bold" >Moe Orange </span>
+
+</div>
