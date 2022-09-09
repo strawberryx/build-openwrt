@@ -21,8 +21,8 @@
 
 <hr/>
 
-<div style="float:right">
+<div align="right">
 
-<img  src="https://avatars.githubusercontent.com/u/101233611?u=099e445f0a045ce4253185c868cdf1bd99f2dcb7&v=4" height="50px" style="vertical-align: middle;"> <span style="font-weight:bold" >Moe Orange </span>
+<img  src="https://avatars.githubusercontent.com/u/101233611?u=099e445f0a045ce4253185c868cdf1bd99f2dcb7&v=4" height="50px" style="vertical-align: middle;"> <b>Moe Orange</b>
 
 </div>
