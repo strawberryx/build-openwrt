@@ -245,7 +245,7 @@ jobs:
       - name: 备份toolchain
         run: |
           cd openwrt
-          tar -czvf - staging_dir/host* staging_dir/tool* build_dir/host* build_dir/tool* .ccache | split -d -b 1900m - ${{ matrix.platform }}.tar.gz.
+          tar -czf - staging_dir/host* staging_dir/tool* build_dir/host* build_dir/tool* | split -d -b 1900m - ${{ matrix.platform }}.tar.gz.
 
       - name: Upload toolchain to release
         uses: softprops/action-gh-release@v1
