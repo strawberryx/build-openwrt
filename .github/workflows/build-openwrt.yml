@@ -63,10 +63,10 @@ jobs:
 
           rm -rf ~/.config/rclone
           mkdir -p ~/.config/rclone
-          # 下载配置
+          # download rclone config
           # curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
 
-          # 检查云盘是否正常
+          # check server status
           # rclone mkdir od:/openwrt/check-status-for-github-action
 
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
@@ -110,10 +110,10 @@ jobs:
           # rm -f .config*
           make defconfig
 
-      - name: 最终配置
+      - name: echo openwrt config
         run: cat $GITHUB_WORKSPACE/openwrt/.config
 
-      - name: 输出选择插件列表
+      - name: echo plugins
         run: |
           cd openwrt
 
@@ -234,18 +234,17 @@ jobs:
           body_path: release.txt
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
-      - name: 清理
-        run: rm -rf ${{ env.PACKAGED_OUTPUTPATH }}    
+      - name: clear bins
+        run: rm -rf ${{ env.PACKAGED_OUTPUTPATH }}
 
       - name: Storage Spaces
         run: |
           df -h /
 
-
-      - name: 备份toolchain
+      - name: zip toolchain
         run: |
           cd openwrt
-          tar -pPczf - staging_dir/host* staging_dir/tool* build_dir/host* build_dir/tool* | split -d -b 1000m - ${{ matrix.platform }}.tar.gz.
+          tar -pPczf - staging_dir/host* staging_dir/tool* build_dir/host* build_dir/tool* | split -d -b 100m - ${{ matrix.platform }}.tar.gz.
           ls -l
 
       - name: Upload toolchain to release
