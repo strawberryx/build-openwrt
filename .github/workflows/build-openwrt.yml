@@ -255,7 +255,7 @@ jobs:
         with:
           name: "toolchain for ${{ matrix.platform }}"
           tag_name: "toolchain-${{ matrix.platform }}"
-          files: ${{ $GITHUB_WORKSPACE }}/openwrt/${{ matrix.platform }}.tar.gz.*
+          files: ${{ GITHUB_WORKSPACE }}/openwrt/${{ matrix.platform }}.tar.gz.*
 
       #- name: Upload firmware to owncloud
       #  run: |
