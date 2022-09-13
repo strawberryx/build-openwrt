@@ -245,7 +245,8 @@ jobs:
       - name: 备份toolchain
         run: |
           cd openwrt
-          tar -czf - staging_dir/host* staging_dir/tool* build_dir/host* build_dir/tool* | split -d -b 1900m - ${{ matrix.platform }}.tar.gz.
+          tar -pPczf - staging_dir/host* staging_dir/tool* build_dir/host* build_dir/tool* | split -d -b 1900m - ${{ matrix.platform }}.tar.gz.
+          ls -l
 
       - name: Upload toolchain to release
         uses: softprops/action-gh-release@v1
@@ -254,7 +255,7 @@ jobs:
         with:
           name: "toolchain for ${{ matrix.platform }}"
           tag_name: "toolchain-${{ matrix.platform }}"
-          files: $GITHUB_WORKSPACE/openwrt/${{ matrix.platform }}.tar.gz.*
+          files: ${{ $GITHUB_WORKSPACE }}/openwrt/${{ matrix.platform }}.tar.gz.*
 
       #- name: Upload firmware to owncloud
       #  run: |
