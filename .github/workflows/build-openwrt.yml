@@ -245,7 +245,7 @@ jobs:
       - name: 备份toolchain
         run: |
           cd openwrt
-          tar -pPczf - staging_dir/host* staging_dir/tool* build_dir/host* build_dir/tool* | split -d -b 1900m - ${{ matrix.platform }}.tar.gz.
+          tar -pPczf - staging_dir/host* staging_dir/tool* build_dir/host* build_dir/tool* | split -d -b 1000m - ${{ matrix.platform }}.tar.gz.
           ls -l
 
       - name: Upload toolchain to release
