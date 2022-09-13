@@ -13,7 +13,7 @@
 | 设备                  |
 | --------------------- |
 | x86                   |
-| s905d s905x3 beikeyun |
+| n1 |
 | pi-3b-plus            |
 | k2p                   |
 | xiaomi-cr660x         |

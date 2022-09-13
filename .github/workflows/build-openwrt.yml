@@ -108,6 +108,22 @@ jobs:
           cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
           # rm -f .config*
+
+      - name: add more apps
+        if: contains(matrix.platform, 'x86')
+        run: cat $GITHUB_WORKSPACE/apps.config >> $GITHUB_WORKSPACE/openwrt/.config
+
+      - name: add more apps
+        if: contains(matrix.platform, 'n1')
+        run: cat $GITHUB_WORKSPACE/apps.config >> $GITHUB_WORKSPACE/openwrt/.config
+
+      - name: add more apps
+        if: contains(matrix.platform, 'pi')
+        run: cat $GITHUB_WORKSPACE/apps.config >> $GITHUB_WORKSPACE/openwrt/.config
+
+      - name: make defconfig
+        run: |
+          cd openwrt
           make defconfig
 
       - name: echo openwrt config
@@ -234,27 +250,27 @@ jobs:
           body_path: release.txt
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
-      - name: clear bins
-        run: rm -rf ${{ env.PACKAGED_OUTPUTPATH }}
-
-      - name: Storage Spaces
-        run: |
-          df -h /
-
-      - name: zip toolchain
-        run: |
-          cd openwrt
-          tar -pPczf - staging_dir/host* staging_dir/tool* build_dir/host* build_dir/tool* | split -d -b 100m - ${{ matrix.platform }}.tar.gz.
-          ls -l
-
-      - name: Upload toolchain to release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          name: "toolchain for ${{ matrix.platform }}"
-          tag_name: "toolchain-${{ matrix.platform }}"
-          files: "/home/runner/work/build-openwrt/build-openwrt/openwrt/${{ matrix.platform }}.tar.gz.*"
+      #- name: clear bins
+      #  run: rm -rf ${{ env.PACKAGED_OUTPUTPATH }}
+      #
+      #- name: Storage Spaces
+      #  run: |
+      #    df -h /
+      #
+      #- name: zip toolchain
+      #  run: |
+      #    cd openwrt
+      #    tar -pPczf - staging_dir/host* staging_dir/tool* build_dir/host* build_dir/tool* | split -d -b 100m - ${{ matrix.platform }}.tar.gz.
+      #    ls -l
+      #
+      #- name: Upload toolchain to release
+      #  uses: softprops/action-gh-release@v1
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #  with:
+      #    name: "toolchain for ${{ matrix.platform }}"
+      #    tag_name: "toolchain-${{ matrix.platform }}"
+      #    files: "/home/runner/work/build-openwrt/build-openwrt/openwrt/${{ matrix.platform }}.tar.gz.*"
 
       #- name: Upload firmware to owncloud
       #  run: |
