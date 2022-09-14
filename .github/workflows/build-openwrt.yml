@@ -207,7 +207,7 @@ jobs:
         if: ${{ !contains(matrix.platform, 'n1') }}
         run: |
           cd openwrt
-          find * | grep -v bin | xargs rm
+          find * | grep -v bin | xargs rm -rf
           shopt -s extglob
           rm -fr !(bin)
           cd bin/targets/*/*
