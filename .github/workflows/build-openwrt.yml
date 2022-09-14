@@ -206,7 +206,11 @@ jobs:
       - name: Organize files
         if: ${{ !contains(matrix.platform, 'n1') }}
         run: |
-          cd openwrt/bin/targets/*/*
+          cd openwrt
+          find * | grep -v bin | xargs rm
+          shopt -s extglob
+          rm -fr !(bin)
+          cd bin/targets/*/*
 
           rm -rf \
           packages \
