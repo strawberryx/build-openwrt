@@ -203,14 +203,17 @@ jobs:
         run: |
           df -h /
 
-      - name: Organize files
-        if: ${{ !contains(matrix.platform, 'n1') }}
+      - name: clear space
         run: |
           cd openwrt
           find * | grep -v bin | xargs rm -rf
-          shopt -s extglob
-          rm -fr !(bin)
-          cd bin/targets/*/*
+          
+
+      - name: Organize files
+        if: ${{ !contains(matrix.platform, 'n1') }}
+        run: |
+
+          cd openwrt/bin/targets/*/*
 
           rm -rf \
           packages \
