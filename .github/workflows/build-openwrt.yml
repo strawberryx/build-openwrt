@@ -78,7 +78,7 @@ jobs:
           git clone $REPO_URL -b $REPO_BRANCH openwrt
 
       - name: Cache
-        if: contains(matrix.platform, 'x86')
+        if: contains(matrix.platform, '不缓存x86')
         uses: klever1988/cachewrtbuild@main
         with:
           ccache: "true"
