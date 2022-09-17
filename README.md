@@ -1,5 +1,7 @@
 # OpenWrt [![OpenWrt CI](https://github.com/c3p7f2/nK57cR/actions/workflows/build-openwrt.yml/badge.svg)](https://github.com/c3p7f2/nK57cR/actions/workflows/build-openwrt.yml)
 
+<img  src="./apps.png" >
+
 > 每夜自动编译并上传至 Release
 
 ### [固件下载](https://github.com/c3p7f2/build-openwrt/releases/tag/openwrt)
@@ -10,14 +12,14 @@
 | ----------- | -------- | -------- |
 | 192.168.1.1 | root     | password |
 
-| 设备                  |
-| --------------------- |
-| x86                   |
-| n1 |
-| pi-3b-plus            |
-| k2p                   |
-| xiaomi-cr660x         |
-| redmi-ax6             |
+| 设备          |
+| ------------- |
+| x86           |
+| n1            |
+| pi-3b-plus    |
+| k2p           |
+| xiaomi-cr660x |
+| redmi-ax6     |
 
 <hr/>
 
