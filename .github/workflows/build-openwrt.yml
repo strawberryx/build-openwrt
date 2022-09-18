@@ -26,12 +26,12 @@ jobs:
       TZ: Asia/Shanghai
 
     steps:
-      - name: TG Notification - 🎉
-        run: |
-          curl -sX POST \
-          -H 'Content-Type: application/json' \
-          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} 🎉 Building OpenWrt..."}' \
-          https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
+      # - name: TG Notification - 🎉
+      #   run: |
+      #     curl -sX POST \
+      #     -H 'Content-Type: application/json' \
+      #     -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} 🎉 Building OpenWrt..."}' \
+      #     https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
 
       - name: Checkout
         uses: actions/checkout@main
@@ -288,21 +288,21 @@ jobs:
       #
       #    rclone copy ${{ env.PACKAGED_OUTPUTPATH }} od:/openwrt/${{ matrix.platform }}/$(date "+%Y-%m-%d_%H%M%S")
 
-      - name: TG Notification - ❌
-        if: ${{ !success() }}
-        run: |
-          curl -sX POST \
-          -H 'Content-Type: application/json' \
-          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} ❌ Build failed or canceled"}' \
-          https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
-
-      - name: TG Notification - ✔️
-        if: ${{ success() }}
-        run: |
-          curl -sX POST \
-          -H 'Content-Type: application/json' \
-          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} ✔️ Done"}' \
-          https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
+      #- name: TG Notification - ❌
+      #  if: ${{ !success() }}
+      #  run: |
+      #    curl -sX POST \
+      #    -H 'Content-Type: application/json' \
+      #    -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} ❌ Build failed or canceled"}' \
+      #    https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
+#
+      #- name: TG Notification - ✔️
+      #  if: ${{ success() }}
+      #  run: |
+      #    curl -sX POST \
+      #    -H 'Content-Type: application/json' \
+      #    -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} ✔️ Done"}' \
+      #    https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
 
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
