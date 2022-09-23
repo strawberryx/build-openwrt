@@ -15,4 +15,5 @@ jobs:
     steps:
       - name: GO
         run: |
-          docker run --net=host -it -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine tcp 22
+          docker run --name=go --net=host -it -d -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine tcp 22
+          docker logs -f go
