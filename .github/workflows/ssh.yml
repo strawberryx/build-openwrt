@@ -1,0 +1,18 @@
+name: SSH
+
+on:
+  workflow_dispatch:
+    inputs:
+      q:
+        description: "Start?"
+        required: true
+        default: "yes"
+
+jobs:
+  ssh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: GO
+        run: |
+          docker run --net=host -it -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine tcp 22
