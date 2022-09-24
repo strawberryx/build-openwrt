@@ -35,6 +35,5 @@ jobs:
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
           Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "${{ secrets.NGROK_TOKEN }}" -Force)
-          Set-WinUserLanguageList -LanguageList zh-CN, en-US -Force
 
           ngrok.exe tcp 3389        
