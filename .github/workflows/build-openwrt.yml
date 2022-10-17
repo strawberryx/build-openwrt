@@ -196,6 +196,8 @@ jobs:
 
       - name: Compile the firmware
         run: |
+          sed -i "s/openwrt/HarmonyOS/g" `grep openwrt -rl ./openwrt`
+
           cd openwrt
           make -j$(($(nproc) + 1)) -i || make -j1 V=s
 
