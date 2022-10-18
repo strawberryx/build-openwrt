@@ -196,9 +196,15 @@ jobs:
 
       - name: Compile the firmware
         run: |
-          sed -i "s/openwrt/HarmonyOS/g" `grep openwrt -rl ./openwrt`
 
           cd openwrt
+
+          /bin/bash $GITHUB_WORKSPACE/diy-2.sh
+
+          if [ -n "$(ls -A "$GITHUB_WORKSPACE/diy" 2>/dev/null)" ]; then
+           cp -Rf $GITHUB_WORKSPACE/diy/* ./
+          fi                
+
           make -j$(($(nproc) + 1)) -i || make -j1 V=s
 
       - name: Storage Spaces
