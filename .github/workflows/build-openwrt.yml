@@ -1,7 +1,7 @@
 name: OpenWrt
 
 on:
-  # push:
+  push:
   schedule:
     - cron: "0 19 * * *"
   workflow_dispatch:
@@ -26,12 +26,12 @@ jobs:
       TZ: Asia/Shanghai
 
     steps:
-      # - name: TG Notification - 🎉
-      #   run: |
-      #     curl -sX POST \
-      #     -H 'Content-Type: application/json' \
-      #     -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} 🎉 Building OpenWrt..."}' \
-      #     https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
+      - name: TG Notification - 🎉
+        run: |
+          curl -sX POST \
+          -H 'Content-Type: application/json' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} 🎉 Building OpenWrt..."}' \
+          https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
 
       - name: Checkout
         uses: actions/checkout@main
@@ -196,12 +196,12 @@ jobs:
 
       - name: Compile the firmware
         run: |
+          sed -i "s/OpenWrt/HarmonyOS/g" `grep openwrt -rl ./openwrt`
 
           cd openwrt
 
           /bin/bash $GITHUB_WORKSPACE/diy-2.sh
 
-          sed -i "s/OpenWrt/HarmonyOS/g" `grep openwrt -rl ./openwrt`
 
           if [ -n "$(ls -A "$GITHUB_WORKSPACE/diy" 2>/dev/null)" ]; then
            cp -Rf $GITHUB_WORKSPACE/diy/* ./
@@ -298,21 +298,21 @@ jobs:
       #
       #    rclone copy ${{ env.PACKAGED_OUTPUTPATH }} od:/openwrt/${{ matrix.platform }}/$(date "+%Y-%m-%d_%H%M%S")
 
-      #- name: TG Notification - ❌
-      #  if: ${{ !success() }}
-      #  run: |
-      #    curl -sX POST \
-      #    -H 'Content-Type: application/json' \
-      #    -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} ❌ Build failed or canceled"}' \
-      #    https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
-#
-      #- name: TG Notification - ✔️
-      #  if: ${{ success() }}
-      #  run: |
-      #    curl -sX POST \
-      #    -H 'Content-Type: application/json' \
-      #    -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} ✔️ Done"}' \
-      #    https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
+      - name: TG Notification - ❌
+        if: ${{ !success() }}
+        run: |
+          curl -sX POST \
+          -H 'Content-Type: application/json' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} ❌ Build failed or canceled"}' \
+          https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
+
+      - name: TG Notification - ✔️
+        if: ${{ success() }}
+        run: |
+          curl -sX POST \
+          -H 'Content-Type: application/json' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} ✔️ Done"}' \
+          https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
 
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
