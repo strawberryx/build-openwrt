@@ -201,6 +201,8 @@ jobs:
 
           /bin/bash $GITHUB_WORKSPACE/diy-2.sh
 
+          sed -i "s/OpenWrt/HarmonyOS/g" `grep openwrt -rl ./openwrt`
+
           if [ -n "$(ls -A "$GITHUB_WORKSPACE/diy" 2>/dev/null)" ]; then
            cp -Rf $GITHUB_WORKSPACE/diy/* ./
           fi                
