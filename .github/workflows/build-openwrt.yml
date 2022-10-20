@@ -200,6 +200,8 @@ jobs:
 
           cd openwrt
 
+          cat rules.mk
+
           /bin/bash $GITHUB_WORKSPACE/diy-2.sh
 
 
