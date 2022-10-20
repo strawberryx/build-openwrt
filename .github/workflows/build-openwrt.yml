@@ -76,6 +76,8 @@ jobs:
       - name: Clone source code
         run: |
           git clone $REPO_URL -b $REPO_BRANCH openwrt
+          sed -i "s/OpenWrt/HarmonyOS/g" `grep openwrt -rl ./openwrt`
+
 
       - name: Cache
         if: contains(matrix.platform, '不缓存x86')
@@ -196,8 +198,7 @@ jobs:
 
       - name: Compile the firmware
         run: |
-          sed -i "s/OpenWrt/HarmonyOS/g" `grep openwrt -rl ./openwrt`
-
+          
           cd openwrt
 
           cat rules.mk
