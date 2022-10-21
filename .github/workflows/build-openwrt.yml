@@ -77,6 +77,8 @@ jobs:
         run: |
           git clone $REPO_URL -b $REPO_BRANCH openwrt
           sed -i "s/OpenWrt/OpenHarmony/g" `grep openwrt -rl ./openwrt/package`
+          sed -i "s/OpenWrt/OpenHarmony/g" `grep openwrt -rl ./openwrt/include`
+          
 
 
       - name: Cache
