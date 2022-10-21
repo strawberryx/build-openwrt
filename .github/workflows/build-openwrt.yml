@@ -76,7 +76,7 @@ jobs:
       - name: Clone source code
         run: |
           git clone $REPO_URL -b $REPO_BRANCH openwrt
-          sed -i "s/OpenWrt/HarmonyOS/g" `grep openwrt -rl ./openwrt`
+          sed -i "s/OpenWrt/OpenHarmony/g" `grep openwrt -rl ./openwrt/package`
 
 
       - name: Cache
@@ -246,7 +246,7 @@ jobs:
           OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
           PACKAGE_SOC: s905d
           # GZIP_IMGS: .7z
-          WHOAMI: c3p7f2
+          WHOAMI: OpenHarmony
 
       - name: Organize files
         if: ${{ contains(matrix.platform, 'n1') }}
@@ -265,8 +265,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: "OP 固件"
-          tag_name: "openwrt"
+          name: "OpenHarmony | 固件下载"
+          tag_name: "OpenHarmony"
           body_path: release.txt
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
