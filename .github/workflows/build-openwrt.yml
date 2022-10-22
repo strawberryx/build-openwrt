@@ -1,4 +1,4 @@
-name: OpenWrt
+name: OpenHarmony
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
         run: |
           curl -sX POST \
           -H 'Content-Type: application/json' \
-          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} 🎉 Building OpenWrt..."}' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} 🎉 Building OpenHarmony..."}' \
           https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
 
       - name: Checkout
@@ -78,8 +78,6 @@ jobs:
           git clone $REPO_URL -b $REPO_BRANCH openwrt
           sed -i "s/OpenWrt/OpenHarmony/g" `grep openwrt -rl ./openwrt/package`
           sed -i "s/OpenWrt/OpenHarmony/g" `grep openwrt -rl ./openwrt/include`
-          
-
 
       - name: Cache
         if: contains(matrix.platform, '不缓存x86')
@@ -116,11 +114,11 @@ jobs:
       #- name: add more apps
       #  if: contains(matrix.platform, 'x86')
       #  run: cat $GITHUB_WORKSPACE/apps.config >> $GITHUB_WORKSPACE/openwrt/.config
-#
+      #
       #- name: add more apps
       #  if: contains(matrix.platform, 'n1')
       #  run: cat $GITHUB_WORKSPACE/apps.config >> $GITHUB_WORKSPACE/openwrt/.config
-#
+      #
       #- name: add more apps
       #  if: contains(matrix.platform, 'pi')
       #  run: cat $GITHUB_WORKSPACE/apps.config >> $GITHUB_WORKSPACE/openwrt/.config
@@ -200,10 +198,8 @@ jobs:
 
       - name: Compile the firmware
         run: |
-          
-          cd openwrt
 
-          cat rules.mk
+          cd openwrt
 
           /bin/bash $GITHUB_WORKSPACE/diy-2.sh
 
@@ -222,7 +218,6 @@ jobs:
         run: |
           cd openwrt
           find * | grep -v bin | xargs rm -rf
-          
 
       - name: Organize files
         if: ${{ !contains(matrix.platform, 'n1') }}
@@ -249,6 +244,7 @@ jobs:
           PACKAGE_SOC: s905d
           # GZIP_IMGS: .7z
           WHOAMI: OpenHarmony
+          DISTRIB_DESCRIPTION: OpenHarmony
 
       - name: Organize files
         if: ${{ contains(matrix.platform, 'n1') }}
