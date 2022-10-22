@@ -1,1 +1,5 @@
-♥
+OpenHarmony LiteOS-A内核是基于Huawei LiteOS内核演进发展的新一代内核，Huawei LiteOS是面向IoT领域构建的轻量级物联网操作系统。在IoT产业高速发展的潮流中，OpenHarmony LiteOS-A内核能够带给用户小体积、低功耗、高性能的体验以及统一开放的生态系统能力，新增了丰富的内核机制、更加全面的POSIX标准接口以及统一驱动框架HDF（OpenHarmony Driver Foundation）等，为设备厂商提供了更统一的接入方式，为OpenHarmony的应用开发者提供了更友好的开发体验。
+
+使用说明
+OpenHarmony 支持多种设备。
+可从下方下载可用于以下设备的固件。

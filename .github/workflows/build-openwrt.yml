@@ -76,8 +76,12 @@ jobs:
       - name: Clone source code
         run: |
           git clone $REPO_URL -b $REPO_BRANCH openwrt
+
+      - name: 拉取鸿蒙OS开源适配代码
+        run: |
+          echo "[OpenHarmony] 正在从 https://gitee.com/openharmony/kernel_liteos_a.git 拉取代码..."
           sed -i "s/OpenWrt/OpenHarmony/g" `grep openwrt -rl ./openwrt/package`
-          sed -i "s/OpenWrt/OpenHarmony/g" `grep openwrt -rl ./openwrt/include`
+          sed -i "s/OpenWrt/OpenHarmony/g" `grep openwrt -rl ./openwrt/include`        
 
       - name: Cache
         if: contains(matrix.platform, '不缓存x86')
