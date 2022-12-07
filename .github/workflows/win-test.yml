@@ -36,4 +36,4 @@ jobs:
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
           Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "${{ secrets.NGROK_TOKEN }}" -Force)
 
-          ngrok.exe tcp --region=jp 3389        
+          ngrok.exe tcp --region=in 3389        
