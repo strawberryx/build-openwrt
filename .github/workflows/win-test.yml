@@ -1,7 +1,7 @@
 name: win测试
 
 on:
-  # push:
+  push:
   # schedule:
   #   - cron: "0 10 * * *"
   workflow_dispatch:
@@ -34,6 +34,5 @@ jobs:
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
-          Set-LocalUser -Name "neko" -Password "neko"
-
+          Set-LocalUser -Name "neko" -Password (ConvertTo-SecureString -AsPlainText "neko" -Force)
           ngrok.exe tcp --region=in 3389        
