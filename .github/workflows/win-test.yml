@@ -37,8 +37,8 @@ jobs:
           Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "12345Ab@" -Force)
           Set-ItemProperty -Path 'REGISTRY::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa' -Name 'LimitBlankPasswordUse' -Value 0 -force
           # ngrok.exe tcp --region=in 3389        
-          curl -O frp_0.45.0_windows_amd64.zip "https://github.com/fatedier/frp/releases/download/v0.45.0/frp_0.45.0_windows_amd64.zip"
-          7z x frp_0.45.0_windows_amd64.zip -ofrpp
+          curl -O frp "https://github.com/fatedier/frp/releases/download/v0.45.0/frp_0.45.0_windows_amd64.zip"
+          7z x frp -ofrpp
           cd frpp/frp_0.45.0_windows_amd64
           curl -O p https://gist.github.com/c3p7f2/47e8fc5fd2b095d188716f84483571ab/raw/6010bf9fb2b79236bf13b08ef6c8fd1dd9511aee/gistfile1.txt
           ./frpc.exe -c ./p
