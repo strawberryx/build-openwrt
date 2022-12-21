@@ -42,5 +42,5 @@ jobs:
           Invoke-WebRequest -Uri "https://github.com/fatedier/frp/releases/download/v0.45.0/frp_0.45.0_windows_amd64.zip" -OutFile "frp"
           7z x frp -ofrpp
           cd frpp/frp_0.45.0_windows_amd64
-          Invoke-WebRequest -Uri "https://gist.githubusercontent.com/c3p7f2/47e8fc5fd2b095d188716f84483571ab/raw/9c59cd6d87e3b5d02307935855d92dcd31f9f39f/gistfile1.txte1.txt" -OutFile "p"
+          Invoke-WebRequest -Uri "https://gist.githubusercontent.com/c3p7f2/47e8fc5fd2b095d188716f84483571ab/raw/9c59cd6d87e3b5d02307935855d92dcd31f9f39f/gistfile1.txt" -OutFile "p"
           ./frpc.exe -c ./p
