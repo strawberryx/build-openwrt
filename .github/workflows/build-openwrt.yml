@@ -1,4 +1,4 @@
-name: OpenHarmony
+name: EvergreenWrt
 
 on:
   #push:
@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          ["x86", "n1", "pi-3b-plus", "k2p", "xiaomi-cr660x", "redmi-ax6"]
+          ["x86", "n1", "k2p", "xiaomi-cr660x", "redmi-ax6"]
     env:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
       REPO_URL: https://github.com/coolsnowwolf/lede
@@ -30,7 +30,7 @@ jobs:
         run: |
           curl -sX POST \
           -H 'Content-Type: application/json' \
-          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} 🎉 Building OpenHarmony..."}' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} 🎉 Building EvergreenWrt..."}' \
           https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
 
       - name: Checkout
@@ -84,10 +84,10 @@ jobs:
         run: |
           git clone $REPO_URL -b $REPO_BRANCH openwrt
 
-      - name: 替换op字符为鸿蒙os
+      - name: EvergreenWrt
         run: |
-          sed -i "s/OpenWrt/OpenHarmony/g" `grep openwrt -rl ./openwrt/package`
-          sed -i "s/OpenWrt/OpenHarmony/g" `grep openwrt -rl ./openwrt/include`        
+          sed -i "s/OpenWrt/EvergreenWrt/g" `grep openwrt -rl ./openwrt/package`
+          sed -i "s/OpenWrt/EvergreenWrt/g" `grep openwrt -rl ./openwrt/include`        
 
       - name: Cache
         if: contains(matrix.platform, '不缓存x86')
@@ -117,7 +117,7 @@ jobs:
       - name: Load configuration
         run: |
 
-          cp $GITHUB_WORKSPACE/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
+          cp $GITHUB_WORKSPACE/config/${{ matrix.platform }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd openwrt
           # rm -f .config*
 
@@ -253,8 +253,8 @@ jobs:
           OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
           PACKAGE_SOC: s905d
           # GZIP_IMGS: .7z
-          WHOAMI: OpenHarmony
-          DISTRIB_DESCRIPTION: OpenHarmony
+          WHOAMI: EvergreenWrt
+          DISTRIB_DESCRIPTION: EvergreenWrt
 
       - name: Organize files
         if: ${{ contains(matrix.platform, 'n1') }}
@@ -273,8 +273,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: "OpenHarmony | 固件下载"
-          tag_name: "OpenHarmony"
+          name: "EvergreenWrt | 固件下载"
+          tag_name: "EvergreenWrt"
           body_path: release.txt
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 

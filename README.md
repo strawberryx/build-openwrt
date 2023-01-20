@@ -1,17 +1,13 @@
 ```
-   ____                   _    _                                        
-  / __ \                 | |  | |                                       
- | |  | |_ __   ___ _ __ | |__| | __ _ _ __ _ __ ___   ___  _ __  _   _ 
- | |  | | '_ \ / _ \ '_ \|  __  |/ _` | '__| '_ ` _ \ / _ \| '_ \| | | |
- | |__| | |_) |  __/ | | | |  | | (_| | |  | | | | | | (_) | | | | |_| |
-  \____/| .__/ \___|_| |_|_|  |_|\__,_|_|  |_| |_| |_|\___/|_| |_|\__, |
-        | |                                                        __/ |
-        |_|                                                       |___/ 
-
-字符串替换大法，本质还是OpenWrt
+    ______                                         _       __     __ 
+   / ____/   _____  _________ _________  ___  ____| |     / /____/ /_
+  / __/ | | / / _ \/ ___/ __ `/ ___/ _ \/ _ \/ __ \ | /| / / ___/ __/
+ / /___ | |/ /  __/ /  / /_/ / /  /  __/  __/ / / / |/ |/ / /  / /_  
+/_____/ |___/\___/_/   \__, /_/   \___/\___/_/ /_/|__/|__/_/   \__/  
+                      /____/                                         
 ```
 
-> 每夜自动编译并上传至 Release
+> 每夜Action自动编译
 
 <br/>
 
@@ -21,19 +17,12 @@
 
 | 设备          |
 | ------------- |
-| x86           |
-| n1            |
-| pi-3b-plus    |
+| x86         |
+| n1        |
 | k2p           |
 | xiaomi-cr660x |
 | redmi-ax6     |
 
-### [--> 下载 OpenHarmony](https://github.com/c3p7f2/build-openwrt/releases/tag/OpenHarmony)
+### [--> 下载 EvergreenWrt](https://github.com/c3p7f2/build-openwrt/releases/tag/EvergreenWrt)
 
 <hr/>
-
-<div align="right">
-
-<img  src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/HMOS_Logo_Icon.svg/150px-HMOS_Logo_Icon.svg.png" height="50px" style="vertical-align: middle;"> <div></div>
-
-</div>
