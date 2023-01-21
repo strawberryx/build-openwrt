@@ -282,10 +282,6 @@ jobs:
           cd $OPENWRT_PATH
           git pull
 
-      - name: EvergreenWrt
-        run: |
-          sed -i "s/OpenWrt/EvergreenWrt/g" `grep openwrt -rl $OPENWRT_PATH/package`
-          sed -i "s/OpenWrt/EvergreenWrt/g" `grep openwrt -rl $OPENWRT_PATH/include`
 
       - name: Add packages
         run: |
