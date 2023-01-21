@@ -6,8 +6,24 @@ on:
     - cron: "0 19 * * *"
   workflow_dispatch:
 
+env:
+  SOURCE_URL: https://github.com/coolsnowwolf/lede
+  SOURCE_BRANCH: master
+
+  TOOLCHAIN_TAG: Toolchain
+  SOURCE: lede
+  TZ: Asia/Shanghai  
+
+  CONFIG_FILE: configs/n1.config
+  DIY_SCRIPT: scripts/diy/n1-lede.sh
+  COM_SCRIPT: scripts/common.sh  
+
 jobs:
   Toolchain:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ["x86", "n1", "xiaomi-cr660x", "redmi-ax6"]
     runs-on: ubuntu-latest
 
     outputs:
@@ -41,6 +57,7 @@ jobs:
         id: clone
         run: |
           df -hT $GITHUB_WORKSPACE
+          git clone 
           git clone $SOURCE_URL -b $SOURCE_BRANCH workspace/openwrt
           cd workspace/openwrt
           echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
@@ -51,7 +68,8 @@ jobs:
 
       - name: 生成Toolchain配置
         run: |
-          [ -e $CONFIG_FILE ] && mv $CONFIG_FILE $OPENWRT_PATH/.config
+          svn co https://github.com/c3p7f2/build-openwrt/trunk/config config
+          mv config/${{ matrix.platform }}/.config $OPENWRT_PATH/.config
           echo -e "\nCONFIG_ALL=y" >> $OPENWRT_PATH/.config
           echo -e "\nCONFIG_ALL_NONSHARED=y" >> $OPENWRT_PATH/.config
           cd $OPENWRT_PATH
@@ -139,10 +157,7 @@ jobs:
   build:
     needs: [Toolchain]
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        platform: ["x86", "n1", "xiaomi-cr660x", "redmi-ax6"]
+
     env:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
       REPO_URL: https://github.com/coolsnowwolf/lede
