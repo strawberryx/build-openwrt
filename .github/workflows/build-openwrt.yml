@@ -18,6 +18,8 @@ env:
   DIY_SCRIPT: scripts/diy/n1-lede.sh
   COM_SCRIPT: scripts/common.sh
 
+  MSG_PREFIX: "Ref: ${{ github.ref }}\nDevice: ${{ matrix.Device }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
+
 jobs:
   Toolchain:
     strategy:
@@ -163,10 +165,13 @@ jobs:
         Device: ["x86", "n1", "xiaomi-cr660x", "redmi-ax6"]
 
     env:
-      MSG_PREFIX: "Ref: ${{ github.ref }}\nDevice: ${{ matrix.Device }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
-      REPO_URL: https://github.com/coolsnowwolf/lede
-      REPO_BRANCH: master
-      TZ: Asia/Shanghai
+      OPENWRT_PATH: ${{ needs.Toolchain.outputs.OPENWRT_PATH }}
+      VERSION_INFO: ${{ needs.Toolchain.outputs.VERSION_INFO }}
+      CURRENT_BRANCH: ${{ needs.Toolchain.outputs.CURRENT_BRANCH }}
+      SOURCE_REPO: ${{ needs.Toolchain.outputs.SOURCE_REPO }}
+      DEVICE_TARGET: ${{ needs.Toolchain.outputs.DEVICE_TARGET }}
+      DEVICE_SUBTARGET: ${{ needs.Toolchain.outputs.DEVICE_SUBTARGET }}
+      TOOLCHAIN_IMAGE: ${{ needs.Toolchain.outputs.TOOLCHAIN_IMAGE }}
 
     steps:
       - name: TG Notification - 🎉
@@ -181,7 +186,7 @@ jobs:
           git init
           git remote add origin https://github.com/$GITHUB_REPOSITORY
           git fetch
-          git checkout -t origin/$CURRENT_BRANCH          
+          git checkout -t origin/$CURRENT_BRANCH
 
       - name: Initialization environment
         env:
@@ -260,8 +265,6 @@ jobs:
           mkdir $GITHUB_WORKSPACE/tmp && chmod 777 $GITHUB_WORKSPACE/tmp
           sudo cp -rp /tmp/* $GITHUB_WORKSPACE/tmp
           sudo mount -B $GITHUB_WORKSPACE/tmp /tmp && df -hT
-
-
 
       - name: 准备Toolchain Image
         run: |
