@@ -184,12 +184,9 @@ jobs:
 
       - name: Check-out
         run: |
-          cd $GITHUB_WORKSPACE
-          git init
-          git remote add origin https://github.com/$GITHUB_REPOSITORY
-          git fetch
-          git checkout -t origin/$CURRENT_BRANCH
-          git pull
+          git clone https://github.com/$GITHUB_REPOSITORY myrepo
+          cd myrepo
+          echo "MYREPO_PATH=$PWD" >> $GITHUB_ENV
 
       - name: Initialization environment
         env:
@@ -288,8 +285,8 @@ jobs:
       - name: Add packages
         run: |
           cd $OPENWRT_PATH          
-          chmod +x $GITHUB_WORKSPACE/scripts/add-package.sh
-          $GITHUB_WORKSPACE/scripts/add-package.sh
+          chmod +x $MYREPO_PATH/scripts/add-package.sh
+          $MYREPO_PATH/scripts/add-package.sh
 
       - name: Update feeds
         run: |
@@ -300,7 +297,7 @@ jobs:
       - name: Load configuration
         run: |
 
-          cp $GITHUB_WORKSPACE/configs/${{ matrix.Device }}/.config $GITHUB_WORKSPACE/openwrt/.config
+          cp $MYREPO_PATH/configs/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
           cd $OPENWRT_PATH
           # rm -f .config*
 
@@ -310,7 +307,7 @@ jobs:
           make defconfig
 
       - name: echo openwrt config
-        run: cat $GITHUB_WORKSPACE/openwrt/.config
+        run: cat $OPENWRT_PATH/.config
 
       - name: echo plugins
         run: |
@@ -348,11 +345,11 @@ jobs:
 
           cd $OPENWRT_PATH
 
-          /bin/bash $GITHUB_WORKSPACE/rewrite.sh
+          /bin/bash $MYREPO_PATH/rewrite.sh
 
 
-          if [ -n "$(ls -A "$GITHUB_WORKSPACE/files" 2>/dev/null)" ]; then
-           cp -Rf $GITHUB_WORKSPACE/files/* ./
+          if [ -n "$(ls -A "$MYREPO_PATH/files" 2>/dev/null)" ]; then
+           cp -Rf $MYREPO_PATH/files/* ./
           fi                
 
           make -j$(($(nproc) + 1)) || make -j1 V=s
@@ -387,7 +384,7 @@ jobs:
         if: contains(matrix.Device, 'n1')
         uses: ophub/flippy-openwrt-actions@main
         env:
-          OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
+          OPENWRT_ARMVIRT: $OPENWRT_PATH/bin/targets/*/*/*.tar.gz
           PACKAGE_SOC: s905d
           WHOAMI: EvergreenWrt
 
