@@ -12,11 +12,11 @@ env:
 
   TOOLCHAIN_TAG: Toolchain
   SOURCE: lede
-  TZ: Asia/Shanghai  
+  TZ: Asia/Shanghai
 
   CONFIG_FILE: configs/n1.config
   DIY_SCRIPT: scripts/diy/n1-lede.sh
-  COM_SCRIPT: scripts/common.sh  
+  COM_SCRIPT: scripts/common.sh
 
 jobs:
   Toolchain:
@@ -155,6 +155,10 @@ jobs:
   build:
     needs: [Toolchain]
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: ["x86", "n1", "xiaomi-cr660x", "redmi-ax6"]
 
     env:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
