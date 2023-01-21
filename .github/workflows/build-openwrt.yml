@@ -1,4 +1,4 @@
-name: EvergreenWrt
+name: Build EvergreenWrt
 
 on:
   #push:
@@ -17,8 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform:
-          ["x86", "n1", "k2p", "xiaomi-cr660x", "redmi-ax6"]
+        platform: ["x86", "n1", "xiaomi-cr660x", "redmi-ax6"]
     env:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nPlatform: ${{ matrix.platform }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
       REPO_URL: https://github.com/coolsnowwolf/lede
@@ -52,7 +51,6 @@ jobs:
           mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip libpython3-dev qemu-utils \
           rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
 
-
           ulimit -u 10000
           ulimit -n 4096
           ulimit -d unlimited
@@ -67,13 +65,12 @@ jobs:
 
           sudo -E swapoff -a
 
-
           rm -rf ~/.config/rclone
           mkdir -p ~/.config/rclone
+
           # download rclone config
           # curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
-
-          # check server status
+          ## check server status
           # rclone mkdir od:/openwrt/check-status-for-github-action
 
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
@@ -87,20 +84,14 @@ jobs:
       - name: EvergreenWrt
         run: |
           sed -i "s/OpenWrt/EvergreenWrt/g" `grep openwrt -rl ./openwrt/package`
-          sed -i "s/OpenWrt/EvergreenWrt/g" `grep openwrt -rl ./openwrt/include`        
+          sed -i "s/OpenWrt/EvergreenWrt/g" `grep openwrt -rl ./openwrt/include`
 
-      - name: Cache
-        if: contains(matrix.platform, '不缓存x86')
-        uses: klever1988/cachewrtbuild@main
-        with:
-          ccache: "true"
-          prefix: ${{ github.workspace }}/openwrt
-
-      # - name: Patch zzz-default-settings
-      #   run: |
-      #     cp ./${{ matrix.platform }}/zzz-default-settings.patch ./openwrt
-      #     cd openwrt
-      #     patch -p0 < zzz-default-settings.patch
+      # - name: Cache
+      #   if: contains(matrix.platform, 'x86')
+      #   uses: klever1988/cachewrtbuild@main
+      #   with:
+      #     ccache: "true"
+      #     prefix: ${{ github.workspace }}/openwrt
 
       - name: Add packages
         run: |
@@ -202,18 +193,16 @@ jobs:
       #
       #          rm -f op-env.7z
 
-
-
       - name: Compile the firmware
         run: |
 
           cd openwrt
 
-          /bin/bash $GITHUB_WORKSPACE/diy-2.sh
+          /bin/bash $GITHUB_WORKSPACE/rewrite.sh
 
 
-          if [ -n "$(ls -A "$GITHUB_WORKSPACE/diy" 2>/dev/null)" ]; then
-           cp -Rf $GITHUB_WORKSPACE/diy/* ./
+          if [ -n "$(ls -A "$GITHUB_WORKSPACE/file" 2>/dev/null)" ]; then
+           cp -Rf $GITHUB_WORKSPACE/file/* ./
           fi                
 
           make -j$(($(nproc) + 1)) || make -j1 V=s
@@ -250,9 +239,7 @@ jobs:
         env:
           OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*.tar.gz
           PACKAGE_SOC: s905d
-          # GZIP_IMGS: .7z
           WHOAMI: EvergreenWrt
-          DISTRIB_DESCRIPTION: EvergreenWrt
 
       - name: Organize files
         if: ${{ contains(matrix.platform, 'n1') }}

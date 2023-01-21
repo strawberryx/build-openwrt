@@ -9,8 +9,6 @@
 
 > 每夜Action自动编译
 
-<br/>
-
 | 默认登陆 IP | 默认账号 | 默认密码 |
 | ----------- | -------- | -------- |
 | 192.168.1.1 | root     | password |
@@ -19,10 +17,7 @@
 | ------------- |
 | x86         |
 | n1        |
-| k2p           |
 | xiaomi-cr660x |
 | redmi-ax6     |
 
 ### [--> 下载 EvergreenWrt](https://github.com/c3p7f2/build-openwrt/releases/tag/EvergreenWrt)
-
-<hr/>
