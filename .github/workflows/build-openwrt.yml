@@ -346,19 +346,44 @@ jobs:
         run: |
           df -h /
 
-      - name: Compile the firmware
+      - name: 替换banner
         run: |
 
           cd $OPENWRT_PATH
 
-          /bin/bash $GITHUB_WORKSPACE/scripts/rewrite.sh
+          # /bin/bash $GITHUB_WORKSPACE/scripts/rewrite.sh
 
 
           if [ -n "$(ls -A "$GITHUB_WORKSPACE/files" 2>/dev/null)" ]; then
            cp -Rf $GITHUB_WORKSPACE/files/* ./
           fi                
 
-          make -j$(($(nproc) + 1)) || make -j1 V=s
+
+      - name: 编译Packages
+        id: compile
+        run: |
+          cd $OPENWRT_PATH
+          echo -e "$(nproc) thread compile"
+          make diffconfig
+          make target/compile -j$(nproc) IGNORE_ERRORS="m n" BUILD_LOG=1 || \
+          yes n | make target/compile -j1 V=s IGNORE_ERRORS=1
+          make package/compile -j$(nproc) IGNORE_ERRORS=1 || make package/compile -j1 V=s IGNORE_ERRORS=1
+          make package/index
+
+      - name: 生成固件
+        id: generate
+        run: |
+          cd $OPENWRT_PATH
+          mkdir -p files/etc/uci-defaults
+          cp $GITHUB_WORKSPACE/scripts/init-settings.sh files/etc/uci-defaults/99-init-settings
+          make package/install -j$(nproc) || make package/install -j1 V=s
+          make target/install -j$(nproc) || make target/install -j1 V=s
+          echo "status=success" >> $GITHUB_OUTPUT
+          make json_overview_image_info
+          make checksum
+
+          
+
 
       - name: Storage Spaces
         run: |
