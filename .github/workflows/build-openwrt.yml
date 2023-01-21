@@ -43,9 +43,8 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /etc/mysql /usr/local/lib/android
+          sudo rm -rf /etc/apt/sources.list.d/*
           sudo -E apt-get -qq update
-          sudo -E apt-get -qq full-upgrade
           sudo -E apt-get -qq install $(curl -fsSL is.gd/depends_ubuntu_2204)
           sudo -E apt-get -qq install aria2 clang clangd ecj lib32gcc-s1 libfuse-dev libncursesw5 \
                                   libpython3-dev lld lldb python3-ply re2c
