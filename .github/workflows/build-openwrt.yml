@@ -189,6 +189,7 @@ jobs:
           git remote add origin https://github.com/$GITHUB_REPOSITORY
           git fetch
           git checkout -t origin/$CURRENT_BRANCH
+          git pull
 
       - name: Initialization environment
         env:
