@@ -184,6 +184,7 @@ jobs:
 
       - name: Check-out
         run: |
+          cd $GITHUB_WORKSPACE
           git init
           git remote add origin https://github.com/$GITHUB_REPOSITORY
           git fetch
@@ -286,8 +287,8 @@ jobs:
       - name: Add packages
         run: |
           cd $OPENWRT_PATH          
-          chmod +x $GITHUB_WORKSPACE/add-package.sh
-          $GITHUB_WORKSPACE/add-package.sh
+          chmod +x $GITHUB_WORKSPACE/scripts/add-package.sh
+          $GITHUB_WORKSPACE/scripts/add-package.sh
 
       - name: Update feeds
         run: |
@@ -298,7 +299,7 @@ jobs:
       - name: Load configuration
         run: |
 
-          cp $GITHUB_WORKSPACE/config/${{ matrix.Device }}/.config $GITHUB_WORKSPACE/openwrt/.config
+          cp $GITHUB_WORKSPACE/configs/${{ matrix.Device }}/.config $GITHUB_WORKSPACE/openwrt/.config
           cd $OPENWRT_PATH
           # rm -f .config*
 
@@ -349,8 +350,8 @@ jobs:
           /bin/bash $GITHUB_WORKSPACE/rewrite.sh
 
 
-          if [ -n "$(ls -A "$GITHUB_WORKSPACE/file" 2>/dev/null)" ]; then
-           cp -Rf $GITHUB_WORKSPACE/file/* ./
+          if [ -n "$(ls -A "$GITHUB_WORKSPACE/files" 2>/dev/null)" ]; then
+           cp -Rf $GITHUB_WORKSPACE/files/* ./
           fi                
 
           make -j$(($(nproc) + 1)) || make -j1 V=s
