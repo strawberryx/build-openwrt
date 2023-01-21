@@ -18,7 +18,7 @@ env:
   DIY_SCRIPT: scripts/diy/n1-lede.sh
   COM_SCRIPT: scripts/common.sh
 
-  MSG_PREFIX: "Ref: ${{ github.ref }}\nDevice: ${{ matrix.Device }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
+  
 
 jobs:
   Toolchain:
@@ -171,6 +171,8 @@ jobs:
       DEVICE_TARGET: ${{ needs.Toolchain.outputs.DEVICE_TARGET }}
       DEVICE_SUBTARGET: ${{ needs.Toolchain.outputs.DEVICE_SUBTARGET }}
       TOOLCHAIN_IMAGE: ${{ needs.Toolchain.outputs.TOOLCHAIN_IMAGE }}
+
+      MSG_PREFIX: "Ref: ${{ github.ref }}\nDevice: ${{ matrix.Device }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
 
     steps:
       - name: TG Notification - 🎉
