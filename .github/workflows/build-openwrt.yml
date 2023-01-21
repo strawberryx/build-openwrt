@@ -182,37 +182,6 @@ jobs:
           -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} 🎉 Building EvergreenWrt..."}' \
           https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
 
-
-      - name: 组合磁盘
-        run: |
-          export ROOT_FREE_KB=$(df --block-size=1024 --output=avail / | tail -1)
-          export ROOT_LOOP_KB=$(expr $ROOT_FREE_KB - 1048576)
-          export ROOT_LOOP_BYTES=$(expr $ROOT_LOOP_KB \* 1024)
-          sudo fallocate -l $ROOT_LOOP_BYTES /root.img
-          export ROOT_LOOP_DEVNAME=$(sudo losetup -Pf --show /root.img)
-          sudo pvcreate -f $ROOT_LOOP_DEVNAME
-          export MNT_FREE_KB=$(df --block-size=1024 --output=avail /mnt | tail -1)
-          export MNT_LOOP_KB=$(expr $MNT_FREE_KB - 102400)
-          export MNT_LOOP_BYTES=$(expr $MNT_LOOP_KB \* 1024)
-          sudo fallocate -l $MNT_LOOP_BYTES /mnt/mnt.img
-          export MNT_LOOP_DEVNAME=$(sudo losetup -Pf --show /mnt/mnt.img)
-          sudo pvcreate -f $MNT_LOOP_DEVNAME
-          sudo vgcreate vgstorage $ROOT_LOOP_DEVNAME $MNT_LOOP_DEVNAME
-          sudo lvcreate -n lvstorage -l 100%FREE vgstorage
-          export LV_DEVNAME=$(sudo lvscan | awk -F "'" '{print $2}')
-          sudo mkfs.btrfs -L combinedisk $LV_DEVNAME
-          sudo mount -o compress=zstd $LV_DEVNAME $GITHUB_WORKSPACE
-          sudo chown -R runner:runner $GITHUB_WORKSPACE
-          mkdir $GITHUB_WORKSPACE/tmp && chmod 777 $GITHUB_WORKSPACE/tmp
-          sudo cp -rp /tmp/* $GITHUB_WORKSPACE/tmp
-          sudo mount -B $GITHUB_WORKSPACE/tmp /tmp && df -hT          
-
-      - name: Check-out
-        run: |
-          git clone https://github.com/$GITHUB_REPOSITORY myrepo
-          cd myrepo
-          echo "MYREPO_PATH=$PWD" >> $GITHUB_ENV
-
       - name: Initialization environment
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -253,6 +222,39 @@ jobs:
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
 
+      - name: 组合磁盘
+        run: |
+          export ROOT_FREE_KB=$(df --block-size=1024 --output=avail / | tail -1)
+          export ROOT_LOOP_KB=$(expr $ROOT_FREE_KB - 1048576)
+          export ROOT_LOOP_BYTES=$(expr $ROOT_LOOP_KB \* 1024)
+          sudo fallocate -l $ROOT_LOOP_BYTES /root.img
+          export ROOT_LOOP_DEVNAME=$(sudo losetup -Pf --show /root.img)
+          sudo pvcreate -f $ROOT_LOOP_DEVNAME
+          export MNT_FREE_KB=$(df --block-size=1024 --output=avail /mnt | tail -1)
+          export MNT_LOOP_KB=$(expr $MNT_FREE_KB - 102400)
+          export MNT_LOOP_BYTES=$(expr $MNT_LOOP_KB \* 1024)
+          sudo fallocate -l $MNT_LOOP_BYTES /mnt/mnt.img
+          export MNT_LOOP_DEVNAME=$(sudo losetup -Pf --show /mnt/mnt.img)
+          sudo pvcreate -f $MNT_LOOP_DEVNAME
+          sudo vgcreate vgstorage $ROOT_LOOP_DEVNAME $MNT_LOOP_DEVNAME
+          sudo lvcreate -n lvstorage -l 100%FREE vgstorage
+          export LV_DEVNAME=$(sudo lvscan | awk -F "'" '{print $2}')
+          sudo mkfs.btrfs -L combinedisk $LV_DEVNAME
+          sudo mount -o compress=zstd $LV_DEVNAME $GITHUB_WORKSPACE
+          sudo chown -R runner:runner $GITHUB_WORKSPACE
+          mkdir $GITHUB_WORKSPACE/tmp && chmod 777 $GITHUB_WORKSPACE/tmp
+          sudo cp -rp /tmp/* $GITHUB_WORKSPACE/tmp
+          sudo mount -B $GITHUB_WORKSPACE/tmp /tmp && df -hT          
+
+      - name: Checkout
+        run: |
+          cd $GITHUB_WORKSPACE
+          git init
+          git remote add origin https://github.com/$GITHUB_REPOSITORY
+          git fetch
+          git checkout -t origin/$CURRENT_BRANCH
+
+
       - name: 检查服务器配置
         run: |
           echo "警告⚠"
@@ -284,11 +286,7 @@ jobs:
           git pull
 
 
-      - name: Add packages
-        run: |
-          cd $OPENWRT_PATH          
-          chmod +x $MYREPO_PATH/scripts/add-package.sh
-          $MYREPO_PATH/scripts/add-package.sh
+
 
       - name: Update feeds
         run: |
@@ -296,10 +294,16 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
+      - name: Add packages
+        run: |
+          cd $OPENWRT_PATH          
+          chmod +x $GITHUB_WORKSPACE/scripts/add-package.sh
+          $GITHUB_WORKSPACE/scripts/add-package.sh          
+
       - name: Load configuration
         run: |
 
-          cp $MYREPO_PATH/configs/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
+          cp $GITHUB_WORKSPACE/configs/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
           cd $OPENWRT_PATH
           # rm -f .config*
 
@@ -347,11 +351,11 @@ jobs:
 
           cd $OPENWRT_PATH
 
-          /bin/bash $MYREPO_PATH/rewrite.sh
+          /bin/bash $GITHUB_WORKSPACE/scripts/rewrite.sh
 
 
-          if [ -n "$(ls -A "$MYREPO_PATH/files" 2>/dev/null)" ]; then
-           cp -Rf $MYREPO_PATH/files/* ./
+          if [ -n "$(ls -A "$GITHUB_WORKSPACE/files" 2>/dev/null)" ]; then
+           cp -Rf $GITHUB_WORKSPACE/files/* ./
           fi                
 
           make -j$(($(nproc) + 1)) || make -j1 V=s
