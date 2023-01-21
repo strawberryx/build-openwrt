@@ -253,12 +253,7 @@ jobs:
           sudo mount -B $GITHUB_WORKSPACE/tmp /tmp && df -hT
 
       - name: Checkout
-        run: |
-          cd $GITHUB_WORKSPACE
-          git init
-          git remote add origin https://github.com/$GITHUB_REPOSITORY
-          git fetch
-          git checkout -t origin/dev
+        uses: actions/checkout@main
 
       - name: 准备Toolchain Image
         run: |
