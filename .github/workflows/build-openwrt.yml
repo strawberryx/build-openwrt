@@ -5,6 +5,11 @@ on:
   schedule:
     - cron: "0 19 * * *"
   workflow_dispatch:
+    inputs:
+      conf-url-x86:
+        description: "[x86] 使用这个自定义配置URL进行编译"
+        required: false
+        default: ""
 
 env:
   SOURCE_URL: https://github.com/coolsnowwolf/lede
@@ -295,8 +300,6 @@ jobs:
 
           cp $GITHUB_WORKSPACE/configs/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
           cd $OPENWRT_PATH
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
           make defconfig
 
       ###########################################################################################
