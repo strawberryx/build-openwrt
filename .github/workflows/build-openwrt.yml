@@ -265,6 +265,7 @@ jobs:
           echo "--------------------------硬盘信息--------------------------"
           echo "硬盘数量：$(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
 
+      ###########################################################################################
 
       - name: 准备Toolchain Image
         run: |
@@ -281,11 +282,7 @@ jobs:
           cd $OPENWRT_PATH
           git pull
 
-      - name: Update feeds
-        run: |
-          cd $OPENWRT_PATH
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
+      ###########################################################################################
 
       - name: Add packages
         run: |
@@ -293,17 +290,16 @@ jobs:
           chmod +x $GITHUB_WORKSPACE/scripts/add-package.sh
           $GITHUB_WORKSPACE/scripts/add-package.sh
 
-      - name: Load configuration
+      - name: Update configuration
         run: |
 
           cp $GITHUB_WORKSPACE/configs/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
           cd $OPENWRT_PATH
-          # rm -f .config*
-
-      - name: make defconfig
-        run: |
-          cd $OPENWRT_PATH
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
           make defconfig
+
+      ###########################################################################################
 
       - name: echo openwrt config
         run: cat $OPENWRT_PATH/.config
@@ -351,6 +347,8 @@ jobs:
            cp -Rf $GITHUB_WORKSPACE/files/* ./
           fi
 
+      ###########################################################################################
+
       - name: 编译Packages
         id: compile
         run: |
@@ -373,6 +371,8 @@ jobs:
           echo "status=success" >> $GITHUB_OUTPUT
           make json_overview_image_info
           make checksum
+
+      ###########################################################################################
 
       - name: Storage Spaces
         run: |
@@ -429,6 +429,8 @@ jobs:
           tag_name: "EvergreenWrt"
           body_path: release.txt
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
+
+      ###########################################################################################
 
       - name: TG Notification - ❌
         if: ${{ !success() }}
