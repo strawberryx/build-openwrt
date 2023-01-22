@@ -410,7 +410,7 @@ jobs:
         if: contains(matrix.Device, 'n1')
         uses: ophub/flippy-openwrt-actions@main
         env:
-          OPENWRT_ARMVIRT: $OPENWRT_PATH/bin/targets/*/*/*.tar.gz
+          OPENWRT_ARMVIRT: workspace/openwrt/bin/targets/*/*/*rootfs.tar.gz
           PACKAGE_SOC: s905d
           WHOAMI: EvergreenWrt
 
