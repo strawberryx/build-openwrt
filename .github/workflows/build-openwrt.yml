@@ -294,6 +294,9 @@ jobs:
           cd $OPENWRT_PATH          
           chmod +x $GITHUB_WORKSPACE/scripts/add-package.sh
           $GITHUB_WORKSPACE/scripts/add-package.sh
+          git pull
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
 
       - name: Update configuration
         run: |

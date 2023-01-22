@@ -15,6 +15,4 @@ cd package
 svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic luci-app-amlogic
 
 
-git pull
-./scripts/feeds update -a
-./scripts/feeds install -a
+
