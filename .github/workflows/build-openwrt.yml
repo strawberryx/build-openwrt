@@ -89,7 +89,7 @@ jobs:
           export DEVICE_SUBTARGET=$(cat .config | grep CONFIG_TARGET_SUBTARGET | awk -F '"' '{print $2}')
           echo "DEVICE_SUBTARGET=$DEVICE_SUBTARGET" >> $GITHUB_ENV
           echo "DEVICE_SUBTARGET=$(echo $DEVICE_SUBTARGET)" >> $GITHUB_OUTPUT
-          export TOOLCHAIN_IMAGE="toolchain-$SOURCE_REPO-$SOURCE_BRANCH-$DEVICE_TARGET-$DEVICE_SUBTARGET"
+          export TOOLCHAIN_IMAGE="toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}"
           echo "TOOLCHAIN_IMAGE=$TOOLCHAIN_IMAGE" >> $GITHUB_ENV
           echo "TOOLCHAIN_IMAGE=$(echo $TOOLCHAIN_IMAGE)" >> $GITHUB_OUTPUT
 
@@ -265,15 +265,6 @@ jobs:
           echo "--------------------------硬盘信息--------------------------"
           echo "硬盘数量：$(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
 
-      - name: 获取配置信息
-        run: |
-          cd $GITHUB_WORKSPACE/configs/${{ matrix.Device }}
-
-          export DEVICE_TARGET=$(cat .config | grep CONFIG_TARGET_BOARD | awk -F '"' '{print $2}')
-          echo "DEVICE_TARGET=$DEVICE_TARGET" >> $GITHUB_ENV    
-
-          export DEVICE_SUBTARGET=$(cat .config | grep CONFIG_TARGET_SUBTARGET | awk -F '"' '{print $2}')
-          echo "DEVICE_SUBTARGET=$DEVICE_SUBTARGET" >> $GITHUB_ENV
 
       - name: 准备Toolchain Image
         run: |
@@ -282,10 +273,10 @@ jobs:
           for i in {0..9}
           do
             echo downloading..
-            curl -fsL https://github.com/$GITHUB_REPOSITORY/releases/download/$TOOLCHAIN_TAG/toolchain-$SOURCE_REPO-$SOURCE_BRANCH-$DEVICE_TARGET-$DEVICE_SUBTARGET.img.0$i >> toolchain-$SOURCE_REPO-$SOURCE_BRANCH-$DEVICE_TARGET-$DEVICE_SUBTARGET.img || break
+            curl -fsL https://github.com/$GITHUB_REPOSITORY/releases/download/$TOOLCHAIN_TAG/toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img.0$i >> toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img || break
           done
           mkdir openwrt-ro openwrt workdir overlay
-          sudo mount -o loop toolchain-$SOURCE_REPO-$SOURCE_BRANCH-$DEVICE_TARGET-$DEVICE_SUBTARGET.img openwrt-ro
+          sudo mount -o loop toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img openwrt-ro
           sudo mount -t overlay overlay -o lowerdir=openwrt-ro,upperdir=overlay,workdir=workdir openwrt
           cd $OPENWRT_PATH
           git pull
