@@ -1,4 +1,4 @@
-name: Build EvergreenWrt
+name: Build Redstone
 
 on:
   push:
@@ -71,7 +71,7 @@ jobs:
 
       - name: 生成Toolchain配置
         run: |
-          svn co https://github.com/c3p7f2/build-openwrt/trunk/config config
+          svn co https://github.com/c3p7f2/build-openwrt/trunk/configs config
           mv config/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
           echo -e "\nCONFIG_ALL=y" >> $OPENWRT_PATH/.config
           echo -e "\nCONFIG_ALL_NONSHARED=y" >> $OPENWRT_PATH/.config
@@ -181,7 +181,7 @@ jobs:
         run: |
           curl -sX POST \
           -H 'Content-Type: application/json' \
-          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} 🎉 Building EvergreenWrt..."}' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} 🎉 Building Redstone..."}' \
           https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
 
       - name: Initialization environment
@@ -412,7 +412,7 @@ jobs:
         env:
           OPENWRT_ARMVIRT: workspace/openwrt/bin/targets/*/*/*rootfs.tar.gz
           PACKAGE_SOC: s905d
-          WHOAMI: EvergreenWrt
+          WHOAMI: Redstone
 
       - name: Organize files
         if: ${{ contains(matrix.Device, 'n1') }}
@@ -431,8 +431,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: "EvergreenWrt | 固件下载"
-          tag_name: "EvergreenWrt"
+          name: "Redstone | 固件下载"
+          tag_name: "Redstone"
           body_path: release.txt
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 

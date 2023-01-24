@@ -31,13 +31,13 @@ echo "DISTRIB_REVISION='R$(TZ=UTC-8 date "+%-m.%-d")'" >> /etc/openwrt_release
 sed -i '/DISTRIB_RELEASE/d' /etc/openwrt_release
 echo "DISTRIB_RELEASE='$(TZ=UTC-8 date "+%Y.%-m.%-d")'" >> /etc/openwrt_release
 sed -i '/DISTRIB_DESCRIPTION/d' /etc/openwrt_release
-echo "DISTRIB_DESCRIPTION='OpenWrt '" >> /etc/openwrt_release
+echo "DISTRIB_DESCRIPTION='Redstone '" >> /etc/openwrt_release
 
-sed -i 's/LuCI Master/EvergreenWrt/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI openwrt-18.06 branch/EvergreenWrt/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI openwrt-18.06-k5.4 branch/EvergreenWrt/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI 17.01 Lienol/EvergreenWrt/g' /usr/lib/lua/luci/version.lua
-sed -i 's/LuCI openwrt-21.02 branch/EvergreenWrt/g' /usr/lib/lua/luci/version.lua
+sed -i 's/LuCI Master/Redstone/g' /usr/lib/lua/luci/version.lua
+sed -i 's/LuCI openwrt-18.06 branch/Redstone/g' /usr/lib/lua/luci/version.lua
+sed -i 's/LuCI openwrt-18.06-k5.4 branch/Redstone/g' /usr/lib/lua/luci/version.lua
+sed -i 's/LuCI 17.01 Lienol/Redstone/g' /usr/lib/lua/luci/version.lua
+sed -i 's/LuCI openwrt-21.02 branch/Redstone/g' /usr/lib/lua/luci/version.lua
 sed -i '/luciversion/d' /usr/lib/lua/luci/version.lua
 echo "luciversion = '$(TZ=UTC-8 date "+%Y.%-m.%-d")'" >> /usr/lib/lua/luci/version.lua
 
