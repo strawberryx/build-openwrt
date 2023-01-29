@@ -1,7 +1,7 @@
 name: Build Redstone
 
 on:
-  push:
+  # push:
   schedule:
     - cron: "0 19 * * *"
   workflow_dispatch:
@@ -10,6 +10,12 @@ on:
         description: "[x86] 使用这个自定义配置URL进行编译"
         required: false
         default: ""
+
+    debug_enabled:
+      type: boolean
+      description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+      required: false
+      default: false        
 
 env:
   SOURCE_URL: https://github.com/coolsnowwolf/lede
@@ -53,8 +59,7 @@ jobs:
           sudo -E apt-get -qq install $(curl -fsSL is.gd/depends_ubuntu_2204)
           sudo -E apt-get -qq install aria2 clang clangd ecj lib32gcc-s1 libfuse-dev libncursesw5 \
                                   libpython3-dev lld lldb python3-ply re2c
-          sudo -E apt-get -qq autoremove --purge
-          sudo -E apt-get -qq clean
+
           sudo timedatectl set-timezone "$TZ"
 
       - name: 克隆源码
@@ -304,6 +309,10 @@ jobs:
           cp $GITHUB_WORKSPACE/configs/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
           cd $OPENWRT_PATH
           make defconfig
+
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}       
 
       ###########################################################################################
 
