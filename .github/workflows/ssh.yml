@@ -35,5 +35,5 @@ jobs:
           
 
           docker run --name=go --net=host -it -d -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine tcp 6901
-          docker run --rm -it --shm-size=512m -p 6901:6901 -e VNC_PW=password kasmweb/hunchly:1.12.0
-          docker logs -f go
+          docker run --name=go1 -d --shm-size=512m -p 6901:6901 -e VNC_PW=password kasmweb/hunchly:1.12.0
+          docker logs -f go1
