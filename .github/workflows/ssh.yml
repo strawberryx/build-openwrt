@@ -34,6 +34,15 @@ jobs:
           
           
 
-          docker run --name=go --net=host -it -d -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine tcp 6901
-          docker run --name=go1 -d --shm-size=512m -p 6901:6901 -e VNC_PW=password kasmweb/hunchly:1.12.0
-          docker logs -f go1
+          docker run --name=go --net=host -it -d -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine tcp 8080
+          docker run -d \
+            --name=qbittorrent \
+            -e PUID=1000 \
+            -e PGID=1000 \
+            -e TZ=Europe/London \
+            -e WEBUI_PORT=8080 \
+            --net=host \
+            --restart unless-stopped \
+            lscr.io/linuxserver/qbittorrent:latest          
+
+          docker logs -f qbittorrent
