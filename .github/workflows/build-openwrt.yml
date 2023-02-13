@@ -1,7 +1,7 @@
 name: Build Redstone
 
 on:
-  #push:
+  push:
   schedule:
     - cron: "0 19 * * *"
   workflow_dispatch:
@@ -159,7 +159,7 @@ jobs:
 
   build:
     needs: [Toolchain]
-    runs-on: ubuntu-latest-16-cores
+    runs-on: ubuntu-latest-8-cores
     strategy:
       fail-fast: false
       matrix:
