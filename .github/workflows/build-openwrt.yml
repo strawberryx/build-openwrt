@@ -159,7 +159,7 @@ jobs:
 
   build:
     needs: [Toolchain]
-    runs-on: ubuntu-latest-8-cores
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
