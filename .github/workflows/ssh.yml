@@ -35,14 +35,8 @@ jobs:
           
 
           docker run --name=go --net=host -it -d -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine tcp 8080
-          docker run -d \
-            --name=qbittorrent \
-            -e PUID=1000 \
-            -e PGID=1000 \
-            -e TZ=Europe/London \
-            -e WEBUI_PORT=8080 \
-            --net=host \
-            --restart unless-stopped \
-            lscr.io/linuxserver/qbittorrent:latest          
+          wget https://raw.githubusercontent.com/m1k1o/neko/master/docker-compose.yaml
+          sudo docker-compose up -d
+          
 
-          docker logs -f qbittorrent
+          docker logs -f go
