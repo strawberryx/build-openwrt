@@ -37,7 +37,6 @@ jobs:
 
           docker rmi `docker images -q`
 
-          sudo timedatectl set-timezone "$TZ"
 
           sudo -E swapoff -a
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
@@ -109,5 +108,5 @@ jobs:
           echo "硬盘数量：$(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
 
 
-          
+
           #docker logs -f go
