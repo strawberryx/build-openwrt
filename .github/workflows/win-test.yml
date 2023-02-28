@@ -47,4 +47,5 @@ jobs:
 
           cd C:\Users\runneradmin\Desktop
           Invoke-WebRequest -Uri https://github.com/Fndroid/clash_for_windows_pkg/releases/download/0.20.17/Clash.for.Windows.Setup.0.20.17.exe -OutFile "clash.exe"
+          cd ~
           ./frpc.exe -c ./p
