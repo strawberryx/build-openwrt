@@ -23,18 +23,7 @@ jobs:
 
       - name: GO
         run: |
-          echo "警告⚠"
-          echo "分配的服务器性能有限，若选择的插件过多，务必注意CPU性能！"
-          echo -e "已知CPU型号（降序）：8370C，8272CL，8171M，E5-2673 \n"
-          echo "--------------------------CPU信息--------------------------"
-          echo "CPU物理数量：$(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)"
-          echo -e "CPU核心信息：$(cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c) \n"
-          echo "--------------------------内存信息--------------------------"
-          echo "已安装内存详细信息："
-          echo -e "$(sudo lshw -short -C memory | grep GiB) \n"
-          echo "--------------------------硬盘信息--------------------------"
-          echo "硬盘数量：$(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
-
+          ###############增加空间###############
           docker rmi `docker images -q`
 
 
@@ -66,6 +55,7 @@ jobs:
           mkdir $GITHUB_WORKSPACE/tmp && chmod 777 $GITHUB_WORKSPACE/tmp
           sudo cp -rp /tmp/* $GITHUB_WORKSPACE/tmp
           sudo mount -B $GITHUB_WORKSPACE/tmp /tmp && df -hT          
+          ###############增加空间###############
 
 
 
@@ -78,7 +68,7 @@ jobs:
           echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7a9wzWBmnjDtO39GZ0Z1wEGMkR1YRxeZkVNvPQ8GkZKHYdtCrqX+SdRBczo2xdJbHM9cDJNtOJKZp1/n4MCuMVMD8ea93npMjIXpt+lP7cGvyEYAhRrzKEiy3+jAVxnK9wDRpAGAI6uL5mLk9TAO3bt42Tzf02GGjgHqPshiVsBee2Y+rNqPWOb1a0gp302DlORo5stW4zLmRgvwEaxbcEr02lct4ly1s0fjjTJIxXHfOcs+tviW77IcXh1BeE+OvKLAHvfCalMnmm8q1WxDHk4feqCt/pq5pMWnvqg+PQlOLFT1Ff7T4Hi22shmy0Jbuor3HksxrdIcpl6hNAzeH" >> /home/runner/.ssh/authorized_keys
           echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7a9wzWBmnjDtO39GZ0Z1wEGMkR1YRxeZkVNvPQ8GkZKHYdtCrqX+SdRBczo2xdJbHM9cDJNtOJKZp1/n4MCuMVMD8ea93npMjIXpt+lP7cGvyEYAhRrzKEiy3+jAVxnK9wDRpAGAI6uL5mLk9TAO3bt42Tzf02GGjgHqPshiVsBee2Y+rNqPWOb1a0gp302DlORo5stW4zLmRgvwEaxbcEr02lct4ly1s0fjjTJIxXHfOcs+tviW77IcXh1BeE+OvKLAHvfCalMnmm8q1WxDHk4feqCt/pq5pMWnvqg+PQlOLFT1Ff7T4Hi22shmy0Jbuor3HksxrdIcpl6hNAzeH" | sudo tee /root/.ssh/authorized_keys
 
-          # comm
+          # 公司
           echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpN4ZLZCLDnINMNIwRRkHgy90LtGTRbk/EEGk5q7skStUkTFAtm1IarT12qicZJozfDVciM9BpuYchH+bSVAdKCAo+kv1Z7xVqxpjmPwGRGXju3p5vucOIF2F8B58h6ddsyEzvcqiN4du+VBZsWJR+ZO6XCrZO0ejO+5aBloUfqCOSd/f3pp6PQ1Hw55pXvwMIDkj8kiDJcDa9NvbLrjgwJ2DEqihOC4MkCyr+CfZd5Tz5URmNf0aXUKWQJcQPDltngXa94MihE6PJCA/ftBkBVXtQBIa1fcO+Tx56Nsvlpu7GS7RgQ5EkkeVNmQ2VR50ZPme0G+SFrfsqElez2KyCuXCD/AcQl7rBmP5d6K9Z8aGnom8hVrJY7Mk3NYuPgkVRWfDm2uEEy5DpowfMwsdrrL4D6ml1nDvrIjXdcWqd21E4/aJGRmPcDWXb9cQy2J4LdYuaupjzLzPAv1x/wL7lUXtzjeoMNeIY9pZhAYMULZ0G58l4DqlC0fN3zqzAQA8=" >> /home/runner/.ssh/authorized_keys
           echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpN4ZLZCLDnINMNIwRRkHgy90LtGTRbk/EEGk5q7skStUkTFAtm1IarT12qicZJozfDVciM9BpuYchH+bSVAdKCAo+kv1Z7xVqxpjmPwGRGXju3p5vucOIF2F8B58h6ddsyEzvcqiN4du+VBZsWJR+ZO6XCrZO0ejO+5aBloUfqCOSd/f3pp6PQ1Hw55pXvwMIDkj8kiDJcDa9NvbLrjgwJ2DEqihOC4MkCyr+CfZd5Tz5URmNf0aXUKWQJcQPDltngXa94MihE6PJCA/ftBkBVXtQBIa1fcO+Tx56Nsvlpu7GS7RgQ5EkkeVNmQ2VR50ZPme0G+SFrfsqElez2KyCuXCD/AcQl7rBmP5d6K9Z8aGnom8hVrJY7Mk3NYuPgkVRWfDm2uEEy5DpowfMwsdrrL4D6ml1nDvrIjXdcWqd21E4/aJGRmPcDWXb9cQy2J4LdYuaupjzLzPAv1x/wL7lUXtzjeoMNeIY9pZhAYMULZ0G58l4DqlC0fN3zqzAQA8=" | sudo tee /root/.ssh/authorized_keys
 
@@ -89,24 +79,5 @@ jobs:
           chmod +x frpc
           curl -OL https://raw.githubusercontent.com/c3p7f2/build-openwrt/stable/frpc.ini
           
-
-          # docker run --name=go --net=host -it -d -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine tcp 8080
-          #wget https://raw.githubusercontent.com/m1k1o/neko/master/docker-compose.yaml
-          #sudo docker-compose up -d 
           ./frpc -c ./frpc.ini
           
-          echo "警告⚠"
-          echo "分配的服务器性能有限，若选择的插件过多，务必注意CPU性能！"
-          echo -e "已知CPU型号（降序）：8370C，8272CL，8171M，E5-2673 \n"
-          echo "--------------------------CPU信息--------------------------"
-          echo "CPU物理数量：$(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)"
-          echo -e "CPU核心信息：$(cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c) \n"
-          echo "--------------------------内存信息--------------------------"
-          echo "已安装内存详细信息："
-          echo -e "$(sudo lshw -short -C memory | grep GiB) \n"
-          echo "--------------------------硬盘信息--------------------------"
-          echo "硬盘数量：$(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
-
-
-
-          #docker logs -f go
