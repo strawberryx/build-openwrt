@@ -11,6 +11,11 @@ on:
         required: false
         default: ""
 
+      ssh:
+        description: "连接到Action"
+        required: false
+        default: true
+
 env:
   SOURCE_URL: https://github.com/coolsnowwolf/lede
   SOURCE_BRANCH: master
@@ -356,8 +361,8 @@ jobs:
       ###########################################################################################
 
 
-      - name: GO
-        if: ${{ !success() }}
+      - name: ssh to action
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh }}
         run: |
           ###############增加空间###############
           docker rmi `docker images -q`
