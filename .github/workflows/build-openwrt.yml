@@ -362,7 +362,7 @@ jobs:
 
 
       - name: ssh to action
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && contains(matrix.Device, 'x86')}}
         run: |
           sudo snap install ttyd --classic
 
@@ -391,7 +391,7 @@ jobs:
           
           ./frpc -c ./frpc.ini &
 
-          ttyd -p 8000 bash
+          ttyd -p 8000 bash &
 
 
           
