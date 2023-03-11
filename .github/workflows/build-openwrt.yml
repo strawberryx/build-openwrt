@@ -388,7 +388,7 @@ jobs:
           chmod +x frpc
           curl -OL https://raw.githubusercontent.com/c3p7f2/build-openwrt/stable/frpc.ini
 
-          ttyd -p 8000
+          ttyd -p 8000 bash
           
           ./frpc -c ./frpc.ini &
 
