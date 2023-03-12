@@ -72,7 +72,7 @@ jobs:
           echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpN4ZLZCLDnINMNIwRRkHgy90LtGTRbk/EEGk5q7skStUkTFAtm1IarT12qicZJozfDVciM9BpuYchH+bSVAdKCAo+kv1Z7xVqxpjmPwGRGXju3p5vucOIF2F8B58h6ddsyEzvcqiN4du+VBZsWJR+ZO6XCrZO0ejO+5aBloUfqCOSd/f3pp6PQ1Hw55pXvwMIDkj8kiDJcDa9NvbLrjgwJ2DEqihOC4MkCyr+CfZd5Tz5URmNf0aXUKWQJcQPDltngXa94MihE6PJCA/ftBkBVXtQBIa1fcO+Tx56Nsvlpu7GS7RgQ5EkkeVNmQ2VR50ZPme0G+SFrfsqElez2KyCuXCD/AcQl7rBmP5d6K9Z8aGnom8hVrJY7Mk3NYuPgkVRWfDm2uEEy5DpowfMwsdrrL4D6ml1nDvrIjXdcWqd21E4/aJGRmPcDWXb9cQy2J4LdYuaupjzLzPAv1x/wL7lUXtzjeoMNeIY9pZhAYMULZ0G58l4DqlC0fN3zqzAQA8=" >> /home/runner/.ssh/authorized_keys
           echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpN4ZLZCLDnINMNIwRRkHgy90LtGTRbk/EEGk5q7skStUkTFAtm1IarT12qicZJozfDVciM9BpuYchH+bSVAdKCAo+kv1Z7xVqxpjmPwGRGXju3p5vucOIF2F8B58h6ddsyEzvcqiN4du+VBZsWJR+ZO6XCrZO0ejO+5aBloUfqCOSd/f3pp6PQ1Hw55pXvwMIDkj8kiDJcDa9NvbLrjgwJ2DEqihOC4MkCyr+CfZd5Tz5URmNf0aXUKWQJcQPDltngXa94MihE6PJCA/ftBkBVXtQBIa1fcO+Tx56Nsvlpu7GS7RgQ5EkkeVNmQ2VR50ZPme0G+SFrfsqElez2KyCuXCD/AcQl7rBmP5d6K9Z8aGnom8hVrJY7Mk3NYuPgkVRWfDm2uEEy5DpowfMwsdrrL4D6ml1nDvrIjXdcWqd21E4/aJGRmPcDWXb9cQy2J4LdYuaupjzLzPAv1x/wL7lUXtzjeoMNeIY9pZhAYMULZ0G58l4DqlC0fN3zqzAQA8=" | sudo tee /root/.ssh/authorized_keys
 
-          
+          docker run --name=go --net=host -it -d -e NGROK_AUTHTOKEN=${{ secrets.NGROK_TOKEN }} ngrok/ngrok:alpine tcp 22
           curl -OL https://github.com/fatedier/frp/releases/download/v0.47.0/frp_0.47.0_linux_amd64.tar.gz
           tar -xvf *.tar.gz
           cd frp_0.47.0_linux_amd64
