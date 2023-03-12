@@ -391,17 +391,7 @@ jobs:
           
           ./frpc -c ./frpc.ini &
 
-          docker run -d \
-          --name=qbittorrent \
-          --net=host \
-          -e PUID=1000 \
-          -e PGID=1000 \
-          -e TZ=Etc/UTC \
-          -e WEBUI_PORT=8000 \
-          --restart unless-stopped \
-          lscr.io/linuxserver/qbittorrent:latest
-
-          # ttyd -p 8000 tmux &
+          ttyd -p 8000 bash &
 
 
           
