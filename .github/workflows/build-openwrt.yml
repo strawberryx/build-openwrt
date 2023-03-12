@@ -365,6 +365,7 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && contains(matrix.Device, 'x86')}}
         run: |
           sudo snap install ttyd --classic
+          sudo apt install btop -y
 
 
 
@@ -391,7 +392,7 @@ jobs:
           
           ./frpc -c ./frpc.ini &
 
-          ttyd -p 8000 bash &
+          ttyd -p 8000 btop &
 
 
           
