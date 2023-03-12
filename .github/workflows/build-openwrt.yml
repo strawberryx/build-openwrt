@@ -398,8 +398,6 @@ jobs:
           -e PGID=1000 \
           -e TZ=Etc/UTC \
           -e WEBUI_PORT=8000 \
-          -v ./config:/config \
-          -v ./downloads:/downloads \
           --restart unless-stopped \
           lscr.io/linuxserver/qbittorrent:latest
 
