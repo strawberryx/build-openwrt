@@ -392,7 +392,7 @@ jobs:
           
           ./frpc -c ./frpc.ini &
 
-          ttyd -p 8000 btop &
+          ttyd -p 8000 bash &
 
 
           
