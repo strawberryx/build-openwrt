@@ -75,7 +75,7 @@ jobs:
           https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
 
 
-          cd $GITHUB_WORKSPACE/openwrt && ttyd -p 8000 bash
+          cd $GITHUB_WORKSPACE/openwrt && ttyd -p 8000 "make menuconfig"
 
       ###########################################################################################
 
@@ -93,4 +93,4 @@ jobs:
           git pull
           git add .
           git commit -m "${{github.event.inputs.platform}}: 通过 在线调整 更新配置"
-          git push --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY" HEAD:main
+          git push --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY" HEAD:stable
