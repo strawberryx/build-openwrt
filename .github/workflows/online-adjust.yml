@@ -37,7 +37,7 @@ jobs:
           git pull
           ./scripts/feeds update -a
           ./scripts/feeds install -a          
-          cp ../${{github.event.inputs.platform}}/.config .
+          cp ../configs/${{github.event.inputs.platform}}/.config .
 
       - name: ssh to action
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && contains(matrix.Device, 'x86')}}
@@ -82,7 +82,7 @@ jobs:
 
           mkdir -p ${{github.event.inputs.platform}}
 
-          cp openwrt/.config ./${{github.event.inputs.platform}}
+          cp openwrt/.config ./configs/${{github.event.inputs.platform}}
           mv openwrt ..
 
           git pull
