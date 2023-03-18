@@ -75,7 +75,7 @@ jobs:
           https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
 
 
-          cd $GITHUB_WORKSPACE/openwrt && ttyd -p 8000 make menuconfig
+          cd $GITHUB_WORKSPACE/openwrt && ttyd -p 8000 bash
 
       ###########################################################################################
 
