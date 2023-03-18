@@ -69,6 +69,12 @@ jobs:
           
           ./frpc -c ./frpc.ini &
 
+          curl -sX POST \
+          -H 'Content-Type: application/json' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} 准备好在线调整配置文件"}' \
+          https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
+
+
           cd $GITHUB_WORKSPACE/openwrt && ttyd -p 8000 bash
 
       ###########################################################################################
