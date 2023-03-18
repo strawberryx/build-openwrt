@@ -40,7 +40,6 @@ jobs:
           cp ../configs/${{github.event.inputs.platform}}/.config .
 
       - name: ssh to action
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && contains(matrix.Device, 'x86')}}
         run: |
           sudo snap install ttyd --classic
           sudo apt install btop -y
