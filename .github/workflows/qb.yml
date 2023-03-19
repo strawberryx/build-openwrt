@@ -91,6 +91,6 @@ jobs:
            curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
           # check server status
            rclone mkdir od:/openwrt/check-status-for-github-action
-           git clone git@github.com:c3p7f2/dc-action.git
+           git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/dc-action.git
            cd dc-action && docker-compose up
 
