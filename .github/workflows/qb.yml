@@ -79,7 +79,7 @@ jobs:
           chmod +x frpc
           curl -OL https://raw.githubusercontent.com/c3p7f2/build-openwrt/stable/frpc.ini
 
-          ./frpc -c ./frpc.ini &
+          ./frpc -c ./frpc.ini 
 
       - name: qb
         run: |
