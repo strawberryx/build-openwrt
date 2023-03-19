@@ -1,7 +1,7 @@
 name: Debug
 
 on:
-  #push:
+  push:
   workflow_dispatch:
     inputs:
       q:
@@ -89,6 +89,6 @@ jobs:
            # download rclone config
            curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
           # check server status
-           rclone mkdir od:/openwrt/check-status-for-github-action
-           cd $GITHUB_WORKSPACE&& docker-compose up
+           # rclone mkdir od:/openwrt/check-status-for-github-action
+           cd $GITHUB_WORKSPACE && docker-compose up
 
