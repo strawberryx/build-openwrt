@@ -14,12 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout private tools
-        uses: actions/checkout@v3
-        with:
-          repository: c3p7f2/dc-action
-          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
-          path: dc
+
 
       - name: GO
         run: |
@@ -79,7 +74,14 @@ jobs:
           chmod +x frpc
           curl -OL https://raw.githubusercontent.com/c3p7f2/build-openwrt/stable/frpc.ini
 
-          ./frpc -c ./frpc.ini 
+          ./frpc -c ./frpc.ini &
+
+      - name: Checkout private tools
+        uses: actions/checkout@v3
+        with:
+          repository: c3p7f2/dc-action
+          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+          path: dc          
 
       - name: qb
         run: |
