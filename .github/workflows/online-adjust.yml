@@ -74,7 +74,8 @@ jobs:
 
 
           cd $GITHUB_WORKSPACE/openwrt && ttyd -p 8000 bash
-
+          # ps -ef | grep ttyd | grep -v grep | awk '{print $2}' | xargs kill
+          echo "继续以下步骤请在终端输入：ps -ef | grep ttyd | grep -v grep | awk '{print \$2}' | xargs kill"
       ###########################################################################################
 
       - name: diff 配置
