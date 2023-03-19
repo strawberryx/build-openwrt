@@ -23,6 +23,7 @@ jobs:
 
       - name: GO
         run: |
+          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/c3p7f2/dc-action.git          
           ###############增加空间###############
           docker rmi `docker images -q`
 
@@ -91,6 +92,5 @@ jobs:
            curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
           # check server status
            rclone mkdir od:/openwrt/check-status-for-github-action
-           git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/dc-action.git
            cd dc-action && docker-compose up
 
