@@ -22,7 +22,6 @@ jobs:
 
       - name: GO
         run: |
-          git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/c3p7f2/dc-action.git          
           ###############增加空间###############
           docker rmi `docker images -q`
 
