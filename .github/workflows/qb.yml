@@ -92,5 +92,5 @@ jobs:
           # check server status
            # rclone mkdir od:/openwrt/check-status-for-github-action
            ls -l /home/runner/work/
-           cd /home/runner/work/build-openwrt/dc && docker-compose up
+           cd $GITHUB_WORKSPACE/dc && docker-compose up
 
