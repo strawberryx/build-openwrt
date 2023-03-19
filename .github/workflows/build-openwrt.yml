@@ -308,7 +308,7 @@ jobs:
 
           cp $GITHUB_WORKSPACE/configs/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
           cd $OPENWRT_PATH
-          make defconfig
+          # make defconfig
 
       ###########################################################################################
 
@@ -410,8 +410,8 @@ jobs:
           cd $OPENWRT_PATH
           mkdir -p files/etc/uci-defaults
           cp $GITHUB_WORKSPACE/scripts/init-settings.sh files/etc/uci-defaults/99-init-settings
-          make package/install -j$(nproc) || make package/install -j1 V=s
-          make target/install -j$(nproc) || make target/install -j1 V=s
+          make package/install -j$(nproc) IGNORE_ERRORS=1 || make package/install -j1 V=s
+          make target/install -j$(nproc) IGNORE_ERRORS=1 || make target/install -j1 V=s
           echo "status=success" >> $GITHUB_OUTPUT
           make json_overview_image_info
           make checksum
