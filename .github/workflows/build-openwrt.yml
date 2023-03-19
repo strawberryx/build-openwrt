@@ -308,7 +308,7 @@ jobs:
 
           cp $GITHUB_WORKSPACE/configs/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
           cd $OPENWRT_PATH
-          # make defconfig
+          make defconfig
 
       ###########################################################################################
 
