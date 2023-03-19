@@ -226,8 +226,8 @@ jobs:
           # check server status
            # rclone mkdir od:/openwrt/check-status-for-github-action
            ls -l /home/runner/work/
-           cd $GITHUB_WORKSPACE/dc && docker-compose up      
-               
+           cd $GITHUB_WORKSPACE/dc && docker-compose up -d  
+
       - name: TG Notification - 🎉
         run: |
           curl -sX POST \
