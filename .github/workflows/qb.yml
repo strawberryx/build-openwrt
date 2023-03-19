@@ -1,7 +1,7 @@
 name: Debug
 
 on:
-  push:
+  # push:
   workflow_dispatch:
     inputs:
       q:
