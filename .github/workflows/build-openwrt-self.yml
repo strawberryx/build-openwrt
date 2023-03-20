@@ -261,6 +261,7 @@ jobs:
       - name: Checkout
         run: |
           cd $GITHUB_WORKSPACE
+          rm -rf ./*
           git init
           git remote add origin https://github.com/$GITHUB_REPOSITORY
           git fetch
