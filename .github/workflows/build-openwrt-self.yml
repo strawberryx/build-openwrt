@@ -1,7 +1,7 @@
 name: Build Redstone
 
 on:
-  # push:
+  push:
   schedule:
     - cron: "0 19 * * *"
   workflow_dispatch:
@@ -213,7 +213,7 @@ jobs:
           ulimit -t unlimited
           ulimit -v unlimited
 
-          docker rmi `docker images -q`
+          # docker rmi `docker images -q`
 
           sudo timedatectl set-timezone "$TZ"
 
