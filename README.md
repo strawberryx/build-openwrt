@@ -8,6 +8,9 @@
 
 > 一个在UI外观和功能上平衡的OpenWrt固件
 
+<img src="./img/index.png" width="auto" height="auto"/>
+<img src="./img/plugins.png" width="auto" height="auto"/>
+
 
 | 默认登陆 IP | 默认账号 | 默认密码 |
 | ----------- | -------- | -------- |
