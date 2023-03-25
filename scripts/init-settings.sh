@@ -1,7 +1,7 @@
 #!/bin/bash
 
 uci set luci.main.lang=zh_cn
-uci set luci.main.mediaurlbase='/luci-static/bootstrap'
+uci set luci.main.mediaurlbase='/luci-static/design'
 uci commit luci
 
 uci -q batch <<-EOF
