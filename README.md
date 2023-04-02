@@ -22,7 +22,23 @@
 | ------------------------------------------ |
 | x86                                        |
 | VMware、Esxi（需下载拓展名为 vmdk 的固件） |
-| 斐讯 N1                                    |
+| vplus                                      |
+| beikeyun                                   |
+| l1pro                                      |
+| rock5b                                     |
+| h88k                                       |
+| r66s                                       |
+| r68s                                       |
+| h68k                                       |
+| e25                                        |
+| s905                                       |
+| s905d                                      |
+| s905x2                                     |
+| s905x3                                     |
+| s912                                       |
+| s922x                                      |
+| s922x-n2                                   |
+| qemu                                       |
 | xiaomi-cr660x                              |
 | redmi-ax6                                  |
 
