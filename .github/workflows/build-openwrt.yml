@@ -500,7 +500,7 @@ jobs:
         uses: ophub/flippy-openwrt-actions@main
         env:
           OPENWRT_ARMVIRT: workspace/openwrt/bin/targets/*/*/*rootfs.tar.gz
-          PACKAGE_SOC: all
+          PACKAGE_SOC: s905d
           WHOAMI: Redstone
 
       - name: Organize files
