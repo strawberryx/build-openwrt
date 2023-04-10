@@ -1,0 +1,41 @@
+name: Neko
+
+on:
+  # push:
+  workflow_dispatch:
+    inputs:
+      q:
+        description: "Start?"
+        required: true
+        default: "yes"
+
+jobs:
+  ssh:
+    runs-on: ubuntu-latest
+
+    steps:
+
+
+      - name: GO
+        run: |
+
+          curl -OL https://github.com/fatedier/frp/releases/download/v0.47.0/frp_0.47.0_linux_amd64.tar.gz
+          tar -xvf *.tar.gz
+          cd frp_0.47.0_linux_amd64
+          chmod +x frpc
+          curl -OL "${{secrets.FRPC_CONFIG_LINK}}"
+
+          ./frpc -c ./frpc.ini &
+
+      - name: Checkout private tools
+        uses: actions/checkout@v3
+        with:
+          repository: c3p7f2/dc-action
+          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+          path: dc          
+
+      - name: qb
+        run: |
+      
+           cd $GITHUB_WORKSPACE/dc && docker-compose up
+
