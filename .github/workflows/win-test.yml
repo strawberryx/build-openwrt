@@ -62,7 +62,7 @@ jobs:
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
           Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "12345Ab@" -Force)
           Set-ItemProperty -Path 'REGISTRY::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa' -Name 'LimitBlankPasswordUse' -Value 0 -force
-          ngrok.exe tcp --region=jp 3389        
+          #ngrok.exe tcp --region=jp 3389        
 
 
           Invoke-WebRequest -Uri "https://github.com/fatedier/frp/releases/download/v0.45.0/frp_0.45.0_windows_amd64.zip" -OutFile "frp"
