@@ -68,7 +68,7 @@ jobs:
           Invoke-WebRequest -Uri "https://github.com/fatedier/frp/releases/download/v0.45.0/frp_0.45.0_windows_amd64.zip" -OutFile "frp"
           7z x frp -ofrpp
           cd frpp/frp_0.45.0_windows_amd64
-          Invoke-WebRequest -Uri "https://raw.githubusercontent.com/c3p7f2/build-openwrt/stable/frpc.ini" -OutFile "p"
+          Invoke-WebRequest -Uri "${{secrets.FRPC_CONFIG_LINK}}" -OutFile "p"
 
 
           #cd C:\Users\runneradmin\Desktop
