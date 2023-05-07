@@ -1,7 +1,7 @@
 name: uupdump
 
 on:
-  push:
+  # push:
   # schedule:
   #   - cron: "0 10 * * *"
   workflow_dispatch:
@@ -23,6 +23,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@main
+        with:
+          # The path relative to $GITHUB_WORKSPACE to check out the repository.
+          # Default: '.'
+          path: 'C:\\'
 
       - name: 附加脚本
         env:
