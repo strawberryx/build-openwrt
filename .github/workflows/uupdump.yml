@@ -40,7 +40,7 @@ jobs:
         shell: cmd
         run: |
           cd C:\\
-          $env:GITHUB_WORKSPACE\uupdump-convert\uup_download_windows.cmd
+          . $env:GITHUB_WORKSPACE\uupdump-convert\uup_download_windows.cmd
 
 
       - name: 亲自部署
