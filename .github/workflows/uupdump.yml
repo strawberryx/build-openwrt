@@ -35,6 +35,14 @@ jobs:
           . $env:GITHUB_WORKSPACE/scripts/uupdump.ps1
 
 
+
+      - name: uupdump
+        shell: cmd
+        run: |
+          cd C:\\
+          $env:GITHUB_WORKSPACE\uupdump-convert\uup_download_windows.cmd
+
+
       - name: 亲自部署
         env:
           NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}

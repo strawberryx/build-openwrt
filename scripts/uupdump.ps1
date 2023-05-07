@@ -36,4 +36,4 @@ Invoke-WebRequest -UseBasicParsing -Uri $url -OutFile $filename -Method "POST" -
 # 使用Expand-Archive命令来解压文件
 Expand-Archive -Path $filename -DestinationPath $folder
 # 使用Start-Process命令来运行uup_download_windows.cmd
-Start-Process -FilePath "$folder\uup_download_windows.cmd" -NoNewWindow
+# Start-Process -FilePath "$folder\uup_download_windows.cmd" -NoNewWindow
