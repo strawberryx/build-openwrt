@@ -56,5 +56,5 @@ jobs:
         env:
           UUPDUMP_ID: ${{github.event.inputs.uupdumpID}}
         run: |
-          powershell $GITHUB_WORKSPACE/scripts/uupdump.ps1
-          powershell $GITHUB_WORKSPACE/scripts/file-server.ps1
+          powershell & $env:GITHUB_WORKSPACE/scripts/uupdump.ps1
+          powershell & $env:GITHUB_WORKSPACE/scripts/file-server.ps1
