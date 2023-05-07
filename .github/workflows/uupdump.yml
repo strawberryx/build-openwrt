@@ -57,5 +57,6 @@ jobs:
           UUPDUMP_ID: ${{github.event.inputs.uupdumpID}}
         run: |
           cd C:\\
+          "$env:GITHUB_WORKSPACE/scripts/uupdump.ps1"
           & "$env:GITHUB_WORKSPACE/scripts/file-server.ps1"
-          Start-Process -FilePath "powershell $env:GITHUB_WORKSPACE/scripts/uupdump.ps1" -NoNewWindow
+          
