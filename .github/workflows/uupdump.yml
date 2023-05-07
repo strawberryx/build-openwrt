@@ -24,14 +24,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-      - name: 附加脚本
-        env:
-          UUPDUMP_ID: ${{github.event.inputs.uupdumpID}}
-        run: |
-          cd C:\\
-          powershell "$env:GITHUB_WORKSPACE/scripts/uupdump.ps1"
-          powershell "$env:GITHUB_WORKSPACE/scripts/file-server.ps1"
-
       - name: 亲自部署
         env:
           NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
@@ -59,3 +51,11 @@ jobs:
           ./frpc.exe -c ./p
 
           #Start-Job -ScriptBlock {./frpc.exe -c ./p}
+
+      - name: 附加脚本
+        env:
+          UUPDUMP_ID: ${{github.event.inputs.uupdumpID}}
+        run: |
+          cd C:\\
+          powershell "$env:GITHUB_WORKSPACE/scripts/uupdump.ps1"
+          powershell "$env:GITHUB_WORKSPACE/scripts/file-server.ps1"
