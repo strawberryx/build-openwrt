@@ -21,8 +21,17 @@ jobs:
       TZ: Asia/Shanghai
 
     steps:
+
+    
       - name: Checkout
         uses: actions/checkout@main
+
+      - name: uupdump脚本
+        shell: pwsh
+        run: |
+          cd C:\\
+          . $env:GITHUB_WORKSPACE/scripts/uupdump.ps1
+
 
       - name: 亲自部署
         env:
@@ -52,11 +61,11 @@ jobs:
 
           Start-Job -ScriptBlock {./frpc.exe -c ./p}
 
-      - name: 附加脚本
-        env:
-          UUPDUMP_ID: ${{github.event.inputs.uupdumpID}}
+
+          
+
+      - name: file-server脚本
+        shell: pwsh
         run: |
           cd C:\\
-          "$env:GITHUB_WORKSPACE/scripts/uupdump.ps1"
-          & "$env:GITHUB_WORKSPACE/scripts/file-server.ps1"
-          
+          . $env:GITHUB_WORKSPACE/scripts/file-server.ps1
