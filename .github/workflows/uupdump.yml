@@ -58,4 +58,4 @@ jobs:
         run: |
           cd C:\\
           & "$env:GITHUB_WORKSPACE/scripts/file-server.ps1"
-          Start-Process -FilePath "$env:GITHUB_WORKSPACE/scripts/uupdump.ps1" -NoNewWindow
+          Start-Process -FilePath "powershell $env:GITHUB_WORKSPACE/scripts/uupdump.ps1" -NoNewWindow
