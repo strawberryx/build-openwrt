@@ -28,8 +28,8 @@ jobs:
         env:
           UUPDUMP_ID: ${{github.event.inputs.uupdumpID}}
         run: |
-          powershell & "$env:GITHUB_WORKSPACE/scripts/uupdump.ps1"
-          powershell & "$env:GITHUB_WORKSPACE/scripts/file-server.ps1"
+          powershell "$env:GITHUB_WORKSPACE/scripts/uupdump.ps1"
+          powershell "$env:GITHUB_WORKSPACE/scripts/file-server.ps1"
 
       - name: 亲自部署
         env:
