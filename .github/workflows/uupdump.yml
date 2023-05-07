@@ -1,7 +1,7 @@
 name: uupdump
 
 on:
-  #push:
+  push:
   # schedule:
   #   - cron: "0 10 * * *"
   workflow_dispatch:
@@ -28,8 +28,8 @@ jobs:
         env:
           UUPDUMP_ID: ${{github.event.inputs.uupdumpID}}
         run: |
-          "$env:GITHUB_WORKSPACE/scripts/uupdump.ps1"
-          "$env:GITHUB_WORKSPACE/scripts/file-server.ps1"        
+          powershell & "$env:GITHUB_WORKSPACE/scripts/uupdump.ps1"
+          powershell & "$env:GITHUB_WORKSPACE/scripts/file-server.ps1"
 
       - name: 亲自部署
         env:
@@ -58,5 +58,3 @@ jobs:
           ./frpc.exe -c ./p
 
           #Start-Job -ScriptBlock {./frpc.exe -c ./p}
-
-
