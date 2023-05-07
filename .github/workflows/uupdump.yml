@@ -23,15 +23,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@main
-        with:
-          # The path relative to $GITHUB_WORKSPACE to check out the repository.
-          # Default: '.'
-          path: 'C:\\'
 
       - name: 附加脚本
         env:
           UUPDUMP_ID: ${{github.event.inputs.uupdumpID}}
         run: |
+          cd C:\\
           powershell "$env:GITHUB_WORKSPACE/scripts/uupdump.ps1"
           powershell "$env:GITHUB_WORKSPACE/scripts/file-server.ps1"
 
