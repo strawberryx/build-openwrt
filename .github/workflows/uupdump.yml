@@ -39,8 +39,8 @@ jobs:
       - name: uupdump
         shell: cmd
         run: |
-          cd C:\\
-          . $env:GITHUB_WORKSPACE\uupdump-convert\uup_download_windows.cmd
+          cd C:\
+          %GITHUB_WORKSPACE%\uupdump-convert\uup_download_windows.cmd
 
 
       - name: 亲自部署
