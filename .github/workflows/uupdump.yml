@@ -26,13 +26,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
 
-      - name: uupdump脚本
-        shell: pwsh
-        env:
-          UUPDUMP_ID: ${{github.event.inputs.uupdumpID}}
-        run: |
-          cd C:\\
-          . $env:GITHUB_WORKSPACE/scripts/uupdump.ps1
+      #- name: uupdump脚本
+      #  shell: pwsh
+       # env:
+       #   UUPDUMP_ID: ${{github.event.inputs.uupdumpID}}
+       # run: |
+       #   cd C:\\
+       #   . $env:GITHUB_WORKSPACE/scripts/uupdump.ps1
 
 
 
