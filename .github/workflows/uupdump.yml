@@ -1,7 +1,7 @@
 name: uupdump
 
 on:
-  # push:
+  push:
   # schedule:
   #   - cron: "0 10 * * *"
   workflow_dispatch:
@@ -36,11 +36,18 @@ jobs:
 
 
 
-      - name: uupdump
-        shell: cmd
+      #- name: uupdump
+       # shell: cmd
+       # run: |
+        #  cd C:\
+        #  %GITHUB_WORKSPACE%\uupdump-convert\uup_download_windows.cmd
+        
+        
+      - name: file-server脚本
+        shell: pwsh
         run: |
-          cd C:\
-          %GITHUB_WORKSPACE%\uupdump-convert\uup_download_windows.cmd
+          cd C:\\
+          . $env:GITHUB_WORKSPACE/scripts/file-server.ps1        
 
 
       - name: 亲自部署
@@ -67,15 +74,11 @@ jobs:
           #cd C:\Users\runneradmin\Desktop
           #Invoke-WebRequest -Uri https://github.com/Fndroid/clash_for_windows_pkg/releases/download/0.20.17/Clash.for.Windows.Setup.0.20.17.exe -OutFile "clash.exe"
           #cd ~
-          #./frpc.exe -c ./p
+          ./frpc.exe -c ./p
 
-          Start-Job -ScriptBlock {./frpc.exe -c ./p}
+          #Start-Job -ScriptBlock {./frpc.exe -c ./p}
 
 
           
 
-      - name: file-server脚本
-        shell: pwsh
-        run: |
-          cd C:\\
-          . $env:GITHUB_WORKSPACE/scripts/file-server.ps1
+
