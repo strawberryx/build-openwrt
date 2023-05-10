@@ -195,14 +195,8 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            ${{ github.actor }} created commit:
-            Commit message: ${{ github.event.commits[0].message }}
-            Repository: ${{ github.repository }}         
-            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}    
-
-            ==> 🎉 开始编译
-                设备/平台：${{ matrix.Device }}
-                编译状态： ${{ github.event.workflow_run.url }}
+            开始编译 🎉 
+            设备/平台：${{ matrix.Device }}
 
       - name: Initialization environment
         env:
@@ -558,14 +552,8 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            ${{ github.actor }} created commit:
-            Commit message: ${{ github.event.commits[0].message }}
-            Repository: ${{ github.repository }}         
-            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}    
-
-            ==> ❌ 编译失败
-                编译状态： ${{ github.event.workflow_run.url }}
-                设备/平台：${{ matrix.Device }}
+            编译失败 ❌
+            设备/平台：${{ matrix.Device }}
 
       - name: TG Notification - ✔️
         if: ${{ success() }}
@@ -574,15 +562,10 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            ${{ github.actor }} created commit:
-            Commit message: ${{ github.event.commits[0].message }}
-            Repository: ${{ github.repository }}         
-            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}    
-
-            ==> ✔️ 编译成功
-                设备/平台：${{ matrix.Device }}       
-                编译状态： ${{ github.event.workflow_run.url }}
-                固件下载地址：https://github.com/c3p7f2/build-openwrt/releases/tag/Redstone
+            编译成功 ✔️
+            设备/平台：${{ matrix.Device }}       
+            编译状态： ${{ github.event.workflow_run.url }}
+            固件下载地址：https://github.com/c3p7f2/build-openwrt/releases/tag/Redstone
 
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main

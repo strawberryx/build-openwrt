@@ -10,8 +10,6 @@
 
 <br/>
 
-<img src="./img/plugins.png" width="auto" height="auto"/>
-
 <br/>
 
 | 默认登陆 IP | 默认账号 | 默认密码 |
