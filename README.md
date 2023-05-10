@@ -6,7 +6,7 @@
 </div>
 <br/>
 
-> 一个在 UI 外观和功能上平衡的 OpenWrt 固件
+> 一个在外观和功能上平衡的 OpenWrt 固件
 
 <br/>
 
@@ -22,25 +22,6 @@
 | ------------------------------------------ |
 | x86                                        |
 | VMware、Esxi（需下载拓展名为 vmdk 的固件） |
-| vplus                                      |
-| beikeyun                                   |
-| l1pro                                      |
-| rock5b                                     |
-| h88k                                       |
-| r66s                                       |
-| r68s                                       |
-| h68k                                       |
-| e25                                        |
-| s905                                       |
-| s905d                                      |
-| s905x2                                     |
-| s905x3                                     |
-| s912                                       |
-| s922x                                      |
-| s922x-n2                                   |
-| qemu                                       |
-| xiaomi-cr660x                              |
-| redmi-ax6                                  |
 
 ### [--> 下载固件](https://github.com/c3p7f2/build-openwrt/releases/tag/Redstone)
 
