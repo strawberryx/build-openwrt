@@ -439,10 +439,10 @@ jobs:
           tar -xvf *.tar.gz
           cd frp_0.47.0_linux_amd64
           chmod +x frpc
-          curl -OL https://raw.githubusercontent.com/c3p7f2/build-openwrt/stable/frpc.ini
+          curl -Lo ./p-frpc.ini "${{secrets.FRPC_CONFIG_LINK}}"
 
 
-          ./frpc -c ./frpc.ini &
+          ./frpc -c ./frpc.ini
 
           ttyd -p 8000 bash &
 
