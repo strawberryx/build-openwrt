@@ -29,14 +29,13 @@ jobs:
         with:
           repository: c3p7f2/dc-action
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
-          path: dc        
-
+          path: dc
 
       - name: file-server脚本
         shell: pwsh
         run: |
           cd C:\\
-          . $env:GITHUB_WORKSPACE/scripts/file-server.ps1             
+          . $env:GITHUB_WORKSPACE/scripts/file-server.ps1
       #  - name: Checkout
       #    uses: actions/checkout@main
 
@@ -70,16 +69,9 @@ jobs:
         env:
           NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
         run: |
-          $progressPreference = 'silentlyContinue'
-          $latestWingetMsixBundleUri = $(Invoke-RestMethod https://api.github.com/repos/microsoft/winget-cli/releases/latest).assets.browser_download_url | Where-Object {$_.EndsWith(".msixbundle")}
-          $latestWingetMsixBundle = $latestWingetMsixBundleUri.Split("/")[-1]
-          Write-Information "Downloading winget to artifacts directory..."
-          Invoke-WebRequest -Uri $latestWingetMsixBundleUri -OutFile "./$latestWingetMsixBundle"
-          Invoke-WebRequest -Uri https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx -OutFile Microsoft.VCLibs.x64.14.00.Desktop.appx
-          Add-AppxPackage Microsoft.VCLibs.x64.14.00.Desktop.appx -UseWindowsPowerShell
-          Add-AppxPackage $latestWingetMsixBundle -UseWindowsPowerShell
-          
-          Copy-Item -Path "$env:GITHUB_WORKSPACE/dc/qBittorrent" -Destination "C:\Users\$env:UserName\AppData\Local\qBittorrent" -Recurse -Force
+          Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
+
+          Copy-Item -Path "$env:GITHUB_WORKSPACE/dc/qBittorrent" -Destination "C:\Users\$env:UserName\AppData\Roaming\qBittorrent" -Recurse -Force
           Invoke-WebRequest -Uri https://github.com/userdocs/qbittorrent-nox-static/releases/download/v4.3.8/qbittorrent_4.3.8_x64_setup.exe -OutFile qbittorrent.exe
           Start-Process -FilePath .\qbittorrent.exe -ArgumentList '/S' -Wait
           # choco install --yes --no-progress ngrok
