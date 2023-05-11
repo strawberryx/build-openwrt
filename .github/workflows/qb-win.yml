@@ -71,9 +71,9 @@ jobs:
         run: |
           Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False
 
-          Copy-Item -Path "$env:GITHUB_WORKSPACE/dc/qBittorrent" -Destination "C:\Users\$env:UserName\AppData\Roaming\qBittorrent" -Recurse -Force
-          Invoke-WebRequest -Uri https://github.com/userdocs/qbittorrent-nox-static/releases/download/v4.3.8/qbittorrent_4.3.8_x64_setup.exe -OutFile qbittorrent.exe
-          Start-Process -FilePath .\qbittorrent.exe -ArgumentList '/S' -Wait
+          # Copy-Item -Path "$env:GITHUB_WORKSPACE/dc/qBittorrent" -Destination "C:\Users\$env:UserName\AppData\Roaming\qBittorrent" -Recurse -Force
+          # Invoke-WebRequest -Uri https://github.com/userdocs/qbittorrent-nox-static/releases/download/v4.3.8/qbittorrent_4.3.8_x64_setup.exe -OutFile qbittorrent.exe
+          # Start-Process -FilePath .\qbittorrent.exe -ArgumentList '/S' -Wait
           # choco install --yes --no-progress ngrok
           # ngrok.exe authtoken $env:NGROK_TOKEN
 
@@ -94,4 +94,7 @@ jobs:
           #cd C:\Users\runneradmin\Desktop
           #Invoke-WebRequest -Uri https://github.com/Fndroid/clash_for_windows_pkg/releases/download/0.20.17/Clash.for.Windows.Setup.0.20.17.exe -OutFile "clash.exe"
           #cd ~
+          #./frpc.exe -c ./p
           ./frpc.exe -c ./p
+          cd $GITHUB_WORKSPACE/dc
+          docker-compose up

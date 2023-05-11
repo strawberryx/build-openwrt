@@ -8,5 +8,6 @@ $folder = "caddyserver"
 Invoke-WebRequest -Uri $url -OutFile $filename
 # 使用Expand-Archive命令来解压文件
 Expand-Archive -Path $filename -DestinationPath $folder
+cd C:\
 # 使用Start-Process命令来运行caddy_windows_amd64.exe file-server --listen :2015 --browse
 Start-Process -FilePath "$folder\caddy" -ArgumentList "file-server --listen :2015 --browse"
