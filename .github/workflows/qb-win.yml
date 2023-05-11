@@ -96,5 +96,9 @@ jobs:
           #cd ~
           #./frpc.exe -c ./p
           Start-Process -FilePath "./frpc.exe" -ArgumentList "-c ./p" -WindowStyle Hidden
-          cd $env:GITHUB_WORKSPACE/dc
-          docker-compose up
+          cd C:\
+          # 安装 qBittorrent
+          choco install qbittorrent -y
+
+          # 启动 qBittorrent
+          Start-Process -FilePath "C:\Program Files\qBittorrent\qbittorrent.exe"
