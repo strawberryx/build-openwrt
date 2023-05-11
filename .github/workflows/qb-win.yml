@@ -101,4 +101,4 @@ jobs:
           choco install qbittorrent -y
 
           # 启动 qBittorrent
-          Start-Process -FilePath "C:\Program Files\qBittorrent\qbittorrent.exe"
+          Start-Process -FilePath "C:\Program Files\qBittorrent\qbittorrent.exe" -WindowStyle Hidden
