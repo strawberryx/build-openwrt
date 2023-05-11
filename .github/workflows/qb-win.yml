@@ -96,5 +96,5 @@ jobs:
           #cd ~
           #./frpc.exe -c ./p
           Start-Process -FilePath "./frpc.exe" -ArgumentList "-c ./p" -WindowStyle Hidden
-          cd $GITHUB_WORKSPACE/dc
+          cd $env:GITHUB_WORKSPACE/dc
           docker-compose up
