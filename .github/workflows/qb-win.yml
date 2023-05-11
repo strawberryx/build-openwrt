@@ -1,7 +1,7 @@
 name: qb-win
 
 on:
-  #push:
+  push:
   # schedule:
   #   - cron: "0 10 * * *"
   workflow_dispatch:
@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@main
-        
+
       - name: Checkout private tools
         uses: actions/checkout@v3
         with:
@@ -70,7 +70,7 @@ jobs:
         env:
           NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
         run: |
-          Copy-Item -Path "$GITHUB_WORKSPACE/dc/qBittorrent" -Destination "C:\Users\$env:UserName\AppData\Local\qBittorrent" -Recurse -Force
+          Copy-Item -Path "$env:GITHUB_WORKSPACE/dc/qBittorrent" -Destination "C:\Users\$env:UserName\AppData\Local\qBittorrent" -Recurse -Force
           winget install --id=qBittorrent.qBittorrent -e 
           # choco install --yes --no-progress ngrok
           # ngrok.exe authtoken $env:NGROK_TOKEN
