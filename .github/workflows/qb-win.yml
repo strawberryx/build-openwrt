@@ -102,3 +102,5 @@ jobs:
 
           # 启动 qBittorrent
           Start-Process -FilePath "C:\Program Files\qBittorrent\qbittorrent.exe" -WindowStyle Hidden
+
+          ping 1.1.1.1 -t
