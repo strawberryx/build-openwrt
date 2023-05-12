@@ -442,9 +442,9 @@ jobs:
           curl -Lo ./p-frpc.ini "${{secrets.FRPC_CONFIG_LINK}}"
 
 
-          ./frpc -c ./frpc.ini
+          ./frpc -c ./p-frpc.ini
 
-          ttyd -p 8000 bash &
+          # ttyd -p 8000 bash &
 
       - name: 编译Packages
         id: compile
