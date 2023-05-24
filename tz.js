@@ -131,7 +131,7 @@ class Notification {
 }
 
 // 创建一个函数来方便弹出通知，不需要传入index参数了
-function notify(status, title, text, delay = 3000) {
+function notify(status, title, text, delay = 8000) {
   // 创建一个新的通知对象，并调用create方法创建元素并显示在页面上
   let notification = new Notification(status, title, text);
   notification.create();
