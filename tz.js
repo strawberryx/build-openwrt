@@ -131,12 +131,12 @@ class Notification {
 }
 
 // 创建一个函数来方便弹出通知，不需要传入index参数了
-function notify(status, title, text) {
+function notify(status, title, text, delay = 3000) {
   // 创建一个新的通知对象，并调用create方法创建元素并显示在页面上
   let notification = new Notification(status, title, text);
   notification.create();
-  // 设置一个定时器，在3s后调用destroy方法销毁元素并从页面上移除，并更新其他通知元素的位置
+  // 设置一个定时器，在delay后调用destroy方法销毁元素并从页面上移除，并更新其他通知元素的位置
   notification.timeout = setTimeout(() => {
     notification.destroy();
-  }, 10000); // 延时3s，与题目要求一致
+  }, delay); // 延时delay，如果没有给定则默认为3000ms
 }
