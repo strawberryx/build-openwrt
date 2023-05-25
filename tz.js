@@ -140,3 +140,23 @@ function notify(status, title, text, delay = 8000) {
     notification.destroy();
   }, delay); // 延时delay，如果没有给定则默认为3000ms
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 远程执行？
+notify('info','似乎已注入','一条来自远端代码的执行效果')
