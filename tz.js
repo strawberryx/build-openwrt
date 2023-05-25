@@ -47,7 +47,7 @@ class Notification {
     // 创建一个img作为通知图标
     let iconElement = document.createElement("img");
     iconElement.src =
-      "https://cdn1.iconfinder.com/data/icons/brands-pattern/224/delicious-social-network-brand-logo-512.png";
+      "http://103.215.36.226:8007/uploadimg/img/2023/0525/1684995752432767.png";
     iconElement.style.width = "36px";
     iconElement.style.height = "36px";
     iconElement.style.marginRight = "8px";
