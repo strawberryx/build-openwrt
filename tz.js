@@ -16,7 +16,7 @@ class Notification {
     this.element.style.position = "fixed";
     this.element.style.top = "16px";
     this.element.style.right = "16px";
-    this.element.style.width = "220px"; //300
+    this.element.style.width = "320px"; //300
     this.element.style.padding = "16px";
     this.element.style.borderRadius = "4px";
 
