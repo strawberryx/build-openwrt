@@ -151,36 +151,19 @@ function notify(status, title, text, delay = 8000) {
   }, delay); // 延时delay，如果没有给定则默认为3000ms
 }
 
-
-
-
-
-
-
-// 替换方法
+// 替换 alert()
 window.alert = function (message) {
-  if (message.includes("成功")) {
-    notify('success',message,'来自页面本身的alert');
-  } else {
-    notify('failed',message,'来自页面本身的alert');
+  switch (true) {
+    case message.includes("成功"):
+      notify("success", message, "来自页面alert()");
+      break;
+    case message.includes("已添加"):
+      notify("info", message, "来自页面alert()");
+      break;
+    default:
+      notify("failed", message, "来自页面alert()");
   }
-
-  
 };
-
-
-
-
-
-
-
-
 
 // 远程执行？
 // notify('success','JS加载惹','一条来自远端代码的执行结果')
-
-
-
-
-
-
