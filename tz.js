@@ -169,7 +169,7 @@ function notify(status, title, text, delay = 8000) {
 
 
 // 远程执行？
-notify('success','JS加载惹','一条来自远端代码的执行结果')
+// notify('success','JS加载惹','一条来自远端代码的执行结果')
 
 
 
