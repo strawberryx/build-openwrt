@@ -1,3 +1,11 @@
+// 调用页面截图函数
+catchRemoteImage_logo("img_logo");
+catchRemoteImage_logo("icon");
+
+catchRemoteImage_jietu("img_jietu");
+
+
+
 // 创建一个通知类
 class Notification {
   constructor(status, title, text) {
@@ -165,8 +173,4 @@ notify('success','JS加载惹','一条来自远端代码的执行结果')
 
 
 
-// 调用页面截图函数
-catchRemoteImage_logo("img_logo");
-catchRemoteImage_logo("icon");
 
-catchRemoteImage_jietu("img_jietu");
