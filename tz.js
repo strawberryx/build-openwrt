@@ -1,10 +1,12 @@
+/*
+
 // 调用页面截图函数
 catchRemoteImage_logo("img_logo");
 catchRemoteImage_logo("icon");
 
 catchRemoteImage_jietu("img_jietu");
 
-
+*/
 
 // 创建一个通知类
 class Notification {
