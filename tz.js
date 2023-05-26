@@ -157,8 +157,10 @@ function notify(status, title, text, delay = 8000) {
 
 
 
-
-
+// 替换方法
+window.alert = function (message) {
+  notify('failed',message,'来自页面本身的alert');
+};
 
 
 
