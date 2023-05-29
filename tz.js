@@ -157,7 +157,7 @@ window.alert = function (message) {
     case message.includes("成功"):
       notify("success", message, "来自页面alert()");
       break;
-    case message.includes("已添加"):
+    case message.includes("已"):
       notify("info", message, "来自页面alert()");
       break;
     default:
