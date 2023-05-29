@@ -167,3 +167,78 @@ window.alert = function (message) {
 
 // 远程执行？
 // notify('success','JS加载惹','一条来自远端代码的执行结果')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+
+添加红线
+
+
+**/
+
+
+/*
+
+// 获取所有需要绑定点击事件的元素
+const elements = document.querySelectorAll('input');
+
+// 给每个元素绑定点击事件
+elements.forEach(element => {
+  element.addEventListener('click', () => {
+    // 修改元素的样式
+    element.style.border = '2px solid #ffc408';
+  });
+});
+
+// 获取所有需要绑定点击事件的元素
+const elements1 = document.querySelectorAll('textarea');
+
+// 给每个元素绑定点击事件
+elements1.forEach(element => {
+  element.addEventListener('click', () => {
+    // 修改元素的样式
+    element.style.border = '2px solid #ffc408';
+  });
+});
+
+
+*/
+
+var inputs = document.querySelectorAll('input, textarea, select');
+
+inputs.forEach(function(input) {
+  input.addEventListener('focus', function() {
+    //input.style.transition = 'border-color 1s ease-in-out';
+    input.style.border = '2px solid #ed4845';
+/*
+    setTimeout(function() {
+      input.style.transition = 'border-color 1s ease-in-out';
+      input.style.borderColor = '';
+      //input.style.border = '2px solid #ffc408';
+      
+    }, 3000);
+    */
+  });
+});
