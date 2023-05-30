@@ -208,7 +208,7 @@ const elements = document.querySelectorAll('input');
 elements.forEach(element => {
   element.addEventListener('click', () => {
     // 修改元素的样式
-    element.style.border = '2px solid #ffc408';
+    element.style.border = '2px solid #0072C6';
   });
 });
 
