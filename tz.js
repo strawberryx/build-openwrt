@@ -224,7 +224,7 @@ elements1.forEach(element => {
 });
 
 
-*/
+
 
 var inputs = document.querySelectorAll('input, textarea, select');
 
@@ -242,3 +242,7 @@ inputs.forEach(function(input) {
     */
   });
 });
+
+
+
+*/
