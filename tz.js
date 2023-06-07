@@ -115,3 +115,152 @@ window.alert = function (message) {
 // 测试代码
 
 notify("success", "注入成功", "函数已放入页面，在本页DOM中可调用");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+document.querySelector('#dcMain').style.marginLeft = 0;
+document.querySelector('#dcLeft').style.display = 'none';
+
+function checkUrl(url) {
+  switch (true) {
+    case url.includes("ttgame&typeID=1"):
+      // 手机游戏数据1
+      // do something
+      break;
+    case url.includes("ttgame&typeID=2"):
+      // 手机软件数据2
+      // do something
+      break;
+    case url.includes("ttnews&catid=3"):
+      // 咨询列表数据3
+      // do something
+      break;
+    case url.includes("ttnews&catid=4"):
+      // 攻略列表数据4
+      // do something
+      break;
+    case url.includes("tsoft&typeID=2"):
+      // 手机游戏数据1
+      // do something
+      break;
+    case url.includes("tsoft&typeID=3"):
+      // 手机软件数据2
+      // do something
+      break;
+    case url.includes("tgonglue"):
+      // 文章列表数据3
+      // do something
+      break;
+    case url.includes("theji"):
+      // 合集列表数据4
+      // do something
+      break;
+    case url.includes("tmsoft&typeID=2"):
+      // 手机游戏数据1
+      // do something
+      break;
+    case url.includes("tmsoft&typeID=3"):
+      // 手机软件数据2
+      // do something
+      break;
+    case url.includes("tmgonglue"):
+      // 文章列表数据3
+      // do something
+      break;
+    case url.includes("apgame&typeID=2"):
+      // 手机游戏数据1
+      // do something
+      break;
+    case url.includes("apgame&typeID=3"):
+      // 手机软件数据2
+      // do something
+      break;
+    default:
+  }
+}
+
+
+
+
+document.body.style.cursor =
+  "url(https://www.52yahuan.com/wp-content/themes/kratos-pjax-0.3.8/static/images/cursor.cur), auto";
+
+
+// 创建一个div元素
+var div = document.createElement("div");
+// 设置div的样式为固定在右下角
+div.style.position = "fixed";
+div.style.bottom = "20px";
+div.style.right = "10px";
+
+// 创建一个函数，用于创建按钮
+function createButton(text, onclick) {
+  // 创建一个按钮元素
+  var button = document.createElement("button");
+  // 设置按钮的文本
+  button.innerText = text;
+  // 设置按钮的样式
+  button.setAttribute("class","btn btnXiao")
+  button.style.marginRight = "8px";
+  // 设置按钮的点击事件
+  button.onclick = onclick;
+  // 返回按钮
+  return button;
+}
+
+// 使用函数创建删除按钮
+var buttonDel = createButton("删除", function () {
+  var url = window.location.href;
+  url = url.replace("edit", "del");
+  window.location.href = url;
+});
+// 把按钮添加到div中
+div.appendChild(buttonDel);
+
+// 使用函数创建游戏推荐按钮
+var buttonGame = createButton("游戏推荐", function () {
+  taglist(6911, "游戏推荐");
+
+  //获取元素id为typeID的select
+  var select = document.getElementById("typeID");
+  //更改select的选项为24
+  select.value = 24;
+});
+// 把按钮添加到div中
+div.appendChild(buttonGame);
+
+// 使用函数创建软件推荐按钮
+var buttonSoft = createButton("软件推荐", function () {
+  taglist(6990, "软件推荐");
+
+  //获取元素id为typeID的select
+  var select = document.getElementById("typeID");
+  //更改select的选项为25
+  select.value = 25;
+});
+// 把按钮添加到div中
+div.appendChild(buttonSoft);
+
+// 把div添加到页面中
+document.body.appendChild(div);
+
+
