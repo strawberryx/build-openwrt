@@ -239,14 +239,17 @@ div.appendChild(buttonSoft);
 var buttonPublish = createButton("发布&日期更新", function () {
 
   try {
+    document.getElementsByName("isPublish")[0].checked = true;
+    document.getElementsByName("submit")[0].click();
+
+    // 资讯没这个
     document.getElementsByName("isUpdatetime")[0].checked = true;
   } catch (e) {
     alert(e);
   }
   
 
-  document.getElementsByName("isPublish")[0].checked = true;
-  document.getElementsByName("submit")[0].click();
+
 });
 // 把按钮添加到div中
 div.appendChild(buttonPublish);
