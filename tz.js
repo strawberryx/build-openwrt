@@ -265,15 +265,19 @@ var buttonRecom = createButton("填推荐", function () {
     // 获取textarea和body元素
     let textarea = document.getElementById("description");
 
-    var toHtml = document.getElementsByClassName(
-      "ke-toolbar-icon ke-toolbar-icon-url ke-icon-source"
-    )[0];
-    toHtml.click();
-    let editorTextarea = document.getElementsByClassName("ke-edit-textarea")[0];
-    toHtml.click();
+    // 获取iframe元素
+    var iframe = document.querySelector(".ke-edit-iframe");
+    // 获取iframe的window对象
+    var iframeWindow = iframe.contentWindow;
+    // 获取iframe的document对象
+    var iframeDocument = iframeWindow.document;
+    // 获取iframe里的body元素
+    var iframeBody = iframeDocument.querySelector(".ke-content");
+
     // 将替换后的字符串填入元素中
+    iframeBody.innerHTML = output;
+
     textarea.value = output;
-    editorTextarea.value = output;
   } catch (e) {
     alert(e);
   }
