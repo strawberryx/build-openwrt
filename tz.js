@@ -256,7 +256,7 @@ var buttonRecom = createButton("填推荐", function () {
     // 获取输入框的值
     let input = prompt("请输入内容");
     // 定义正则表达式，匹配句号前面的！!。并转义
-    let regex = /[。](?!！$)/g;
+    let regex = /[。](?!$)/g;
 
     // 定义替换后的字符
     let replacement = "，";
