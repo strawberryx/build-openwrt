@@ -314,11 +314,7 @@ var buttonRecom = createButton("填推荐", function () {
 // 把按钮添加到div中
 div.appendChild(buttonRecom);
 
-/**
- *
- * 添加包含按钮的DIV到页面
- *
- */
+//
 document.body.appendChild(div);
 
 /**
