@@ -237,7 +237,13 @@ div.appendChild(buttonSoft);
 
 // 使用函数创建发布按钮
 var buttonPublish = createButton("发布&日期更新", function () {
-  document.getElementsByName("isUpdatetime")[0].checked = true;
+
+  try {
+    document.getElementsByName("isUpdatetime")[0].checked = true;
+  } catch (e) {
+    alert(e);
+  }
+  
 
   document.getElementsByName("isPublish")[0].checked = true;
   document.getElementsByName("submit")[0].click();
