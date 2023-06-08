@@ -268,7 +268,7 @@ div.appendChild(buttonSoft);
 
 
 // 使用函数创建发布按钮
-var buttonSoft = createButton("发布&日期更新", function () {
+var buttonPublish = createButton("发布&日期更新", function () {
   document.getElementsByName("isUpdatetime")[0].checked = true;
   
   document.getElementsByName("isPublish")[0].checked = true;
@@ -276,7 +276,7 @@ var buttonSoft = createButton("发布&日期更新", function () {
   
 });
 // 把按钮添加到div中
-div.appendChild(buttonSoft);
+div.appendChild(buttonPublish);
 
 
 
