@@ -260,6 +260,36 @@ var buttonSoft = createButton("软件推荐", function () {
 // 把按钮添加到div中
 div.appendChild(buttonSoft);
 
+
+
+
+
+
+
+
+// 使用函数创建发布按钮
+var buttonSoft = createButton("发布", function () {
+  document.getElementsByName("isPublish")[0].checked = true;
+  document.getElementsByName("submit")[0].click();
+  
+});
+// 把按钮添加到div中
+div.appendChild(buttonSoft);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // 把div添加到页面中
 document.body.appendChild(div);
 
