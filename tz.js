@@ -116,29 +116,33 @@ window.alert = function (message) {
 
 notify("success", "注入成功", "函数已放入页面，在本页DOM中可调用");
 
+document.querySelector("#dcMain").style.marginLeft = 0;
+document.querySelector("#dcLeft").style.display = "none";
 
+document.body.style.cursor =
+  "url(https://www.52yahuan.com/wp-content/themes/kratos-pjax-0.3.8/static/images/cursor.cur), auto";
 
+// 创建一个div元素
+var div = document.createElement("div");
+// 设置div的样式为固定在右下角
+div.style.position = "fixed";
+div.style.top = "60px";
+div.style.left = "20px";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-document.querySelector('#dcMain').style.marginLeft = 0;
-document.querySelector('#dcLeft').style.display = 'none';
+// 创建一个函数，用于创建按钮
+function createButton(text, onclick) {
+  // 创建一个按钮元素
+  var button = document.createElement("button");
+  // 设置按钮的文本
+  button.innerText = text;
+  // 设置按钮的样式
+  button.setAttribute("class", "btn btnXiao");
+  button.style.marginRight = "8px";
+  // 设置按钮的点击事件
+  button.onclick = onclick;
+  // 返回按钮
+  return button;
+}
 
 function checkUrl(url) {
   switch (true) {
@@ -198,35 +202,6 @@ function checkUrl(url) {
   }
 }
 
-
-
-
-document.body.style.cursor =
-  "url(https://www.52yahuan.com/wp-content/themes/kratos-pjax-0.3.8/static/images/cursor.cur), auto";
-
-
-// 创建一个div元素
-var div = document.createElement("div");
-// 设置div的样式为固定在右下角
-div.style.position = "fixed";
-div.style.top = "60px";
-div.style.left = "20px";
-
-// 创建一个函数，用于创建按钮
-function createButton(text, onclick) {
-  // 创建一个按钮元素
-  var button = document.createElement("button");
-  // 设置按钮的文本
-  button.innerText = text;
-  // 设置按钮的样式
-  button.setAttribute("class","btn btnXiao")
-  button.style.marginRight = "8px";
-  // 设置按钮的点击事件
-  button.onclick = onclick;
-  // 返回按钮
-  return button;
-}
-
 // 使用函数创建删除按钮
 var buttonDel = createButton("删除", function () {
   var url = window.location.href;
@@ -260,39 +235,15 @@ var buttonSoft = createButton("软件推荐", function () {
 // 把按钮添加到div中
 div.appendChild(buttonSoft);
 
-
-
-
-
-
-
-
 // 使用函数创建发布按钮
 var buttonPublish = createButton("发布&日期更新", function () {
   document.getElementsByName("isUpdatetime")[0].checked = true;
-  
+
   document.getElementsByName("isPublish")[0].checked = true;
   document.getElementsByName("submit")[0].click();
-  
 });
 // 把按钮添加到div中
 div.appendChild(buttonPublish);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // 把div添加到页面中
 document.body.appendChild(div);
-
-
