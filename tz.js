@@ -209,8 +209,8 @@ document.body.style.cursor =
 var div = document.createElement("div");
 // 设置div的样式为固定在右下角
 div.style.position = "fixed";
-div.style.bottom = "20px";
-div.style.right = "10px";
+div.style.top = "60px";
+div.style.left = "20px";
 
 // 创建一个函数，用于创建按钮
 function createButton(text, onclick) {
