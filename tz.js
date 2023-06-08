@@ -237,7 +237,6 @@ div.appendChild(buttonSoft);
 
 // 使用函数创建发布按钮
 var buttonPublish = createButton("发布&日期更新", function () {
-
   try {
     document.getElementsByName("isPublish")[0].checked = true;
     document.getElementsByName("submit")[0].click();
@@ -247,12 +246,34 @@ var buttonPublish = createButton("发布&日期更新", function () {
   } catch (e) {
     alert(e);
   }
-  
-
-
 });
 // 把按钮添加到div中
 div.appendChild(buttonPublish);
+
+// 使用函数创建发布按钮
+var buttonRecom = createButton("填推荐", function () {
+  try {
+    // 获取输入框的值
+    let input = prompt("请输入内容");
+    // 定义正则表达式，匹配句号后面的！!。并转义
+    let regex = /(?<=\.)！!。/g;
+
+    // 定义替换后的字符
+    let replacement = "，";
+    // 使用replace方法替换字符串
+    let output = input.replace(regex, replacement);
+    // 获取textarea和body元素
+    let textarea = document.getElementById("description");
+    let body = document.getElementsByClassName("ke-content")[0];
+    // 将替换后的字符串填入元素中
+    textarea.value = output;
+    body.innerHTML = output;
+  } catch (e) {
+    alert(e);
+  }
+});
+// 把按钮添加到div中
+div.appendChild(buttonRecom);
 
 // 把div添加到页面中
 document.body.appendChild(div);
