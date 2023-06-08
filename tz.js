@@ -256,7 +256,7 @@ var buttonRecom = createButton("填推荐", function () {
     // 获取输入框的值
     let input = prompt("请输入内容");
     // 定义正则表达式，匹配句号前面的！!。并转义
-    let regex = /！!。(?<=。)/g;
+    let regex = /[。](?!！$)/g;
 
     // 定义替换后的字符
     let replacement = "，";
@@ -264,7 +264,13 @@ var buttonRecom = createButton("填推荐", function () {
     let output = input.replace(regex, replacement);
     // 获取textarea和body元素
     let textarea = document.getElementById("description");
+
+    var toHtml = document.getElementsByClassName(
+      "ke-toolbar-icon ke-toolbar-icon-url ke-icon-source"
+    )[0];
+    toHtml.click();
     let editorTextarea = document.getElementsByClassName("ke-edit-textarea")[0];
+    toHtml.click();
     // 将替换后的字符串填入元素中
     textarea.value = output;
     editorTextarea.value = output;
