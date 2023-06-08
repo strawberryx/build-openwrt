@@ -264,7 +264,7 @@ var buttonRecom = createButton("填推荐", function () {
     let output = input.replace(regex, replacement);
     // 获取textarea和body元素
     let textarea = document.getElementById("description");
-    let body = document.getElementsByClassName("ke-content")[0];
+    let body = document.getElementsByClassName("ke-edit-textarea")[0];
     // 将替换后的字符串填入元素中
     textarea.value = output;
     body.innerHTML = output;
