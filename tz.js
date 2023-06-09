@@ -149,7 +149,7 @@ class Notification {
     this.element.style.position = "fixed";
     this.element.style.top = "16px";
     this.element.style.right = "16px";
-    this.element.style.width = "auto"; //300
+    this.element.style.width = "320px"; //300
     this.element.style.padding = "16px";
     this.element.style.borderRadius = "4px";
 
@@ -208,6 +208,8 @@ class Notification {
     textElement.style.marginBottom = "0";
     textElement.style.fontSize = "14px";
     textElement.style.lineHeight = "1.5";
+    textElement.setAttribute("style", `  word-break: break-all;
+    word-wrap: break-word;`);
 
     // 将图标、标题、文字添加到内容元素中
     contentElement.appendChild(titleElement);
