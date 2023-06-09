@@ -416,6 +416,12 @@ console.error = function(...args) {
 
 }
 
+window.onerror = function(msg, url, lineNo, columnNo, error) {
+  
+  notify("error", "JavaScript ERR!!", 'Error: ' + msg + '\nURL: ' + url + '\nLine: ' + lineNo + '\nColumn: ' + columnNo + '\nStackTrace: ' + error);
+  return false;
+}
+
 // 测试代码
 
 // notify("success", "注入成功", "函数已放入页面，在本页DOM中可调用");
