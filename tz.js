@@ -162,6 +162,9 @@ class Notification {
       case "failed":
         this.element.style.backgroundColor = "#e83015";
         break;
+      case "error":
+        this.element.style.backgroundColor = "#e83015";
+        break;        
       case "warn":
         this.element.style.backgroundColor = "#feba07";
         break;
@@ -389,13 +392,13 @@ function notify(type, title, message, duration) {
 window.alert = function (message) {
   switch (true) {
     case message.includes("成功"):
-      notify("success", message, "来自页面alert()");
+      notify("success", message, "From alert(");
       break;
-    case message.includes("已"):
-      notify("info", message, "来自页面alert()");
+    case message.includes("无"):
+      notify("error", message, "From alert(");
       break;
     default:
-      notify("error", message, "来自页面alert()");
+      notify("info", message, "From alert()");
   }
 };
 
