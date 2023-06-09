@@ -245,6 +245,14 @@ window.alert = function (message) {
   }
 };
 
+
+console.log = function(...args) {
+  // do something with args
+  
+  notify("error", args.join(' '), "console");
+  originalLog.apply(console, args);
+}
+
 // 测试代码
 
 // notify("success", "注入成功", "函数已放入页面，在本页DOM中可调用");
