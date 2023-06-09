@@ -152,6 +152,7 @@ class Notification {
     this.element.style.width = "320px"; //300
     this.element.style.padding = "16px";
     this.element.style.borderRadius = "4px";
+    this.element.style.zIndex = 99999
 
     // 修改通知元素的背景颜色，使用hex格式
 
