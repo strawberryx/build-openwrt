@@ -213,7 +213,7 @@ class Notification {
     contentElement.appendChild(titleElement);
     contentElement.appendChild(textElement);
     // 将图标和内容添加到通知元素中
-    this.element.appendChild(iconElement);
+    // this.element.appendChild(iconElement);
     this.element.appendChild(contentElement);
 
     // 获取页面上已有的通知元素
@@ -399,15 +399,15 @@ window.alert = function (message) {
 
 
 console.log = function(...args) {  
-  notify("info", JSON.stringify(args), "From Console");
+  notify("info", "From Console",JSON.stringify(args) );
 }
 
 console.warn = function(...args) {
-  notify("warn", JSON.stringify(args), "From Console");
+  notify("warn", "From Console", JSON.stringify(args));
 
 }
 console.error = function(...args) {
-  notify("error", JSON.stringify(args), "From Console");
+  notify("error", "From Console", JSON.stringify(args));
 
 }
 
