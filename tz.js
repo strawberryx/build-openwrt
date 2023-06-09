@@ -269,7 +269,7 @@ class Notification {
 }
 
 // 创建一个函数来方便弹出通知，不需要传入index参数了
-function notify(status, title, text, delay = 4000) {
+function notify(status, title, text, delay = 6000) {
   // 创建一个新的通知对象，并调用create方法创建元素并显示在页面上
   let notification = new Notification(status, title, text);
   notification.create();
@@ -392,13 +392,13 @@ function notify(type, title, message, duration) {
 window.alert = function (message) {
   switch (true) {
     case message.includes("成功"):
-      notify("success", message, "From alert(");
+      notify("success", "From alert", message);
       break;
     case message.includes("无"):
-      notify("error", message, "From alert(");
+      notify("error", "From alert", message);
       break;
     default:
-      notify("info", message, "From alert()");
+      notify("info", "From alert", message);
   }
 };
 
