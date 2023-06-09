@@ -249,7 +249,7 @@ window.alert = function (message) {
 console.log = function(...args) {
   // do something with args
   
-  notify("error", args.join(' '), "console");
+  notify("error", JSON.stringify(args), "console");
   originalLog.apply(console, args);
 }
 
