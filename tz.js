@@ -279,8 +279,8 @@ function createButton(text, onclick) {
   var button = document.createElement("button");
   // 设置按钮的文本
   button.innerText = text;
-  // 设置按钮的样式
-  button.setAttribute("class", "btn btnXiao");
+  // 设置按钮的样式 （跟随页面）
+  //button.setAttribute("class", "btn btnXiao");
   button.style.marginRight = "8px";
   // 设置按钮的点击事件
   button.onclick = onclick;
@@ -288,7 +288,7 @@ function createButton(text, onclick) {
   return button;
 }
 
-// 使用函数创建删除按钮
+// 使用函数创建按钮
 var buttonDel = createButton("删除", function () {
   var url = window.location.href;
   url = url.replace("edit", "del");
@@ -370,6 +370,19 @@ var buttonRecom = createButton("填推荐", function () {
 });
 // 把按钮添加到div中
 div.appendChild(buttonRecom);
+
+
+
+// 使用函数创建按钮
+var buttonHTMLRegx = createButton("HTMLRegx", function () {
+  var url = window.location.href;
+  url = url.replace("edit", "del");
+  window.location.href = url;
+});
+// 把按钮添加到div中
+div.appendChild(buttonHTMLRegx);
+
+
 
 //
 document.body.appendChild(div);
