@@ -412,7 +412,8 @@ window.onerror = function (msg, url, lineNo, columnNo, error) {
   notify(
     "error",
     "监测到一个运行错误",
-    msg +
+    msg 
+    /* +
       "\nURL: " +
       url +
       "\nLine: " +
@@ -421,6 +422,7 @@ window.onerror = function (msg, url, lineNo, columnNo, error) {
       columnNo +
       "\nStackTrace: " +
       error
+      */
   );
   return false;
 };
