@@ -461,7 +461,7 @@ function createButton(text, onclick) {
   button.innerText = text;
   // 设置按钮的样式 （跟随页面）
   button.setAttribute("class", "btnGraybian");
-  button.style.marginRight = "8px";
+  button.style.marginBottom = "4px";
   // 设置按钮的点击事件
   button.onclick = onclick;
   // 返回按钮
