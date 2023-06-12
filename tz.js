@@ -390,29 +390,22 @@ window.alert = function (message) {
   }
 };
 
-/**
- * 
+console.log = function (...args) {
+  notify("info", "Console LOG", JSON.stringify(args));
+};
 
-
-console.log = function(...args) {  
-  notify("info", "Console LOG",JSON.stringify(args) );
-}
-
-console.warn = function(...args) {
+console.warn = function (...args) {
   notify("warn", "Console WARN", JSON.stringify(args));
-
-}
-console.error = function(...args) {
+};
+console.error = function (...args) {
   notify("error", "Console ERR", JSON.stringify(args));
-
-}
- */
+};
 
 window.onerror = function (msg, url, lineNo, columnNo, error) {
   notify(
     "error",
     "监测到一个运行错误",
-    msg 
+    msg
     /* +
       "\nURL: " +
       url +
@@ -561,6 +554,22 @@ var buttonHTMLRegx = createButton("HTMLRegx", function () {
 });
 // 把按钮添加到div中
 div.appendChild(buttonHTMLRegx);
+
+// 使用函数创建按钮
+var buttonHejiTitle = createButton("生成合集标题", function () {
+  try {
+    // 获取输入框的值
+    let inputTitle = prompt("[合集] 输入标题（不含“推荐”）");
+
+    document.getElementsByName("title")[0].value = inputTitle + "大全";
+    document.getElementsByName("seo_title")[0].value =
+      inputTitle + "大全" + inputTitle + "推荐" + inputTitle + "下载";
+  } catch (e) {
+    console.error(e);
+  }
+});
+// 把按钮添加到div中
+div.appendChild(buttonHejiTitle);
 
 //
 document.body.appendChild(div);
