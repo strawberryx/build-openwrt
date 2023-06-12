@@ -568,7 +568,7 @@ var buttonHejiTitle = createButton("生成合集标题", function () {
 
     document.getElementsByName("title")[0].value = inputTitle + "大全";
     document.getElementsByName("seo_title")[0].value =
-      inputTitle + "大全" + inputTitle + "推荐" + inputTitle + "下载";
+      inputTitle + "大全-" + inputTitle + "推荐-" + inputTitle + "下载";
   } catch (e) {
     console.error(e);
   }
