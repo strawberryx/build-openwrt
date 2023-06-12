@@ -443,6 +443,11 @@ document.body.style.cursor =
 
 // 创建一个div元素
 var div = document.createElement("div");
+div.setAttribute(
+  "style",
+  `  display: flex;
+  flex-direction: column;`
+);
 // 设置div的样式为固定在右下角
 div.style.position = "fixed";
 div.style.top = "60px";
