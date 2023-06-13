@@ -127,7 +127,7 @@ function checkUrl(url) {
  * 动态加载 Start 
  */
 
-loadScript('https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js',()=>{console.log('https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js Loaded!')})
+loadScript('https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js',()=>{})
 /**
  * 动态加载 END
  */
@@ -579,9 +579,10 @@ div.appendChild(buttonHTMLRegx);
 var buttonHejiTitle = createButton("生成合集标题", function () {
   try {
     // 获取输入框的值
-    let inputTitle = prompt("[合集] 输入标题（不含“推荐”）");
+    let inputTitle = prompt("[合集] 输入标题（不含“大全”）");
 
     document.getElementsByName("title")[0].value = inputTitle + "大全";
+    document.getElementsByName("ename")[0].value = cnchar.spell(inputTitle,'first', 'low'); // 首字母小写
     document.getElementsByName("seo_title")[0].value =
       inputTitle + "大全-" + inputTitle + "推荐-" + inputTitle + "下载";
   } catch (e) {
