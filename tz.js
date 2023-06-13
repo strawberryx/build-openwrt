@@ -128,9 +128,9 @@ function checkUrl(url) {
  */
 
 loadScript('https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js',()=>{})
-loadScript('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap',()=>{})
-loadScript('https://fonts.googleapis.com/icon?family=Material+Icons',()=>{})
-loadScript('https://cdn.jsdelivr.net/npm/material-components-web@13.0.0/dist/material-components-web.min.css',()=>{})
+loadStyle('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap',()=>{})
+loadStyle('https://fonts.googleapis.com/icon?family=Material+Icons',()=>{})
+loadStyle('https://cdn.jsdelivr.net/npm/material-components-web@13.0.0/dist/material-components-web.min.css',()=>{})
 /**
  * 动态加载 END
  */
