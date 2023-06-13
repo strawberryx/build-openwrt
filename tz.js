@@ -128,6 +128,8 @@ function checkUrl(url) {
  */
 
 loadScript('https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js',()=>{})
+loadScript('https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/toastr.js/2.1.4/toastr.min.js',()=>{})
+loadStyle('https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/toastr.js/2.1.4/toastr.min.css')
 
 /**
  * 动态加载 END
@@ -141,249 +143,32 @@ loadScript('https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js',()=>{})
  * 通知 Start
  *
  */
-
-// 创建一个通知类
-class Notification {
-  constructor(status, title, text) {
-    this.status = status; // 通知图标的url
-    this.title = title; // 通知标题
-    this.text = text; // 通知文字
-    this.element = null; // 通知元素
-    this.timeout = null; // 通知消失的定时器
-  }
-
-  // 创建通知元素并添加到页面上
-  create() {
-    // 创建一个div作为通知元素
-    this.element = document.createElement("div");
-    // 设置通知元素的样式，参考elementUI
-    this.element.style.position = "fixed";
-    this.element.style.bottom = "16px";
-    this.element.style.left = "16px";
-    this.element.style.width = "320px"; //300
-    this.element.style.padding = "16px";
-    this.element.style.borderRadius = "4px";
-    this.element.style.zIndex = 99999;
-
-    // 修改通知元素的背景颜色，使用hex格式
-
-    switch (this.status) {
-      case "success":
-        this.element.style.backgroundColor = "#43b244";
-        break;
-      case "failed":
-        this.element.style.backgroundColor = "#e83015";
-        break;
-      case "error":
-        this.element.style.backgroundColor = "#e83015";
-        break;
-      case "warn":
-        this.element.style.backgroundColor = "#feba07";
-        break;
-      default:
-        this.element.style.backgroundColor = "#005a9d";
-    }
-
-    // 修改通知元素的文字颜色为白色，使用hex格式
-    this.element.style.color = "#FFFFFF";
-
-    this.element.style.boxShadow = "0 2px 12px 0 rgba(0,0,0,.1)";
-    this.element.style.display = "flex";
-    this.element.style.alignItems = "center";
-    this.element.style.transition =
-      "transform .3s ease-in-out, opacity .3s ease-in-out"; // 设置动效
-
-    // 创建一个div作为通知内容
-    let contentElement = document.createElement("div");
-    contentElement.style.flexGrow = "1";
-    // 创建一个h4作为通知标题
-    let titleElement = document.createElement("h4");
-    titleElement.textContent = this.title;
-    titleElement.style.marginTop = "0";
-    titleElement.style.marginBottom = "4px";
-    titleElement.style.fontSize = "16px";
-    titleElement.style.fontWeight = "bold";
-    // 创建一个p作为通知文字
-    let textElement = document.createElement("p");
-    textElement.textContent = this.text;
-    textElement.style.marginTop = "0";
-    textElement.style.marginBottom = "0";
-    textElement.style.fontSize = "14px";
-    textElement.style.lineHeight = "1.5";
-    textElement.setAttribute(
-      "style",
-      `  word-break: break-all;
-    word-wrap: break-word;`
-    );
-
-    // 将图标、标题、文字添加到内容元素中
-    contentElement.appendChild(titleElement);
-    contentElement.appendChild(textElement);
-    // 将图标和内容添加到通知元素中
-    this.element.appendChild(contentElement);
-
-    // 获取页面上已有的通知元素
-    let notifications = document.querySelectorAll(".notification");
-    // 计算新的通知元素的偏移量，根据已有的通知元素的数量和高度
-    let offset = notifications.length * (this.element.offsetHeight + 16);
-    // 设置新的通知元素的初始位置，向上偏移一定距离，透明度为0，形成动效的初始状态
-    // this.element.style.transform = `translateY(+${offset + 20}px)`;
-    this.element.style.opacity = "0";
-    // 给新的通知元素添加一个类名，方便后续选择
-    this.element.classList.add("notification");
-    // 将新的通知元素添加到页面上
-    document.body.appendChild(this.element);
-
-    // 在添加到页面上之后，再获取新的通知元素的高度，并重新计算偏移量
-    offset = notifications.length * (this.element.offsetHeight + 16);
-
-    // 触发重绘，让动效生效
-    this.element.offsetHeight;
-    // 设置新的通知元素的最终位置，向下偏移一定距离，透明度为1，形成动效的最终状态
-    this.element.style.transform = `translateY(${offset}px)`;
-    this.element.style.opacity = "1";
-  }
-
-  // 销毁通知元素并从页面上移除，并更新其他通知元素的位置
-  destroy() {
-    if (this.timeout) {
-      clearTimeout(this.timeout); // 清除定时器，避免重复销毁
-    }
-    if (this.element) {
-      // 设置通知元素的消失动效，向上偏移一定距离，透明度为0
-      this.element.style.transform += `translateY(+20px)`;
-      this.element.style.opacity = "0";
-      setTimeout(() => {
-        // 在动效结束后，从页面上移除通知元素，并将其置为null，释放内存
-        document.body.removeChild(this.element);
-        this.element = null;
-        // 获取页面上剩余的通知元素，并更新它们的位置，使其不重叠在一起
-        let notifications = document.querySelectorAll(".notification");
-        for (let i = 0; i < notifications.length; i++) {
-          let notification = notifications[i];
-          let offset = -i * (notification.offsetHeight + 16);
-          notification.style.transform = `translateY(${offset}px)`;
-        }
-      }, 300); // 延时300ms，与动效时间一致
-    }
-  }
+toastr.options = {
+  "closeButton": false,
+  "debug": false,
+  "newestOnTop": false,
+  "progressBar": false,
+  "positionClass": "toast-bottom-left",
+  "preventDuplicates": false,
+  "onclick": null,
+  "showDuration": "300",
+  "hideDuration": "1000",
+  "timeOut": "5000",
+  "extendedTimeOut": "1000",
+  "showEasing": "swing",
+  "hideEasing": "linear",
+  "showMethod": "fadeIn",
+  "hideMethod": "fadeOut"
 }
 
-// 创建一个函数来方便弹出通知，不需要传入index参数了
-function notify(status, title, text, delay = 6000) {
-  // 创建一个新的通知对象，并调用create方法创建元素并显示在页面上
-  let notification = new Notification(status, title, text);
-  notification.create();
-  // 设置一个定时器，在delay后调用destroy方法销毁元素并从页面上移除，并更新其他通知元素的位置
-  notification.timeout = setTimeout(() => {
-    notification.destroy();
-  }, delay); // 延时delay，如果没有给定则默认为3000ms
-}
-
-/* 精简通知
-
-// 创建一个通知元素
-function createNotification(type, title, message) {
-  // 创建一个div元素，添加alert类和type类
-  let notification = document.createElement("div");
-  notification.classList.add("alert", type);
-
-  // 创建一个span元素，添加closebtn类，设置onclick属性为关闭通知
-  let closebtn = document.createElement("span");
-  closebtn.classList.add("closebtn");
-  closebtn.innerHTML = "×";
-  closebtn.onclick = function () {
-    // 设置通知的透明度为0
-    notification.style.opacity = "0";
-    // 在600毫秒后隐藏通知
-    setTimeout(function () {
-      notification.style.display = "none";
-    }, 600);
-  };
-
-  // 创建一个h4元素，设置内容为标题
-  let titleElement = document.createElement("h4");
-  titleElement.innerHTML = title;
-
-  // 创建一个p元素，设置内容为消息
-  let messageElement = document.createElement("p");
-  messageElement.innerHTML = message;
-
-  // 将关闭按钮，标题元素和消息元素添加到通知元素中
-  notification.appendChild(closebtn);
-  notification.appendChild(titleElement);
-  notification.appendChild(messageElement);
-
-  // 根据type参数设置通知的文字颜色
-  switch (type) {
-    case "success":
-      notification.style.color = "green";
-      break;
-    case "error":
-      notification.style.color = "red";
-      break;
-    case "failed":
-      notification.style.color = "red";
-      break;
-    case "warn":
-      notification.style.color = "yellow";
-      break;
-    default:
-      notification.style.color = "black";
-      break;
-  }
-
-  // 返回通知元素
-  return notification;
-}
-
-// 显示一个通知
-function notify(type, title, message, duration) {
-  // 获取页面上左下角的容器元素
-  let container = document.getElementById("notification-container");
-
-  // 如果容器不存在，创建一个并添加到页面上
-  if (!container) {
-    container = document.createElement("div");
-    container.id = "notification-container";
-    container.style.position = "fixed";
-    container.style.bottom = "10px";
-    container.style.left = "10px";
-    document.body.appendChild(container);
-  }
-
-  // 创建一个通知元素
-  let notification = createNotification(type, title, message);
-
-  // 获取通知元素中的关闭按钮
-  let closebtn = notification.querySelector(".closebtn");
-
-  // 将通知元素添加到容器中
-  container.appendChild(notification);
-
-  // 设置通知的透明度为1（显示）
-  notification.style.opacity = "1";
-
-  // 设置通知的过渡动画
-  notification.style.transition = "opacity .6s ease-in-out";
-
-  // 设置关闭按钮的位置为右边
-  closebtn.style.float = "right";
-
-  // 如果duration参数存在，设置一个定时器在duration毫秒后关闭通知
-  if (duration) {
-    setTimeout(function () {
-      closebtn.onclick();
-    }, duration);
-  } else {
-    setTimeout(function () {
-      closebtn.onclick();
-    }, 8000);
-  }
+// 兼容函数
+function notify(status , title, text, delay = 3000) {
+  toastr[status](text, title)
 }
 
 
-**/
+
+
 
 const alertTitle = "提示";
 // 替换 alert()
