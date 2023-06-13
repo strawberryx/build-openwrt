@@ -227,7 +227,7 @@ class Notification {
     // 计算新的通知元素的偏移量，根据已有的通知元素的数量和高度
     let offset = notifications.length * (this.element.offsetHeight + 16);
     // 设置新的通知元素的初始位置，向上偏移一定距离，透明度为0，形成动效的初始状态
-    this.element.style.transform = `translateY(${offset + 20}px)`;
+    this.element.style.transform = `translateY(-${offset + 20}px)`;
     this.element.style.opacity = "0";
     // 给新的通知元素添加一个类名，方便后续选择
     this.element.classList.add("notification");
