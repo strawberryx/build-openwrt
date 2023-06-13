@@ -129,6 +129,9 @@ toastr.options = {
 
 // 兼容函数
 function notify(status , title, text, delay = 3000) {
+  if (status == 'err') {
+    status = 'error'
+  }
   toastr[status](text, title)
 }
 
