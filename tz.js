@@ -158,7 +158,7 @@ class Notification {
     this.element = document.createElement("div");
     // 设置通知元素的样式，参考elementUI
     this.element.style.position = "fixed";
-    this.element.style.bottom = "16px";
+    this.element.style.top = "16px";
     this.element.style.left = "16px";
     this.element.style.width = "320px"; //300
     this.element.style.padding = "16px";
