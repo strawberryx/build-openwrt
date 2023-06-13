@@ -109,7 +109,6 @@ loadCSS('https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/toastr.js/2.1.4/toast
  */
 
 
-toastr["error"]("内容", "标题")
 toastr.options = {
   "closeButton": false,
   "debug": false,
