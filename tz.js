@@ -130,6 +130,9 @@ function notify(status , title, text, delay = 3000) {
 
 
 
+toastr["error"]("内容", "标题")
+
+
 
 
 const alertTitle = "提示";
