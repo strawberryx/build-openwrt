@@ -124,6 +124,18 @@ function checkUrl(url) {
  */
 
 /**
+ * 动态加载 Start 
+ */
+
+loadScript('https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js',()=>{console.log('https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js Loaded!')})
+/**
+ * 动态加载 END
+ */
+
+
+
+
+/**
  *
  * 通知 Start
  *
