@@ -240,7 +240,7 @@ class Notification {
     // 触发重绘，让动效生效
     this.element.offsetHeight;
     // 设置新的通知元素的最终位置，向下偏移一定距离，透明度为1，形成动效的最终状态
-    this.element.style.transform = `translateY(${offset}px)`;
+    this.element.style.transform = `translateY(-${offset}px)`;
     this.element.style.opacity = "1";
   }
 
