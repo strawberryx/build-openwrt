@@ -128,10 +128,31 @@ function checkUrl(url) {
  */
 
 loadScript('https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js',()=>{})
+loadScript('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap',()=>{})
+loadScript('https://fonts.googleapis.com/icon?family=Material+Icons',()=>{})
+loadScript('https://cdn.jsdelivr.net/npm/material-components-web@13.0.0/dist/material-components-web.min.css',()=>{})
 /**
  * 动态加载 END
  */
-
+// 获取所有文本输入框元素
+var inputs = document.querySelectorAll("input[type='text']");
+// 遍历所有文本输入框元素
+for (var i = 0; i < inputs.length; i++) {
+  // 创建一个MD风格的文本输入框容器
+  var container = document.createElement("div");
+  container.classList.add("mdc-text-field");
+  // 将原来的文本输入框放入容器中，并添加MD风格的类名
+  inputs[i].classList.add("mdc-text-field__input");
+  container.appendChild(inputs[i]);
+  // 创建一个MD风格的下划线元素，并放入容器中
+  var underline = document.createElement("div");
+  underline.classList.add("mdc-line-ripple");
+  container.appendChild(underline);
+  // 将原来的文本输入框的父元素替换成容器
+  inputs[i].parentNode.replaceChild(container, inputs[i]);
+  // 初始化MD风格的文本输入框组件
+  var textField = new mdc.textField.MDCTextField(container);
+}
 
 
 
