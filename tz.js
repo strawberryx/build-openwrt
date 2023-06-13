@@ -261,7 +261,7 @@ class Notification {
         let notifications = document.querySelectorAll(".notification");
         for (let i = 0; i < notifications.length; i++) {
           let notification = notifications[i];
-          let offset = i * (notification.offsetHeight + 16);
+          let offset = -i * (notification.offsetHeight + 16);
           notification.style.transform = `translateY(${offset}px)`;
         }
       }, 300); // 延时300ms，与动效时间一致
