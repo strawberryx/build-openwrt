@@ -4,29 +4,6 @@
  *
  */
 
-async function loadJS(url) {
-  return new Promise((resolve, reject) => {
-    var script = document.createElement("script");
-    script.src = url;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-}
-
-async function loadCSS(url) {
-  return new Promise((resolve, reject) => {
-    var link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = url;
-
-  
-    link.onload = resolve;
-    link.onerror = reject;
-    document.head.appendChild(link);
-  });
-}
-
 function checkUrl(url) {
   switch (true) {
     case url.includes("ttgame&typeID=1"):
@@ -84,6 +61,23 @@ function checkUrl(url) {
     default:
   }
 }
+
+function loadJS(url) {
+  var script = document.createElement("script");
+  script.src = url;
+  document.head.appendChild(script);
+}
+
+function loadCSS(url) {
+  var link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = url;
+
+
+  document.head.appendChild(link);
+}
+
+
 
 /**
  *
