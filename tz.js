@@ -4,59 +4,27 @@
  *
  */
 
-function loadScript(url, callback) {
-  var script = document.createElement("script");
-  script.type = "text/javascript";
-  if (script.readyState) {
-    // IE
-    script.onreadystatechange = function () {
-      if (script.readyState == "loaded" || script.readyState == "complete") {
-        script.onreadystatechange = null;
-        callback();
-      }
-    };
-  } else {
-    // Others
-    script.onload = function () {
-      callback();
-    };
-  }
-  script.src = url;
-  document.getElementsByTagName("head")[0].appendChild(script);
+async function loadJS(url) {
+  return new Promise((resolve, reject) => {
+    var script = document.createElement("script");
+    script.src = url;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
 }
 
-// 动态引入 css 文件
-function loadCSS(url) {
-  var link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = url;
-  document.head.appendChild(link);
-}
+async function loadCSS(url) {
+  return new Promise((resolve, reject) => {
+    var link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = url;
 
-// 动态引入 css 文件
-function loadStyle(url) {
-  var link = document.createElement("link");
-  link.type = "text/css";
-  link.rel = "stylesheet";
-  link.href = url;
-  var head = document.getElementsByTagName("head")[0];
-  head.appendChild(link);
-}
-
-// 使用 style 标签动态引入
-function loadCssCode(code) {
-  var style = document.createElement("style");
-  style.type = "text/css";
-  style.rel = "stylesheet";
-  try {
-    //for Chrome Firefox Opera Safari
-    style.appendChild(document.createTextNode(code));
-  } catch (ex) {
-    //for IE
-    style.styleSheet.cssText = code;
-  }
-  var head = document.getElementsByTagName("head")[0];
-  head.appendChild(style);
+  
+    link.onload = resolve;
+    link.onerror = reject;
+    document.head.appendChild(link);
+  });
 }
 
 function checkUrl(url) {
@@ -127,9 +95,9 @@ function checkUrl(url) {
  * 动态加载 Start 
  */
 
-loadScript('https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js',()=>{})
-loadScript('https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/toastr.js/2.1.4/toastr.min.js',()=>{})
-loadStyle('https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/toastr.js/2.1.4/toastr.min.css')
+await loadJS('https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js')
+await loadJS('https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/toastr.js/2.1.4/toastr.min.js')
+await loadCSS('https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/toastr.js/2.1.4/toastr.min.css')
 
 /**
  * 动态加载 END
