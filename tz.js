@@ -105,6 +105,9 @@ loadCSS('https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/toastr.js/2.1.4/toast
  * 通知 Start
  *
  */
+
+
+toastr["error"]("内容", "标题")
 toastr.options = {
   "closeButton": false,
   "debug": false,
@@ -130,7 +133,7 @@ function notify(status , title, text, delay = 3000) {
 
 
 
-toastr["error"]("内容", "标题")
+
 
 
 
