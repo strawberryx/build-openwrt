@@ -89,9 +89,9 @@ function loadCSS(url) {
  * 动态加载 Start 
  */
 
-await loadJS('https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js')
-await loadJS('https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/toastr.js/2.1.4/toastr.min.js')
-await loadCSS('https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/toastr.js/2.1.4/toastr.min.css')
+loadJS('https://fastly.jsdelivr.net/npm/cnchar/cnchar.min.js')
+loadJS('https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/toastr.js/2.1.4/toastr.min.js')
+loadCSS('https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/toastr.js/2.1.4/toastr.min.css')
 
 /**
  * 动态加载 END
