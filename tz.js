@@ -251,7 +251,7 @@ class Notification {
     }
     if (this.element) {
       // 设置通知元素的消失动效，向上偏移一定距离，透明度为0
-      this.element.style.transform += `translateY(-20px)`;
+      this.element.style.transform += `translateY(+20px)`;
       this.element.style.opacity = "0";
       setTimeout(() => {
         // 在动效结束后，从页面上移除通知元素，并将其置为null，释放内存
