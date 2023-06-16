@@ -4,7 +4,8 @@
  *
  */
 
-function changeHtml(code) {
+
+window.changeHtml = function(code) {
   // 获取iframe元素
   var iframe = document.querySelector(".ke-edit-iframe");
   // 获取iframe的window对象
@@ -19,7 +20,7 @@ function changeHtml(code) {
 }
 
 
-function checkUrl(url) {
+window.checkUrl=function(url) {
 switch (true) {
 case url.includes("ttgame&typeID=1"):
   // 手机游戏数据1
@@ -77,13 +78,13 @@ default:
 }
 }
 
-function loadJS(url) {
+window.loadJS = function(url) {
 var script = document.createElement("script");
 script.src = url;
 document.head.appendChild(script);
 }
 
-function loadCSS(url) {
+ window.loadCSS=function(url) {
 var link = document.createElement("link");
 link.rel = "stylesheet";
 link.href = url;
@@ -144,7 +145,7 @@ toastr.options = {
 }
 
 // 兼容函数
-function notify(status , title, text, delay = 3000) {
+window.notify=function(status , title, text, delay = 3000) {
 if (status == 'err') {
 status = 'error'
 }
@@ -213,7 +214,7 @@ div.style.top = "60px";
 div.style.left = "20px";
 
 // 创建一个函数，用于创建按钮
-function createButton(text, onclick) {
+window.createButton=function (text, onclick) {
 // 创建一个按钮元素
 var button = document.createElement("button");
 // 设置按钮的文本
