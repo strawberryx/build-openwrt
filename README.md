@@ -1,16 +1,9 @@
-<div align="center">
-  <a href="#">
-    <img src="./logo.png" width="auto" height="auto"/>
-  </a>
 
-</div>
-<br/>
-
+# Redstone
+> 
 > 一个在外观和功能上平衡的 OpenWrt 固件
 
-<br/>
 
-<br/>
 
 | 默认登陆 IP | 默认账号 | 默认密码 |
 | ----------- | -------- | -------- |
