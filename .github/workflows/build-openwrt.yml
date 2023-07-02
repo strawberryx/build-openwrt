@@ -511,7 +511,8 @@ jobs:
       - name: Generate release tag
         id: tag
         run: |
-          echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M"-${{ matrix.Device }})"
+          echo "::set-output name=release_tag::"
+          echo "release_tag=$(date +"%Y.%m.%d-%H%M"-${{ matrix.Device }})" >> $GITHUB_ENV
           # touch release.txt
           # echo ${{ matrix.Device }} >> release.txt
 
@@ -521,8 +522,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           name: "Redstone | 固件下载"
-          tag_name: "Redstone"
-          body_path: release.txt
+          tag_name: ${{ env.release_tag }}
+          body: |
+            **编译时间：${{ env.release_tag }} 设备/平台：${{ matrix.Device }}**
+            * 编译源码完全同步上游 [➦上游源码](${{ env.SOURCE_URL}})
+            欢迎各种Issues和PR~ 🙇‍
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       ###########################################################################################
@@ -559,10 +563,10 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          document: ${{ env.PACKAGED_OUTPUTPATH }}/*
           message: |
             编译成功 ✔️
-            设备/平台：${{ matrix.Device }}       
+            设备/平台：${{ matrix.Device }}
+            下载地址：https://github.com/$GITHUB_REPOSITORY/releases/tag/${{ env.release_tag }}
 
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main

@@ -14,8 +14,7 @@
 | x86                                        |
 | VMware、Esxi（需下载拓展名为 vmdk 的固件） |
 
-### [--> 下载固件（含历史固件） https://t.me/openwrt_redstone](https://t.me/openwrt_redstone)
-### [--> 下载固件 https://github.com/c3p7f2/build-openwrt/releases/tag/Redstone](https://github.com/c3p7f2/build-openwrt/releases/tag/Redstone)
+### [--> 下载固件](https://github.com/c3p7f2/build-openwrt/releases)
 
 <hr/>
 
