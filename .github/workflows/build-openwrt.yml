@@ -464,7 +464,6 @@ jobs:
       - name: Generate release tag
         id: tag
         run: |
-          echo "::set-output name=release_tag::"
           echo "release_tag=$(date +"%Y.%m.%d-%H%M"-${{ matrix.Device }})" >> $GITHUB_ENV
           # touch release.txt
           # echo ${{ matrix.Device }} >> release.txt
