@@ -515,15 +515,15 @@ jobs:
           # touch release.txt
           # echo ${{ matrix.Device }} >> release.txt
 
-      # - name: Upload firmware to release
-      #   uses: softprops/action-gh-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     name: "Redstone | 固件下载"
-      #     tag_name: "Redstone"
-      #     body_path: release.txt
-      #     files: ${{ env.PACKAGED_OUTPUTPATH }}/*
+      - name: Upload firmware to release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: "Redstone | 固件下载"
+          tag_name: "Redstone"
+          body_path: release.txt
+          files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       ###########################################################################################
 
