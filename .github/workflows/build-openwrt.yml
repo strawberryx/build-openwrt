@@ -515,15 +515,15 @@ jobs:
           # touch release.txt
           # echo ${{ matrix.Device }} >> release.txt
 
-      - name: Upload firmware to release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          name: "Redstone | 固件下载"
-          tag_name: "Redstone"
-          body_path: release.txt
-          files: ${{ env.PACKAGED_OUTPUTPATH }}/*
+      # - name: Upload firmware to release
+      #   uses: softprops/action-gh-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     name: "Redstone | 固件下载"
+      #     tag_name: "Redstone"
+      #     body_path: release.txt
+      #     files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       ###########################################################################################
 
@@ -559,11 +559,10 @@ jobs:
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          document: ${{ env.PACKAGED_OUTPUTPATH }}/*
           message: |
             编译成功 ✔️
             设备/平台：${{ matrix.Device }}       
-            编译状态： ${{ github.event.workflow_run.url }}
-            固件下载地址：https://github.com/c3p7f2/build-openwrt/releases/tag/Redstone
 
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
