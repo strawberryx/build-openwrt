@@ -501,7 +501,7 @@ jobs:
           message: |
             编译成功 ✔️
             设备/平台：${{ matrix.Device }}
-            下载地址：https://github.com/$GITHUB_REPOSITORY/releases/tag/${{ env.release_tag }}
+            下载地址：https://github.com/${{ env.GITHUB_REPOSITORY}}/releases/tag/${{ env.release_tag }}
 
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
