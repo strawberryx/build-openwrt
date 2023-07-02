@@ -477,7 +477,7 @@ jobs:
           name: "Redstone | 固件下载"
           tag_name: ${{ env.release_tag }}
           body: |
-            **编译时间：${{ env.release_tag }} 设备/平台：${{ matrix.Device }}**
+            **${{ env.release_tag }}**
             * 编译源码完全同步上游 [➦上游源码](${{ env.SOURCE_URL}})
             欢迎各种Issues和PR~ 🙇‍
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
