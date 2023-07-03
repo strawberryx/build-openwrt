@@ -185,7 +185,7 @@ jobs:
       #     to: ${{ secrets.TELEGRAM_CHAT_ID }}
       #     token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       #     message: |
-      #       开始编译 🎉 
+      #       开始编译 🎉
       #       设备/平台：${{ matrix.Device }}
 
       - name: Initialization environment
@@ -507,3 +507,15 @@ jobs:
         with:
           retain_days: 3
           keep_minimum_runs: 2
+
+      - uses: sgpublic/delete-release-action@v1.0
+        with:
+          release-drop: true
+          release-keep-count: 6
+          release-drop-tag: true
+          pre-release-drop: false
+          pre-release-keep-count: -1
+          pre-release-drop-tag: true
+          draft-drop: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
