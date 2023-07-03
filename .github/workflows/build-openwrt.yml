@@ -473,7 +473,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: "Redstone | 固件下载"
+          name: "固件下载 | ${{ matrix.Device }}"
           tag_name: ${{ env.release_tag }}
           body: |
             **${{ env.release_tag }}**
