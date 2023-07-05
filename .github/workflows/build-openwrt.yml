@@ -19,10 +19,11 @@ on:
 env:
   SOURCE_URL: https://github.com/coolsnowwolf/lede
   SOURCE_BRANCH: master
-
+  EXTERNAL_FILE: configs/external.config
   TOOLCHAIN_TAG: Toolchain
   SOURCE: lede
   TZ: Asia/Shanghai
+  APP_CONFIG: configs/app.config
 
   CONFIG_FILE: configs/n1.config
   DIY_SCRIPT: scripts/diy/n1-lede.sh
@@ -33,7 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        Device: ["x86"]
+        Device: ["x86", "n1"]
     runs-on: ubuntu-latest
 
     outputs:
@@ -78,6 +79,10 @@ jobs:
         run: |
           svn co https://github.com/c3p7f2/build-openwrt/trunk/configs config
           mv config/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
+          cat $GITHUB_WORKSPACE/$APP_CONFIG >> $OPENWRT_PATH/.config
+          cd $OPENWRT_PATH && make defconfig
+          sed -i '/CONFIG_DEFAULT_luci/'d .config
+
           echo -e "\nCONFIG_ALL=y" >> $OPENWRT_PATH/.config
           echo -e "\nCONFIG_ALL_NONSHARED=y" >> $OPENWRT_PATH/.config
           cd $OPENWRT_PATH
@@ -168,7 +173,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        Device: ["x86"]
+        Device: ["x86", "n1"]
 
     env:
       OPENWRT_PATH: ${{ needs.Toolchain.outputs.OPENWRT_PATH }}
@@ -312,10 +317,15 @@ jobs:
 
       - name: Update configuration
         run: |
-
           cp $GITHUB_WORKSPACE/configs/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
-          cd $OPENWRT_PATH
-          make defconfig
+          cat $GITHUB_WORKSPACE/$APP_CONFIG >> $OPENWRT_PATH/.config
+          cd $OPENWRT_PATH && make defconfig
+          sed -i '/CONFIG_DEFAULT_luci/'d .config
+
+
+          
+          # cd $OPENWRT_PATH
+          # make defconfig
 
       ###########################################################################################
 
@@ -461,10 +471,14 @@ jobs:
         run: |
           rm -f ${{ env.PACKAGED_OUTPUTPATH }}/*.tar.gz
 
+      - name: Set date
+        id: date
+        run: echo "DATE=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+
       - name: Generate release tag
         id: tag
         run: |
-          echo "release_tag=$(date +"%Y.%m.%d-%H%M"-${{ matrix.Device }})" >> $GITHUB_ENV
+          echo "release_tag=${{ env.DATE }}-download" >> $GITHUB_ENV
           # touch release.txt
           # echo ${{ matrix.Device }} >> release.txt
 
@@ -473,11 +487,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: "固件下载 | ${{ matrix.Device }}"
+          name: "OpenWrt | Redstone 固件下载"
           tag_name: ${{ env.release_tag }}
           body: |
-            **${{ env.release_tag }}**
-            * 编译源码完全同步上游 [➦上游源码](${{ env.SOURCE_URL}})
+            **编译日期：${{ env.DATE }}**
+            * [➦上游源码](${{ env.SOURCE_URL}})
             欢迎各种Issues和PR~ 🙇‍
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
@@ -507,3 +521,11 @@ jobs:
         with:
           retain_days: 3
           keep_minimum_runs: 2
+
+      - name: Delete Older Releases
+        uses: dev-drprasad/delete-older-releases@v0.2.1
+        with:
+          keep_latest: 7
+          delete_tag_pattern: download
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
