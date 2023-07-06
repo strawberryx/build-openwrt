@@ -168,7 +168,7 @@ jobs:
           body: OpenWrt 工具链镜像文件
 
   build:
-    needs: [Toolchain]
+    # needs: [Toolchain]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
