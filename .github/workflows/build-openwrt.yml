@@ -349,6 +349,7 @@ jobs:
           echo
           echo "	      已选插件列表"
           cat Plug-in
+          echo "PLUGIN=$(cat Plug-in)" >> $GITHUB_ENV
           rm -rf {Plug-in,Plug-2}
           echo
           echo "=========================================="
@@ -492,6 +493,9 @@ jobs:
           body: |
             **编译日期：${{ env.DATE }}**
             * [➦上游源码](${{ env.SOURCE_URL}})
+            插件：
+            ${{ env.PLUGIN }}
+            
             欢迎各种Issues和PR~ 🙇‍
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
