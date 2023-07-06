@@ -34,7 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        Device: ["x86", "n1", "rpi4", "rockchip"]
+        Device: ["x86", "n1", "rpi4"]
     runs-on: ubuntu-latest
 
     outputs:
@@ -168,12 +168,12 @@ jobs:
           body: OpenWrt 工具链镜像文件
 
   build:
-    # needs: [Toolchain]
+    needs: [Toolchain]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        Device: ["x86", "n1", "rpi4", "rockchip"]
+        Device: ["x86", "n1", "rpi4"]
 
     env:
       OPENWRT_PATH: ${{ needs.Toolchain.outputs.OPENWRT_PATH }}
