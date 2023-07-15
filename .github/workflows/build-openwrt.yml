@@ -367,7 +367,7 @@ jobs:
 
           cd $OPENWRT_PATH
 
-          # /bin/bash $GITHUB_WORKSPACE/scripts/rewrite.sh
+          /bin/bash $GITHUB_WORKSPACE/scripts/rewrite.sh
 
 
           if [ -n "$(ls -A "$GITHUB_WORKSPACE/files" 2>/dev/null)" ]; then
