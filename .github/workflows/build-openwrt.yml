@@ -487,13 +487,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: "OpenWrt | Redstone 固件下载"
+          name: "固件下载 | Nightly Build"
           tag_name: ${{ env.release_tag }}
           body: |
             **编译日期：${{ env.DATE }}**
-            * [➦上游源码](${{ env.SOURCE_URL}})
-
-            自用固件，缝合了挺多人的代码，感谢感谢 🙇‍
+            * [➦OpenWrt源码](${{ env.SOURCE_URL}})
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
@@ -503,7 +501,8 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            编译失败 ❌
+            编译失败
+
             设备/平台：${{ matrix.Device }}
 
       - name: TG Notification - ✔️
@@ -513,7 +512,8 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            编译成功 ✔️
+            编译成功
+
             设备/平台：${{ matrix.Device }}
             下载地址：https://github.com/c3p7f2/build-openwrt/releases/tag/${{ env.release_tag }}
 
