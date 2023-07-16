@@ -5,10 +5,4 @@
 ██║  ██║███████╗██████╔╝███████║   ██║   ╚██████╔╝██║ ╚████║███████╗
 ╚═╝  ╚═╝╚══════╝╚═════╝ ╚══════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═══╝╚══════╝
                                                                                                                                                           
-==> Redstone | %D %V, %C
-
-==> 常用命令
-设置lan口的ip地址：uci set network.lan.ipaddr=[lan ip]
-设置wan口的协议为pppoe：uci set network.wan.proto=pppoe
-设置wan口的用户名和密码：uci set network.wan.username=[username] 和 uci set network.wan.password=[password]
-重载网络配置：service network reload 或者 /etc/init.d/network reload
+==> %D %V, %C
