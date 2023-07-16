@@ -34,7 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        Device: ["x86", "n1", "rpi4"]
+        Device: ["x86", "n1", "rpi4", "rockchip"]
     runs-on: ubuntu-latest
 
     outputs:
@@ -173,7 +173,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        Device: ["x86", "n1", "rpi4"]
+        Device: ["x86", "n1", "rpi4", "rockchip"]
 
     env:
       OPENWRT_PATH: ${{ needs.Toolchain.outputs.OPENWRT_PATH }}
