@@ -493,7 +493,7 @@ jobs:
             **编译日期：${{ env.DATE }}**
             * [➦上游源码](${{ env.SOURCE_URL}})
 
-            欢迎各种Issues和PR~ 🙇‍
+            自用固件，缝合了挺多人的代码，感谢感谢 🙇‍
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
