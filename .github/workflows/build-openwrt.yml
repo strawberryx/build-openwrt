@@ -193,6 +193,11 @@ jobs:
       #       开始编译 🎉
       #       设备/平台：${{ matrix.Device }}
 
+      - name: SSH环境
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && !contains(matrix.Device, 'x86')}}        
+        run: |      
+          sudo halt
+
       - name: Initialization environment
         env:
           DEBIAN_FRONTEND: noninteractive
