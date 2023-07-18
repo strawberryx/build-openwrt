@@ -332,9 +332,45 @@ jobs:
       - name: echo openwrt config
         run: cat $OPENWRT_PATH/.config
 
+      - name: 获取插件列表并提交到README
+        if: ${{ contains(matrix.Device, 'x86') }}
+        run: |
+          cd $OPENWRT_PATH
+
+          # 获取配置文件中的插件列表
+          plugins=$(grep -oP "CONFIG_PACKAGE_\K\w+" .config | sort | uniq)
+                
+          # 删除readme文件中的旧插件列表
+          sed -i '/## 编译的插件列表/,/##/d' README.md
+                
+          # 生成一个markdown格式的表格
+          table="| 插件名 | 说明 |\n| --- | --- |\n"
+          for plugin in $plugins; do
+            # 获取插件的描述信息，如果没有就用插件名代替
+            description=$(grep -oP "$plugin is a \K.*" package/feeds/*/$plugin/Makefile | head -1)
+            if [ -z "$description" ]; then
+              description=$plugin
+            fi
+            # 添加一行到表格中
+            table+="| $plugin | $description |\n"
+          done
+                
+          # 把表格追加到readme文件的末尾
+          echo -e "\n## 编译的插件列表\n\n$table" >> $GITHUB_WORKSPACE/README.md
+                
+          # 提交readme文件到你的仓库
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "[AutoBuild] 更新编译的插件列表"
+          git push origin master          
+
+
       - name: echo plugins
         run: |
           cd $OPENWRT_PATH
+
+          ## 输出LUCI-APP
           echo
           echo "=========================================="
           grep -i CONFIG_PACKAGE_luci-app .config | grep  -v \# > Plug-in
