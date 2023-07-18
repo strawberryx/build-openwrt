@@ -452,7 +452,10 @@ jobs:
           sha256* \
           *manifest \
           *rootfs* \
-          *info
+          *info \
+          *kernel.bin \
+          *sha \
+          *json
 
           # *bin
 
