@@ -538,9 +538,12 @@ jobs:
         run: |
           rm -f ${{ env.PACKAGED_OUTPUTPATH }}/*.tar.gz
 
-      - name: Set date
-        id: date
-        run: echo "DATE=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+      - name: Set variables
+        run: |
+          echo "DATE=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+          BRANCH_NAME=$(echo $GITHUB_REF | cut -d'/' -f 3)
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+
 
       - name: Generate release tag
         id: tag
@@ -561,7 +564,7 @@ jobs:
             * [➦OpenWrt源码](${{ env.SOURCE_URL}})
 
             设备/平台：${{ matrix.Device }}
-            分支：${{ GITHUB_REF#refs/heads/ }}
+            分支：${{ env.BRANCH_NAME }}
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
@@ -585,7 +588,7 @@ jobs:
             编译成功
 
             设备/平台：${{ matrix.Device }}
-            分支：${{ GITHUB_REF#refs/heads/ }}
+            分支：${{ env.BRANCH_NAME }}
             下载地址：https://github.com/c3p7f2/build-openwrt/releases/tag/${{ env.release_tag }}
 
       - name: Delete workflow runs
