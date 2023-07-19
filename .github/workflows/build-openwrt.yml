@@ -304,7 +304,9 @@ jobs:
         run: |
           mkdir -p workspace
           cd workspace
-          aria2c -x 16 https://github.com/$GITHUB_REPOSITORY/releases/download/$TOOLCHAIN_TAG/toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img
+
+          aria2c -s 10 -x 10 -j 20 -c https://github.com/$GITHUB_REPOSITORY/releases/download/$TOOLCHAIN_TAG/toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img.0{0..9} -o toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img
+
           mkdir openwrt-ro openwrt workdir overlay
           sudo mount -o loop toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img openwrt-ro
           sudo mount -t overlay overlay -o lowerdir=openwrt-ro,upperdir=overlay,workdir=workdir openwrt
