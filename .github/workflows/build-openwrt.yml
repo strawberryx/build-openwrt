@@ -343,6 +343,7 @@ jobs:
 
       - name: 更新README
         if: ${{ contains(matrix.Device, 'x86') }}
+        continue-on-error: true
         run: |
           cd $OPENWRT_PATH
 
