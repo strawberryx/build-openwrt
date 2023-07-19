@@ -396,7 +396,7 @@ jobs:
           git pull
           git add README.md
           git commit -m "[AutoBuild] 更新插件列表"
-          git push --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY"
+          git push --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY" HEAD:stable
 
       - name: Make download
         run: |
