@@ -3,7 +3,7 @@ name: Build Redstone
 on:
   push:
     branches-ignore:
-      - main
+      - stable
   schedule:
     - cron: "0 19 * * *"
   workflow_dispatch:
