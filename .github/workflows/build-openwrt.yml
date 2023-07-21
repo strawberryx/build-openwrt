@@ -79,8 +79,8 @@ jobs:
         id: clone
         run: |
           df -hT $GITHUB_WORKSPACE
-          git clone $SOURCE_URL -b $SOURCE_BRANCH workspace/openwrt
-          cd workspace/openwrt
+          git clone $SOURCE_URL -b $SOURCE_BRANCH ../workspace/openwrt
+          cd ../workspace/openwrt
           echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
           echo "OPENWRT_PATH=$(echo $PWD)" >> $GITHUB_OUTPUT
           export VERSION_INFO=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H")
@@ -159,7 +159,7 @@ jobs:
       - name: 生成Toolchain Image
         if: steps.hash.outputs.REBUILD_TOOLCHAIN == 'true'
         run: |
-          cd workspace
+          cd ../workspace
           mksquashfs openwrt $TOOLCHAIN_IMAGE -force-gid 1001 -force-uid 1001 -comp zstd
           mkdir -p $GITHUB_WORKSPACE/output
           split -d -b 1900M $TOOLCHAIN_IMAGE $GITHUB_WORKSPACE/output/$TOOLCHAIN_IMAGE.img.
@@ -288,8 +288,8 @@ jobs:
 
       - name: 准备Toolchain Image
         run: |
-          mkdir -p workspace
-          cd workspace
+          mkdir -p ../workspace
+          cd ../workspace
           for i in {0..9}
           do
             echo downloading..
@@ -470,11 +470,11 @@ jobs:
           sudo lvcreate -n lvstorage -l 100%FREE vgstorage
           export LV_DEVNAME=$(sudo lvscan | awk -F "'" '{print $2}')
           sudo mkfs.btrfs -L combinedisk $LV_DEVNAME
-          sudo mount -o compress=zstd $LV_DEVNAME $GITHUB_WORKSPACE
-          sudo chown -R runner:runner $GITHUB_WORKSPACE
-          mkdir $GITHUB_WORKSPACE/tmp && chmod 777 $GITHUB_WORKSPACE/tmp
-          sudo cp -rp /tmp/* $GITHUB_WORKSPACE/tmp
-          sudo mount -B $GITHUB_WORKSPACE/tmp /tmp && df -hT
+          sudo mount -o compress=zstd $LV_DEVNAME $OPENWRT_PATH
+          sudo chown -R runner:runner $OPENWRT_PATH
+          mkdir $OPENWRT_PATH/tmp && chmod 777 $OPENWRT_PATH/tmp
+          sudo cp -rp /tmp/* $OPENWRT_PATH/tmp
+          sudo mount -B $OPENWRT_PATH/tmp /tmp && df -hT
 
 
       - name: 编译Packages
