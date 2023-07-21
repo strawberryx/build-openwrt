@@ -382,10 +382,10 @@ jobs:
           # 提交readme文件到你的仓库
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'      
-          git fetch origin
 
           branch_name=${GITHUB_REF#refs/heads/}
-
+          git checkout branch_name
+          git fetch origin
           git checkout origin/$branch_name -- README.md
           git add README.md
           git commit -m "更新插件列表"
