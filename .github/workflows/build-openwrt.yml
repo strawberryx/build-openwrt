@@ -545,6 +545,7 @@ jobs:
           echo "DATE=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
           BRANCH_NAME=$(echo $GITHUB_REF | cut -d'/' -f 3)
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "DEVICES=$(echo $matrix | jq -r '.include[].device' | paste -sd '、' -)" >> $GITHUB_ENV
 
 
       - name: Generate release tag
@@ -563,10 +564,29 @@ jobs:
           tag_name: ${{ env.release_tag }}
           body: |
             **编译日期：${{ env.DATE }}**
-            * [➦OpenWrt源码](${{ env.SOURCE_URL}})
+            * [➦上游源码](${{ env.SOURCE_URL}})
+            * 编译分支：${{ env.CURRENT_BRANCH }}
 
-            设备/平台：${{ matrix.Device }}
-            分支：${{ env.BRANCH_NAME }}
+            该Release包含这些设备/平台的固件：${{ matrix.DEVICES }}
+            
+            如何刷入：
+              X86设备：
+                1、下载.gz文件。
+                2、使用Etcher，选择.gz文件直接刷入就行啦。
+                3、以后可直接通过后台更新系统。
+                VMware虚拟机：
+                  vmdk文件可作为VMware虚拟机的硬盘直接启动哦。
+
+              Arm设备：
+                1、下载.gz文件。
+                2、使用Etcher，选择.gz文件直接刷入。
+                3、更新方式不是所有设备通用，具体参考相应的设备更新流程。
+
+            Q1：路由器上可以刷吗 A：上面没有的设备八成不能。
+            Q2: 下载不下来 A：检查你的网络，使用代理试试。
+            Q3：刷完启动黑底白字卡住 A：这时候都加载好了，你可以按Enter进入终端。
+            Q4：刷完黑底白字报错 A：可能固件有问题 :(
+            Q5: 进不去后台啊 A：检查地址（https还是http、ip和端口等等），其他的我也猜不到呢。
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
@@ -579,6 +599,7 @@ jobs:
             编译失败
 
             设备/平台：${{ matrix.Device }}
+            分支：${{ env.CURRENT_BRANCH }}
 
       - name: TG Notification - ✔️
         if: ${{ success() }}
@@ -590,7 +611,7 @@ jobs:
             编译成功
 
             设备/平台：${{ matrix.Device }}
-            分支：${{ env.BRANCH_NAME }}
+            分支：${{ env.CURRENT_BRANCH }}
             下载地址：https://github.com/c3p7f2/build-openwrt/releases/tag/${{ env.release_tag }}
 
       - name: Delete workflow runs
