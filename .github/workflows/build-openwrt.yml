@@ -352,7 +352,6 @@ jobs:
 
       - name: 更新README
         if: ${{ contains(matrix.Device, 'x86') }}
-        continue-on-error: true
         run: |
           cd $OPENWRT_PATH
 
@@ -383,10 +382,9 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'      
 
-          branch_name=${GITHUB_REF#refs/heads/}
-          git checkout branch_name
+          git checkout $CURRENT_BRANCH
           git fetch origin
-          git checkout origin/$branch_name -- README.md
+          git checkout origin/$CURRENT_BRANCH -- README.md
           git add README.md
           git commit -m "更新插件列表"
           git push --quiet "https://${{ secrets.GH_PAT }}@github.com/$GITHUB_REPOSITORY"      
