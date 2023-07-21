@@ -350,44 +350,46 @@ jobs:
 
       ###########################################################################################
 
-      #- name: 更新README
-      #  if: ${{ contains(matrix.Device, 'x86') }}
-      #  run: |
-      #    cd $OPENWRT_PATH
-#
-      #    # 获取配置文件中的插件列表
-      #    grep -i CONFIG_PACKAGE_luci-app .config | grep  -v \# > Plug-in
-      #    grep -i CONFIG_PACKAGE_luci-theme .config | grep  -v \# >> Plug-in
-      #    sed -i '/INCLUDE/d' Plug-in > /dev/null 2>&1
-      #    sed -i 's/CONFIG_PACKAGE_/、/g' Plug-in
-      #    sed -i '/qbittorrent_static/d' Plug-in > /dev/null 2>&1
-      #    sed -i 's/=y/\ /g' Plug-in
-      #    awk '$0=NR$0' Plug-in > Plugins
-      #    awk '{print $0 "  \n"}' Plugins > PluginsList
-#
-      #    plugins=$(cat PluginsList)
-#
-      #    cd $GITHUB_WORKSPACE
-#
-      #    sed -i '/## 当前固件包含的插件/,/##/d' README.md
-#
-      #          
-      #    # 将插件列表附加到README.md文件中
-      #    ## echo "  " >> README.md
-      #    echo "## 当前固件包含的插件：" >> README.md
-      #    echo "" >> README.md
-      #    echo "$plugins" >> README.md
-      #          
-      #    # 提交readme文件到你的仓库
-      #    git config user.name 'github-actions[bot]'
-      #    git config user.email 'github-actions[bot]@users.noreply.github.com'      
-#
-      #    git checkout $CURRENT_BRANCH
-      #    git fetch origin
-      #    git checkout origin/$CURRENT_BRANCH -- README.md
-      #    git add README.md
-      #    git commit -m "更新插件列表"
-      #    git push --quiet "https://${{ secrets.GH_PAT }}@github.com/$GITHUB_REPOSITORY"      
+      - name: 更新README
+        if: ${{ contains(matrix.Device, 'x86') }}
+        run: |
+          cd $OPENWRT_PATH
+
+          # 获取配置文件中的插件列表
+          grep -i CONFIG_PACKAGE_luci-app .config | grep  -v \# > Plug-in
+          grep -i CONFIG_PACKAGE_luci-theme .config | grep  -v \# >> Plug-in
+          sed -i '/INCLUDE/d' Plug-in > /dev/null 2>&1
+          sed -i 's/CONFIG_PACKAGE_/、/g' Plug-in
+          sed -i '/qbittorrent_static/d' Plug-in > /dev/null 2>&1
+          sed -i 's/=y/\ /g' Plug-in
+          awk '$0=NR$0' Plug-in > Plugins
+          awk '{print $0 "  \n"}' Plugins > PluginsList
+          # 获取配置文件中的插件列表
+
+          # 变量
+          PLUGINS=$(cat PluginsList)
+          INSERT_FILE=./README.md
+          # 变量
+
+          cd $GITHUB_WORKSPACE
+          # 在修改文件之前
+          git checkout $CURRENT_BRANCH
+          git fetch origin
+          git checkout origin/$CURRENT_BRANCH -- $INSERT_FILE
+
+          sed -i '/## 当前固件包含的插件/,/##/d' $INSERT_FILE
+          # 将插件列表附加到$INSERT_FILE文件中
+          ## echo "  " >> $INSERT_FILE
+          echo "## 当前固件包含的插件：" >> $INSERT_FILE
+          echo "" >> $INSERT_FILE
+          echo "$PLUGINS" >> $INSERT_FILE
+                
+          # 提交readme文件到你的仓库
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'      
+          git add $INSERT_FILE
+          git commit -m "更新插件列表"
+          git push --quiet "https://${{ secrets.GH_PAT }}@github.com/$GITHUB_REPOSITORY"      
 
       - name: echo openwrt config
         run: cat $OPENWRT_PATH/.config
