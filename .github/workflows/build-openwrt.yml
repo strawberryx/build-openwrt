@@ -118,8 +118,8 @@ jobs:
 
       - name: 生成Toolchain配置
         run: |
-          svn co https://github.com/c3p7f2/build-openwrt/trunk/configs config
-          mv config/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
+          
+          mv configs/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
           cat $GITHUB_WORKSPACE/$APP_CONFIG >> $OPENWRT_PATH/.config
           cd $OPENWRT_PATH && make defconfig
           sed -i '/CONFIG_DEFAULT_luci/'d .config
