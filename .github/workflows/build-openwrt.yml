@@ -313,14 +313,16 @@ jobs:
 
       - name: 准备Toolchain Image
         run: |
-          mkdir -p ../..
-          cd ../..
+          mkdir -p $OPENWRT_PATH
+          cd $OPENWRT_PATH
+          cd ..
+
           for i in {0..9}
           do
             echo downloading..
-            curl -fsL -vk https://github.com/$GITHUB_REPOSITORY/releases/download/$TOOLCHAIN_TAG/toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img.0$i >> toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img || break
+            curl -fsL -k https://github.com/$GITHUB_REPOSITORY/releases/download/$TOOLCHAIN_TAG/toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img.0$i >> toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img || break
           done
-          mkdir openwrt-ro openwrt workdir overlay
+          mkdir -p openwrt-ro openwrt workdir overlay
           sudo mount -o loop toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img openwrt-ro
           sudo mount -t overlay overlay -o lowerdir=openwrt-ro,upperdir=overlay,workdir=workdir openwrt
           cd $OPENWRT_PATH
