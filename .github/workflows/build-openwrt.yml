@@ -68,7 +68,7 @@ jobs:
         run: |
           df -hT $GITHUB_WORKSPACE
           git clone $SOURCE_URL -b $SOURCE_BRANCH openwrt
-          cd workspace/openwrt
+          cd openwrt
           echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
           echo "OPENWRT_PATH=$(echo $PWD)" >> $GITHUB_OUTPUT
           export VERSION_INFO=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H")
