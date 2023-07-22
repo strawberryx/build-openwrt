@@ -57,6 +57,7 @@ jobs:
       DEVICE_TARGET: ${{ steps.env.outputs.DEVICE_TARGET }}
       DEVICE_SUBTARGET: ${{ steps.env.outputs.DEVICE_SUBTARGET }}
       TOOLCHAIN_IMAGE: ${{ steps.env.outputs.TOOLCHAIN_IMAGE }}
+      WORK_PATH: ${{ steps.clone.outputs.WORK_PATH }}
 
     steps:
       - name: Checkout
@@ -80,7 +81,9 @@ jobs:
         run: |
           df -hT $GITHUB_WORKSPACE
           git clone $SOURCE_URL -b $SOURCE_BRANCH ../../openwrt
-          cd ../../openwrt
+          cd ../..
+          echo "WORK_PATH"=$PWD" >> $GITHUB_ENV
+          cd openwrt
           echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
           echo "OPENWRT_PATH=$(echo $PWD)" >> $GITHUB_OUTPUT
           export VERSION_INFO=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H")
@@ -195,6 +198,7 @@ jobs:
       VERSION_INFO: ${{ needs.Toolchain.outputs.VERSION_INFO }}
       CURRENT_BRANCH: ${{ needs.Toolchain.outputs.CURRENT_BRANCH }}
       SOURCE_REPO: ${{ needs.Toolchain.outputs.SOURCE_REPO }}
+      WORK_PATH: ${{ needs.Toolchain.outputs.WORK_PATH }}
 
       MSG_PREFIX: "Ref: ${{ github.ref }}\nDevice: ${{ matrix.Device }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
 
@@ -231,12 +235,12 @@ jobs:
           sudo lvcreate -n lvstorage -l 100%FREE vgstorage
           export LV_DEVNAME=$(sudo lvscan | awk -F "'" '{print $2}')
           sudo mkfs.btrfs -L combinedisk $LV_DEVNAME
-          sudo mkdir -p $OPENWRT_PATH
-          sudo mount -o compress=zstd $LV_DEVNAME $OPENWRT_PATH
-          sudo chown -R runner:runner $OPENWRT_PATH
-          mkdir $OPENWRT_PATH/tmp && chmod 777 $OPENWRT_PATH/tmp
-          sudo cp -rp /tmp/* $OPENWRT_PATH/tmp
-          sudo mount -B $OPENWRT_PATH/tmp /tmp && df -hT          
+          sudo mkdir -p $WORK_PATH
+          sudo mount -o compress=zstd $LV_DEVNAME $WORK_PATH
+          sudo chown -R runner:runner $WORK_PATH
+          mkdir $WORK_PATH/tmp && chmod 777 $WORK_PATH/tmp
+          sudo cp -rp /tmp/* $WORK_PATH/tmp
+          sudo mount -B $WORK_PATH/tmp /tmp && df -hT          
 
       - name: Initialization environment
         env:
