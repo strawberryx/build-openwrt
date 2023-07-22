@@ -79,8 +79,8 @@ jobs:
         id: clone
         run: |
           df -hT $GITHUB_WORKSPACE
-          git clone $SOURCE_URL -b $SOURCE_BRANCH ../workspace/openwrt
-          cd ../workspace/openwrt
+          git clone $SOURCE_URL -b $SOURCE_BRANCH ../../openwrt
+          cd ../../openwrt
           echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
           echo "OPENWRT_PATH=$(echo $PWD)" >> $GITHUB_OUTPUT
           export VERSION_INFO=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H")
@@ -159,7 +159,7 @@ jobs:
       - name: 生成Toolchain Image
         if: steps.hash.outputs.REBUILD_TOOLCHAIN == 'true'
         run: |
-          cd ../workspace
+          cd ../..
           mksquashfs openwrt $TOOLCHAIN_IMAGE -force-gid 1001 -force-uid 1001 -comp zstd
           mkdir -p $GITHUB_WORKSPACE/output
           split -d -b 1900M $TOOLCHAIN_IMAGE $GITHUB_WORKSPACE/output/$TOOLCHAIN_IMAGE.img.
@@ -212,6 +212,30 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && matrix.Device != 'x86' }}        
         run: |      
           sudo halt
+
+      - name: 组合磁盘扩大/tmp
+        run: |
+          export ROOT_FREE_KB=$(df --block-size=1024 --output=avail / | tail -1)
+          export ROOT_LOOP_KB=$(expr $ROOT_FREE_KB - 1048576)
+          export ROOT_LOOP_BYTES=$(expr $ROOT_LOOP_KB \* 1024)
+          sudo fallocate -l $ROOT_LOOP_BYTES /root.img
+          export ROOT_LOOP_DEVNAME=$(sudo losetup -Pf --show /root.img)
+          sudo pvcreate -f $ROOT_LOOP_DEVNAME
+          export MNT_FREE_KB=$(df --block-size=1024 --output=avail /mnt | tail -1)
+          export MNT_LOOP_KB=$(expr $MNT_FREE_KB - 102400)
+          export MNT_LOOP_BYTES=$(expr $MNT_LOOP_KB \* 1024)
+          sudo fallocate -l $MNT_LOOP_BYTES /mnt/mnt.img
+          export MNT_LOOP_DEVNAME=$(sudo losetup -Pf --show /mnt/mnt.img)
+          sudo pvcreate -f $MNT_LOOP_DEVNAME
+          sudo vgcreate vgstorage $ROOT_LOOP_DEVNAME $MNT_LOOP_DEVNAME
+          sudo lvcreate -n lvstorage -l 100%FREE vgstorage
+          export LV_DEVNAME=$(sudo lvscan | awk -F "'" '{print $2}')
+          sudo mkfs.btrfs -L combinedisk $LV_DEVNAME
+          sudo mount -o compress=zstd $LV_DEVNAME $OPENWRT_PATH
+          sudo chown -R runner:runner $OPENWRT_PATH
+          mkdir $OPENWRT_PATH/tmp && chmod 777 $OPENWRT_PATH/tmp
+          sudo cp -rp /tmp/* $OPENWRT_PATH/tmp
+          sudo mount -B $OPENWRT_PATH/tmp /tmp && df -hT          
 
       - name: Initialization environment
         env:
@@ -288,8 +312,8 @@ jobs:
 
       - name: 准备Toolchain Image
         run: |
-          mkdir -p ../workspace
-          cd ../workspace
+          mkdir -p ../..
+          cd ../..
           for i in {0..9}
           do
             echo downloading..
@@ -452,29 +476,7 @@ jobs:
           ttyd -p 8000 bash &
           ./frpc -c ./p-frpc.ini
 
-      - name: 组合磁盘扩大/tmp
-        run: |
-          export ROOT_FREE_KB=$(df --block-size=1024 --output=avail / | tail -1)
-          export ROOT_LOOP_KB=$(expr $ROOT_FREE_KB - 1048576)
-          export ROOT_LOOP_BYTES=$(expr $ROOT_LOOP_KB \* 1024)
-          sudo fallocate -l $ROOT_LOOP_BYTES /root.img
-          export ROOT_LOOP_DEVNAME=$(sudo losetup -Pf --show /root.img)
-          sudo pvcreate -f $ROOT_LOOP_DEVNAME
-          export MNT_FREE_KB=$(df --block-size=1024 --output=avail /mnt | tail -1)
-          export MNT_LOOP_KB=$(expr $MNT_FREE_KB - 102400)
-          export MNT_LOOP_BYTES=$(expr $MNT_LOOP_KB \* 1024)
-          sudo fallocate -l $MNT_LOOP_BYTES /mnt/mnt.img
-          export MNT_LOOP_DEVNAME=$(sudo losetup -Pf --show /mnt/mnt.img)
-          sudo pvcreate -f $MNT_LOOP_DEVNAME
-          sudo vgcreate vgstorage $ROOT_LOOP_DEVNAME $MNT_LOOP_DEVNAME
-          sudo lvcreate -n lvstorage -l 100%FREE vgstorage
-          export LV_DEVNAME=$(sudo lvscan | awk -F "'" '{print $2}')
-          sudo mkfs.btrfs -L combinedisk $LV_DEVNAME
-          sudo mount -o compress=zstd $LV_DEVNAME $OPENWRT_PATH
-          sudo chown -R runner:runner $OPENWRT_PATH
-          mkdir $OPENWRT_PATH/tmp && chmod 777 $OPENWRT_PATH/tmp
-          sudo cp -rp /tmp/* $OPENWRT_PATH/tmp
-          sudo mount -B $OPENWRT_PATH/tmp /tmp && df -hT
+
 
 
       - name: 编译Packages
