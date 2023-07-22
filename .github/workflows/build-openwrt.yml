@@ -149,7 +149,7 @@ jobs:
       - name: 生成Toolchain Image
         if: steps.hash.outputs.REBUILD_TOOLCHAIN == 'true'
         run: |
-          cd workspace
+          # cd workspace
           mksquashfs openwrt $TOOLCHAIN_IMAGE -force-gid 1001 -force-uid 1001 -comp zstd
           mkdir -p $GITHUB_WORKSPACE/output
           split -d -b 1900M $TOOLCHAIN_IMAGE $GITHUB_WORKSPACE/output/$TOOLCHAIN_IMAGE.img.
@@ -580,6 +580,8 @@ jobs:
         with:
           retain_days: 3
           keep_minimum_runs: 2
+        env:
+          token: ${{ secrets.GH_PAT }}               
 
       - name: Delete Older Releases
         uses: dev-drprasad/delete-older-releases@v0.2.1
