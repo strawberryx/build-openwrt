@@ -36,6 +36,9 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - id: set-matrix
         run: |
           # 这里运行你的脚本，并将输出设置为一个 JSON 格式的矩阵
@@ -572,8 +575,7 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            Redstone| OpenWrt
-            编译失败 ：
+            编译失败 ❌
 
             设备/平台：${{ matrix.Device }}
             分支：${{ env.CURRENT_BRANCH }}
@@ -585,10 +587,11 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            编译成功
+            编译成功 ✔️
 
             设备/平台：${{ matrix.Device }}
             分支：${{ env.CURRENT_BRANCH }}
+
             下载地址：https://github.com/c3p7f2/build-openwrt/releases/tag/${{ env.release_tag }}
 
 
