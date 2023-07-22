@@ -83,6 +83,7 @@ jobs:
           git clone $SOURCE_URL -b $SOURCE_BRANCH ../../openwrt
           cd ../..
           echo "WORK_PATH=$PWD" >> $GITHUB_ENV
+          echo "WORK_PATH=$PWD" >> $GITHUB_OUTPUT
           cd openwrt
           echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
           echo "OPENWRT_PATH=$(echo $PWD)" >> $GITHUB_OUTPUT
