@@ -231,6 +231,7 @@ jobs:
           sudo lvcreate -n lvstorage -l 100%FREE vgstorage
           export LV_DEVNAME=$(sudo lvscan | awk -F "'" '{print $2}')
           sudo mkfs.btrfs -L combinedisk $LV_DEVNAME
+          sudo mkdir -p $OPENWRT_PATH
           sudo mount -o compress=zstd $LV_DEVNAME $OPENWRT_PATH
           sudo chown -R runner:runner $OPENWRT_PATH
           mkdir $OPENWRT_PATH/tmp && chmod 777 $OPENWRT_PATH/tmp
