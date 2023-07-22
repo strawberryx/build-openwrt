@@ -30,11 +30,23 @@ env:
   CONFIG_FILE: configs/n1.config
 
 jobs:
+
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        run: |
+          # 这里运行你的脚本，并将输出设置为一个 JSON 格式的矩阵
+          echo "matrix= {\"include\": [ {\"device\":\"x86\"}, {\"device\":\"n1\"}, {\"device\":\"rpi4\"},{\"device\":\"rockchip\"}]}" >> $GITHUB_OUTPUT
+
   Toolchain:
+    needs: generate-matrix
+
     strategy:
       fail-fast: false
-      matrix:
-        Device: ["x86", "n1", "rpi4", "rockchip"]
+      matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
     runs-on: ubuntu-latest
 
     outputs:
@@ -168,7 +180,7 @@ jobs:
           body: OpenWrt 工具链镜像文件
 
   build:
-    needs: [Toolchain]
+    needs: [generate-matrix,Toolchain]
     runs-on: ubuntu-latest
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
@@ -176,8 +188,7 @@ jobs:
       contents: write    
     strategy:
       fail-fast: false
-      matrix:
-        Device: ["x86", "n1", "rpi4", "rockchip"]
+      matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
 
     env:
       OPENWRT_PATH: ${{ needs.Toolchain.outputs.OPENWRT_PATH }}
