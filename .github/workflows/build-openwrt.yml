@@ -41,13 +41,12 @@ jobs:
 
       - id: set-matrix
         run: |
-          # 从本地库中自动生成机型
           # Change directory to configs
           cd configs
-              
+
           # Initialize the matrix variable
           matrix="{\"include\":["
-              
+
           # Loop through each folder in the configs directory
           for d in */ ; do
               # Remove the trailing slash from the folder name
@@ -55,12 +54,21 @@ jobs:
               # Append the device name to the matrix variable
               matrix="$matrix{\"device\":\"$device_name\"},"
           done
-              
+
           # Remove the trailing comma from the matrix variable
           matrix=${matrix%,}
-              
+
           # Close the matrix variable
           matrix="$matrix]}"
+
+          # Change back to the previous directory
+          cd ..
+
+          # Set the matrix output
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
+
+          echo $matrix
 
   Toolchain:
     needs: generate-matrix
