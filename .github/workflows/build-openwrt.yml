@@ -538,6 +538,12 @@ jobs:
           # touch release.txt
           # echo ${{ matrix.Device }} >> release.txt
 
+
+
+
+
+
+
       - name: Upload firmware to release
         uses: softprops/action-gh-release@v1
         env:
@@ -547,7 +553,8 @@ jobs:
           tag_name: ${{ env.release_tag }}
           body: |
             **编译日期：${{ env.DATE }}**
-            * [➦OpenWrt源码](${{ env.SOURCE_URL}})
+            * 编译分支：${{ env.CURRENT_BRANCH }}
+            * 下面包含这些设备/平台的固件：${{ matrix.DEVICES }}
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
@@ -557,9 +564,11 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            编译失败
+            Redstone| OpenWrt
+            编译失败 ：
 
             设备/平台：${{ matrix.Device }}
+            分支：${{ env.CURRENT_BRANCH }}
 
       - name: TG Notification - ✔️
         if: ${{ success() }}
@@ -571,13 +580,21 @@ jobs:
             编译成功
 
             设备/平台：${{ matrix.Device }}
+            分支：${{ env.CURRENT_BRANCH }}
             下载地址：https://github.com/c3p7f2/build-openwrt/releases/tag/${{ env.release_tag }}
+
+
+
+
+
 
       - name: Delete workflow runs
         uses: GitRML/delete-workflow-runs@main
         with:
           retain_days: 3
           keep_minimum_runs: 2
+        env:
+          token: ${{ secrets.GH_PAT }}          
 
       - name: Delete Older Releases
         uses: dev-drprasad/delete-older-releases@v0.2.1
