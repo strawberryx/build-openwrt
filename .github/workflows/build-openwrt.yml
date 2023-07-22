@@ -41,8 +41,26 @@ jobs:
 
       - id: set-matrix
         run: |
-          # 这里运行你的脚本，并将输出设置为一个 JSON 格式的矩阵
-          echo "matrix= {\"include\": [ {\"device\":\"x86\"}, {\"device\":\"n1\"}, {\"device\":\"rpi4\"},{\"device\":\"rockchip\"}]}" >> $GITHUB_OUTPUT
+          # 从本地库中自动生成机型
+          # Change directory to configs
+          cd configs
+              
+          # Initialize the matrix variable
+          matrix="{\"include\":["
+              
+          # Loop through each folder in the configs directory
+          for d in */ ; do
+              # Remove the trailing slash from the folder name
+              device_name=${d%/}
+              # Append the device name to the matrix variable
+              matrix="$matrix{\"device\":\"$device_name\"},"
+          done
+              
+          # Remove the trailing comma from the matrix variable
+          matrix=${matrix%,}
+              
+          # Close the matrix variable
+          matrix="$matrix]}"
 
   Toolchain:
     needs: generate-matrix
