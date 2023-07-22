@@ -7,6 +7,7 @@ uci commit luci
 uci -q batch <<-EOF
 	set system.@system[0].timezone='CST-8'
 	set system.@system[0].zonename='Asia/Shanghai'
+	set system.@system[0].hostname='Redstone'
 
 	delete system.ntp.server
 	add_list system.ntp.server='ntp.ntsc.ac.cn'
