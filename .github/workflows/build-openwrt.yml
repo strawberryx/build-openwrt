@@ -393,27 +393,24 @@ jobs:
           awk '{print $0 "  \n"}' Plugins > PluginsList
 
           plugins=$(cat PluginsList)
-
-          cd $GITHUB_WORKSPACE
-
-          sed -i '/## 当前固件包含的插件/,/##/d' README.md
-
-                
-          # 将插件列表附加到README.md文件中
-          ## echo "  " >> README.md
-          echo "## 当前固件包含的插件：" >> README.md
-          echo "" >> README.md
-          echo "$plugins" >> README.md
           echo "PLUGINS=$plugins" >> $GITHUB_ENV
-                
-          # 提交readme文件到你的仓库
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'      
-          git pull
-          git add README.md
-          git commit -m "README: 更新插件列表"
-          git push --quiet "https://${{ secrets.GH_PAT }}@github.com/$GITHUB_REPOSITORY"      
-
+          
+          # cd $GITHUB_WORKSPACE
+          # sed -i '/## 当前固件包含的插件/,/##/d' README.md
+          # # 将插件列表附加到README.md文件中
+          # ## echo "  " >> README.md
+          # echo "## 当前固件包含的插件：" >> README.md
+          # echo "" >> README.md
+          # echo "$plugins" >> README.md
+          #       
+          # # 提交readme文件到你的仓库
+          # git config user.name 'github-actions[bot]'
+          # git config user.email 'github-actions[bot]@users.noreply.github.com'      
+          # git pull
+          # git add README.md
+          # git commit -m "README: 更新插件列表"
+          # git push --quiet "https://${{ secrets.GH_PAT }}@github.com/$GITHUB_REPOSITORY"   
+          
       - name: echo openwrt config
         run: cat $OPENWRT_PATH/.config
 
