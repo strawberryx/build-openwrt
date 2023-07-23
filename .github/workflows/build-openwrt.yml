@@ -1,18 +1,17 @@
 name: Build Redstone
 
 on:
-  push:
-    branches-ignore:
-      - stable
+  # push:
+  #   paths:
+  #     - "configs/**"
+  #     - ".github/workflows/build-openwrt.yml"
+  #     - "scripts/openwrt/**"
+  #   branches-ignore:
+  #     - stable
   schedule:
     - cron: "0 19 * * *"
   workflow_dispatch:
     inputs:
-      conf-url-x86:
-        description: "[x86] 使用这个自定义配置URL进行编译"
-        required: false
-        default: ""
-
       ssh:
         description: "连接到Action"
         required: false
@@ -28,15 +27,53 @@ env:
   APP_CONFIG: configs/app.config
 
   CONFIG_FILE: configs/n1.config
-  DIY_SCRIPT: scripts/diy/n1-lede.sh
-  COM_SCRIPT: scripts/common.sh
 
 jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - id: set-matrix
+        run: |
+          # Change directory to configs
+          cd configs
+
+          # Initialize the matrix variable
+          matrix="{\"include\":["
+
+          # Loop through each folder in the configs directory
+          for d in */ ; do
+              # Remove the trailing slash from the folder name
+              device_name=${d%/}
+              # Append the device name to the matrix variable
+              matrix="$matrix{\"device\":\"$device_name\"},"
+          done
+
+          # Remove the trailing comma from the matrix variable
+          matrix=${matrix%,}
+
+          # Close the matrix variable
+          matrix="$matrix]}"
+
+          # Change back to the previous directory
+          cd ..
+
+          # Set the matrix output
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+
+
+          echo $matrix
+
   Toolchain:
+    needs: generate-matrix
+
     strategy:
       fail-fast: false
-      matrix:
-        Device: ["x86", "n1", "rpi4", "rockchip"]
+      matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
     runs-on: ubuntu-latest
 
     outputs:
@@ -69,8 +106,8 @@ jobs:
         id: clone
         run: |
           df -hT $GITHUB_WORKSPACE
-          git clone $SOURCE_URL -b $SOURCE_BRANCH workspace/openwrt
-          cd workspace/openwrt
+          git clone $SOURCE_URL -b $SOURCE_BRANCH openwrt
+          cd openwrt
           echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
           echo "OPENWRT_PATH=$(echo $PWD)" >> $GITHUB_OUTPUT
           export VERSION_INFO=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H")
@@ -79,8 +116,8 @@ jobs:
 
       - name: 生成Toolchain配置
         run: |
-          svn co https://github.com/c3p7f2/build-openwrt/trunk/configs config
-          mv config/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
+
+          mv configs/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
           cat $GITHUB_WORKSPACE/$APP_CONFIG >> $OPENWRT_PATH/.config
           cd $OPENWRT_PATH && make defconfig
           sed -i '/CONFIG_DEFAULT_luci/'d .config
@@ -149,7 +186,7 @@ jobs:
       - name: 生成Toolchain Image
         if: steps.hash.outputs.REBUILD_TOOLCHAIN == 'true'
         run: |
-          # cd workspace
+
           mksquashfs openwrt $TOOLCHAIN_IMAGE -force-gid 1001 -force-uid 1001 -comp zstd
           mkdir -p $GITHUB_WORKSPACE/output
           split -d -b 1900M $TOOLCHAIN_IMAGE $GITHUB_WORKSPACE/output/$TOOLCHAIN_IMAGE.img.
@@ -170,16 +207,15 @@ jobs:
           body: OpenWrt 工具链镜像文件
 
   build:
-    needs: [Toolchain]
+    needs: [generate-matrix, Toolchain]
     runs-on: ubuntu-latest
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
       # added or changed files to the repository.
-      contents: write    
+      contents: write
     strategy:
       fail-fast: false
-      matrix:
-        Device: ["x86", "n1", "rpi4", "rockchip"]
+      matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
 
     env:
       OPENWRT_PATH: ${{ needs.Toolchain.outputs.OPENWRT_PATH }}
@@ -190,18 +226,35 @@ jobs:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nDevice: ${{ matrix.Device }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
 
     steps:
-      # - name: TG Notification - 🎉
-      #   uses: appleboy/telegram-action@master
-      #   with:
-      #     to: ${{ secrets.TELEGRAM_CHAT_ID }}
-      #     token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-      #     message: |
-      #       开始编译 🎉
-      #       设备/平台：${{ matrix.Device }}
+      - name: 组合磁盘
+        run: |
+          export ROOT_FREE_KB=$(df --block-size=1024 --output=avail / | tail -1)
+          export ROOT_LOOP_KB=$(expr $ROOT_FREE_KB - 1048576)
+          export ROOT_LOOP_BYTES=$(expr $ROOT_LOOP_KB \* 1024)
+          sudo fallocate -l $ROOT_LOOP_BYTES /root.img
+          export ROOT_LOOP_DEVNAME=$(sudo losetup -Pf --show /root.img)
+          sudo pvcreate -f $ROOT_LOOP_DEVNAME
+          export MNT_FREE_KB=$(df --block-size=1024 --output=avail /mnt | tail -1)
+          export MNT_LOOP_KB=$(expr $MNT_FREE_KB - 102400)
+          export MNT_LOOP_BYTES=$(expr $MNT_LOOP_KB \* 1024)
+          sudo fallocate -l $MNT_LOOP_BYTES /mnt/mnt.img
+          export MNT_LOOP_DEVNAME=$(sudo losetup -Pf --show /mnt/mnt.img)
+          sudo pvcreate -f $MNT_LOOP_DEVNAME
+          sudo vgcreate vgstorage $ROOT_LOOP_DEVNAME $MNT_LOOP_DEVNAME
+          sudo lvcreate -n lvstorage -l 100%FREE vgstorage
+          export LV_DEVNAME=$(sudo lvscan | awk -F "'" '{print $2}')
+          sudo mkfs.btrfs -L combinedisk $LV_DEVNAME
+          sudo mount -o compress=zstd $LV_DEVNAME $GITHUB_WORKSPACE
+          sudo chown -R runner:runner $GITHUB_WORKSPACE
+          mkdir -p $GITHUB_WORKSPACE/tmp && chmod 777 $GITHUB_WORKSPACE/tmp
+          sudo cp -rp /tmp/* $GITHUB_WORKSPACE/tmp
+          sudo mount -B $GITHUB_WORKSPACE/tmp /tmp && df -hT
+
+          # 这里挂载会影响到$GITHUB_WORKSPACE，不要在后续步骤挂载，最好在编译步骤开启就跑
 
       - name: SSH环境下关闭其他工作流
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && matrix.Device != 'x86' }}        
-        run: |      
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && matrix.Device != 'x86' }}
+        run: |
           sudo halt
 
       - name: Initialization environment
@@ -244,30 +297,6 @@ jobs:
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
 
-      - name: 组合磁盘
-        run: |
-          export ROOT_FREE_KB=$(df --block-size=1024 --output=avail / | tail -1)
-          export ROOT_LOOP_KB=$(expr $ROOT_FREE_KB - 1048576)
-          export ROOT_LOOP_BYTES=$(expr $ROOT_LOOP_KB \* 1024)
-          sudo fallocate -l $ROOT_LOOP_BYTES /root.img
-          export ROOT_LOOP_DEVNAME=$(sudo losetup -Pf --show /root.img)
-          sudo pvcreate -f $ROOT_LOOP_DEVNAME
-          export MNT_FREE_KB=$(df --block-size=1024 --output=avail /mnt | tail -1)
-          export MNT_LOOP_KB=$(expr $MNT_FREE_KB - 102400)
-          export MNT_LOOP_BYTES=$(expr $MNT_LOOP_KB \* 1024)
-          sudo fallocate -l $MNT_LOOP_BYTES /mnt/mnt.img
-          export MNT_LOOP_DEVNAME=$(sudo losetup -Pf --show /mnt/mnt.img)
-          sudo pvcreate -f $MNT_LOOP_DEVNAME
-          sudo vgcreate vgstorage $ROOT_LOOP_DEVNAME $MNT_LOOP_DEVNAME
-          sudo lvcreate -n lvstorage -l 100%FREE vgstorage
-          export LV_DEVNAME=$(sudo lvscan | awk -F "'" '{print $2}')
-          sudo mkfs.btrfs -L combinedisk $LV_DEVNAME
-          sudo mount -o compress=zstd $LV_DEVNAME $GITHUB_WORKSPACE
-          sudo chown -R runner:runner $GITHUB_WORKSPACE
-          mkdir $GITHUB_WORKSPACE/tmp && chmod 777 $GITHUB_WORKSPACE/tmp
-          sudo cp -rp /tmp/* $GITHUB_WORKSPACE/tmp
-          sudo mount -B $GITHUB_WORKSPACE/tmp /tmp && df -hT
-
       #- name: Checkout private tools
       #  if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && contains(matrix.Device, 'x86')}}
       #  uses: actions/checkout@v3
@@ -302,27 +331,27 @@ jobs:
 
       - name: 准备Toolchain Image
         run: |
-          mkdir -p workspace
-          cd workspace
+
           for i in {0..9}
           do
             echo downloading..
-            curl -fsL -vk https://github.com/$GITHUB_REPOSITORY/releases/download/$TOOLCHAIN_TAG/toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img.0$i >> toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img || break
+            curl -fsL -k https://github.com/$GITHUB_REPOSITORY/releases/download/$TOOLCHAIN_TAG/toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img.0$i >> toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img || break
           done
-          mkdir openwrt-ro openwrt workdir overlay
+          mkdir -p openwrt-ro openwrt workdir overlay
           sudo mount -o loop toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ matrix.Device }}.img openwrt-ro
           sudo mount -t overlay overlay -o lowerdir=openwrt-ro,upperdir=overlay,workdir=workdir openwrt
+          echo $GITHUB_WORKSPACE
+          echo $OPENWRT_PATH
           cd $OPENWRT_PATH
           git pull
-
 
       ###########################################################################################
 
       - name: Add packages
         run: |
           cd $OPENWRT_PATH          
-          chmod +x $GITHUB_WORKSPACE/scripts/add-package.sh
-          $GITHUB_WORKSPACE/scripts/add-package.sh
+          chmod +x $GITHUB_WORKSPACE/scripts/openwrt/add-package.sh
+          $GITHUB_WORKSPACE/scripts/openwrt/add-package.sh
           git pull
           ./scripts/feeds update -a
           ./scripts/feeds install -a
@@ -341,47 +370,8 @@ jobs:
 
       ###########################################################################################
 
-      - name: 更新README
-        if: ${{ contains(matrix.Device, 'x86') }}
-        continue-on-error: true
-        run: |
-          cd $OPENWRT_PATH
-
-          # 获取配置文件中的插件列表
-          grep -i CONFIG_PACKAGE_luci-app .config | grep  -v \# > Plug-in
-          grep -i CONFIG_PACKAGE_luci-theme .config | grep  -v \# >> Plug-in
-          sed -i '/INCLUDE/d' Plug-in > /dev/null 2>&1
-          sed -i 's/CONFIG_PACKAGE_/、/g' Plug-in
-          sed -i '/qbittorrent_static/d' Plug-in > /dev/null 2>&1
-          sed -i 's/=y/\ /g' Plug-in
-          awk '$0=NR$0' Plug-in > Plugins
-          awk '{print $0 "  \n"}' Plugins > PluginsList
-
-          plugins=$(cat PluginsList)
-
-          cd $GITHUB_WORKSPACE
-
-          sed -i '/## 当前固件包含的插件/,/##/d' README.md
-
-                
-          # 将插件列表附加到README.md文件中
-          ## echo "  " >> README.md
-          echo "## 当前固件包含的插件：" >> README.md
-          echo "" >> README.md
-          echo "$plugins" >> README.md
-                
-          # 提交readme文件到你的仓库
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'      
-          git pull
-          git add README.md
-          git commit -m "README: 更新插件列表"
-          git push --quiet "https://${{ secrets.GH_PAT }}@github.com/$GITHUB_REPOSITORY"      
-
       - name: echo openwrt config
         run: cat $OPENWRT_PATH/.config
-
-
 
       - name: echo plugins
         run: |
@@ -406,8 +396,6 @@ jobs:
           echo
           echo "=========================================="
 
-
-
       - name: Make download
         run: |
           cd $OPENWRT_PATH
@@ -422,7 +410,7 @@ jobs:
 
           cd $OPENWRT_PATH
 
-          /bin/bash $GITHUB_WORKSPACE/scripts/rewrite.sh
+          /bin/bash $GITHUB_WORKSPACE/scripts/openwrt/rewrite.sh
 
 
           if [ -n "$(ls -A "$GITHUB_WORKSPACE/files" 2>/dev/null)" ]; then
@@ -478,7 +466,7 @@ jobs:
         run: |
           cd $OPENWRT_PATH
           mkdir -p files/etc/uci-defaults
-          cp $GITHUB_WORKSPACE/scripts/init-settings.sh files/etc/uci-defaults/99-init-settings
+          cp $GITHUB_WORKSPACE/scripts/openwrt/init-settings.sh files/etc/uci-defaults/99-init-settings
           make package/install -j$(nproc)  || make package/install -j1 V=s
           make target/install -j$(nproc)  || make target/install -j1 V=s
           echo "status=success" >> $GITHUB_OUTPUT
@@ -520,7 +508,7 @@ jobs:
         if: contains(matrix.Device, 'n1')
         uses: ophub/flippy-openwrt-actions@main
         env:
-          OPENWRT_ARMVIRT: workspace/openwrt/bin/targets/*/*/*rootfs.tar.gz
+          OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*rootfs.tar.gz
           PACKAGE_SOC: s905d
           WHOAMI: Redstone
 
@@ -549,7 +537,8 @@ jobs:
           tag_name: ${{ env.release_tag }}
           body: |
             **编译日期：${{ env.DATE }}**
-            * [➦OpenWrt源码](${{ env.SOURCE_URL}})
+            * 编译分支：${{ env.CURRENT_BRANCH }}
+            * 设备/平台：${{ join(fromJson(needs.generate-matrix.outputs.matrix), ', ') }}
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
@@ -559,9 +548,10 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            编译失败
+            编译失败 ❌
 
             设备/平台：${{ matrix.Device }}
+            分支：${{ env.CURRENT_BRANCH }}
 
       - name: TG Notification - ✔️
         if: ${{ success() }}
@@ -570,18 +560,20 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            编译成功
+            编译成功 ✔️
 
             设备/平台：${{ matrix.Device }}
+            分支：${{ env.CURRENT_BRANCH }}
+
             下载地址：https://github.com/c3p7f2/build-openwrt/releases/tag/${{ env.release_tag }}
 
-      - name: Delete workflow runs
-        uses: GitRML/delete-workflow-runs@main
-        with:
-          retain_days: 3
-          keep_minimum_runs: 2
-        env:
-          token: ${{ secrets.GH_PAT }}               
+      # - name: Delete workflow runs
+      #   uses: GitRML/delete-workflow-runs@main
+      #   with:
+      #     retain_days: 3
+      #     keep_minimum_runs: 2
+      #   env:
+      #     token: ${{ secrets.GH_PAT }}
 
       - name: Delete Older Releases
         uses: dev-drprasad/delete-older-releases@v0.2.1
