@@ -404,6 +404,7 @@ jobs:
           echo "## 当前固件包含的插件：" >> README.md
           echo "" >> README.md
           echo "$plugins" >> README.md
+          echo "PLUGINS=$plugins" >> $GITHUB_ENV
                 
           # 提交readme文件到你的仓库
           git config user.name 'github-actions[bot]'
@@ -592,6 +593,9 @@ jobs:
             **编译日期：${{ env.DATE }}**
             * 编译分支：${{ env.CURRENT_BRANCH }}
             * 下面包含这些设备/平台的固件：${{ matrix.DEVICES }}
+
+            固件有以下插件：
+            ${{env.PLUGINS}}
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
