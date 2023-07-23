@@ -3,9 +3,9 @@ name: Build Redstone
 on:
   push:
     paths:
-      - 'configs/**'
-      - '.github/workflows/build-openwrt.yml' 
-      - 'scripts/openwrt/**'
+      - "configs/**"
+      - ".github/workflows/build-openwrt.yml"
+      - "scripts/openwrt/**"
     branches-ignore:
       - stable
   schedule:
@@ -34,7 +34,6 @@ env:
   CONFIG_FILE: configs/n1.config
 
 jobs:
-
   generate-matrix:
     runs-on: ubuntu-latest
     outputs:
@@ -122,7 +121,7 @@ jobs:
 
       - name: 生成Toolchain配置
         run: |
-          
+
           mv configs/${{ matrix.Device }}/.config $OPENWRT_PATH/.config
           cat $GITHUB_WORKSPACE/$APP_CONFIG >> $OPENWRT_PATH/.config
           cd $OPENWRT_PATH && make defconfig
@@ -192,7 +191,7 @@ jobs:
       - name: 生成Toolchain Image
         if: steps.hash.outputs.REBUILD_TOOLCHAIN == 'true'
         run: |
-          
+
           mksquashfs openwrt $TOOLCHAIN_IMAGE -force-gid 1001 -force-uid 1001 -comp zstd
           mkdir -p $GITHUB_WORKSPACE/output
           split -d -b 1900M $TOOLCHAIN_IMAGE $GITHUB_WORKSPACE/output/$TOOLCHAIN_IMAGE.img.
@@ -213,12 +212,12 @@ jobs:
           body: OpenWrt 工具链镜像文件
 
   build:
-    needs: [generate-matrix,Toolchain]
+    needs: [generate-matrix, Toolchain]
     runs-on: ubuntu-latest
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the
       # added or changed files to the repository.
-      contents: write    
+      contents: write
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
@@ -232,7 +231,6 @@ jobs:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nDevice: ${{ matrix.Device }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
 
     steps:
-
       - name: 组合磁盘
         run: |
           export ROOT_FREE_KB=$(df --block-size=1024 --output=avail / | tail -1)
@@ -259,10 +257,9 @@ jobs:
 
           # 这里挂载会影响到$GITHUB_WORKSPACE，不要在后续步骤挂载，最好在编译步骤开启就跑
 
-
       - name: SSH环境下关闭其他工作流
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && matrix.Device != 'x86' }}        
-        run: |      
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && matrix.Device != 'x86' }}
+        run: |
           sudo halt
 
       - name: Initialization environment
@@ -304,7 +301,6 @@ jobs:
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
-
 
       #- name: Checkout private tools
       #  if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && contains(matrix.Device, 'x86')}}
@@ -354,7 +350,6 @@ jobs:
           cd $OPENWRT_PATH
           git pull
 
-
       ###########################################################################################
 
       - name: Add packages
@@ -398,7 +393,7 @@ jobs:
 
           plugins=$(cat PluginsList)
           echo "PLUGINS=$plugins" >> $GITHUB_ENV
-          
+
           # cd $GITHUB_WORKSPACE
           # sed -i '/## 当前固件包含的插件/,/##/d' README.md
           # # 将插件列表附加到README.md文件中
@@ -413,12 +408,10 @@ jobs:
           # git pull
           # git add README.md
           # git commit -m "README: 更新插件列表"
-          # git push --quiet "https://${{ secrets.GH_PAT }}@github.com/$GITHUB_REPOSITORY"   
-          
+          # git push --quiet "https://${{ secrets.GH_PAT }}@github.com/$GITHUB_REPOSITORY"
+
       - name: echo openwrt config
         run: cat $OPENWRT_PATH/.config
-
-
 
       - name: echo plugins
         run: |
@@ -442,8 +435,6 @@ jobs:
           rm -rf {Plug-in,Plug-2}
           echo
           echo "=========================================="
-
-
 
       - name: Make download
         run: |
@@ -557,7 +548,7 @@ jobs:
         if: contains(matrix.Device, 'n1')
         uses: ophub/flippy-openwrt-actions@main
         env:
-          OPENWRT_ARMVIRT: $OPENWRT_PATH/bin/targets/*/*/*rootfs.tar.gz
+          OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*rootfs.tar.gz
           PACKAGE_SOC: s905d
           WHOAMI: Redstone
 
@@ -577,12 +568,6 @@ jobs:
           # touch release.txt
           # echo ${{ matrix.Device }} >> release.txt
 
-
-
-
-
-
-
       - name: Upload firmware to release
         uses: softprops/action-gh-release@v1
         env:
@@ -593,7 +578,7 @@ jobs:
           body: |
             **编译日期：${{ env.DATE }}**
             * 编译分支：${{ env.CURRENT_BRANCH }}
-            * 下面包含这些设备/平台的固件：${{ matrix.DEVICES }}
+            * 设备/平台：${{fromJson(needs.generate-matrix.outputs.matrix)}}
 
             固件有以下插件：
             ${{env.PLUGINS}}
@@ -625,18 +610,13 @@ jobs:
 
             下载地址：https://github.com/c3p7f2/build-openwrt/releases/tag/${{ env.release_tag }}
 
-
-
-
-
-
       # - name: Delete workflow runs
       #   uses: GitRML/delete-workflow-runs@main
       #   with:
       #     retain_days: 3
       #     keep_minimum_runs: 2
       #   env:
-      #     token: ${{ secrets.GH_PAT }}          
+      #     token: ${{ secrets.GH_PAT }}
 
       - name: Delete Older Releases
         uses: dev-drprasad/delete-older-releases@v0.2.1
