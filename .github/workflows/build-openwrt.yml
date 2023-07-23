@@ -2,6 +2,10 @@ name: Build Redstone
 
 on:
   push:
+    paths:
+      - 'configs/**'
+      - '.github/workflows/build-openwrt.yml' 
+      - 'scripts/openwrt/**'
     branches-ignore:
       - stable
   schedule:
