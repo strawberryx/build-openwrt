@@ -12,11 +12,6 @@ on:
     - cron: "0 19 * * *"
   workflow_dispatch:
     inputs:
-      conf-url-x86:
-        description: "[x86] 使用这个自定义配置URL进行编译"
-        required: false
-        default: ""
-
       ssh:
         description: "连接到Action"
         required: false
@@ -543,7 +538,7 @@ jobs:
           body: |
             **编译日期：${{ env.DATE }}**
             * 编译分支：${{ env.CURRENT_BRANCH }}
-            * 设备/平台：${{fromJson(needs.generate-matrix.outputs.matrix)}}
+            * 设备/平台：${{ join(fromJson(needs.generate-matrix.outputs.matrix), ', ') }}
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
