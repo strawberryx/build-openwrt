@@ -629,13 +629,13 @@ jobs:
 
 
 
-      - name: Delete workflow runs
-        uses: GitRML/delete-workflow-runs@main
-        with:
-          retain_days: 3
-          keep_minimum_runs: 2
-        env:
-          token: ${{ secrets.GH_PAT }}          
+      # - name: Delete workflow runs
+      #   uses: GitRML/delete-workflow-runs@main
+      #   with:
+      #     retain_days: 3
+      #     keep_minimum_runs: 2
+      #   env:
+      #     token: ${{ secrets.GH_PAT }}          
 
       - name: Delete Older Releases
         uses: dev-drprasad/delete-older-releases@v0.2.1
