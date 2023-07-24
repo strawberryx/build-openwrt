@@ -528,6 +528,8 @@ jobs:
           # touch release.txt
           # echo ${{ matrix.Device }} >> release.txt
 
+      - run: echo "DEVICES=$(echo needs.generate-matrix.outputs.matrix | jq -r '.include[].device' | tr '\n' ' ')" >> $GITHUB_ENV
+
       - name: Upload firmware to release
         uses: softprops/action-gh-release@v1
         env:
@@ -538,7 +540,7 @@ jobs:
           body: |
             **编译日期：${{ env.DATE }}**
             * 编译分支：${{ env.CURRENT_BRANCH }}
-            * 设备/平台：${{ join(fromJson(needs.generate-matrix.outputs.matrix), ', ') }}
+            * 设备/平台：${{ env.DEVICES }}
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
