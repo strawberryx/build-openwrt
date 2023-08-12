@@ -528,7 +528,9 @@ jobs:
           # touch release.txt
           # echo ${{ matrix.Device }} >> release.txt
 
-      - run: echo "DEVICES=$(echo needs.generate-matrix.outputs.matrix | jq -r '.include[].device' | tr '\n' ' ')" >> $GITHUB_ENV
+      - run: |
+          echo "DEVICES=$(echo ${{ needs.generate-matrix.outputs.matrix }} | jq -r '.include[].device' | tr '\n' ' ')" >> $GITHUB_ENV
+          echo "WORKFLOW=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
 
       - name: Upload firmware to release
         uses: softprops/action-gh-release@v1
@@ -541,6 +543,13 @@ jobs:
             **编译日期：${{ env.DATE }}**
             * 编译分支：${{ env.CURRENT_BRANCH }}
             * 设备/平台：${{ env.DEVICES }}
+            * 工作流： ${{ env.WORKFLOW}}
+
+            😰 由GitHub Action根据OpenWrt源码自动编译，应该能开机吧，具体有什么问题得看上游OP代码改了什么。
+                我们更多使用的是里面的插件，主要还是这些插件更新，我不是很推荐直接在op里更新插件，感觉挺容易更新崩的。（
+                找个稳定版用用就挺好的，除非你特别喜欢最新版，在最新版中可能会遇到更多的BUG。
+
+            😇 测试后会手动将每夜版更改为稳定版。
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
