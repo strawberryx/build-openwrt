@@ -494,7 +494,7 @@ jobs:
           packages \
           sha256* \
           *manifest \
-          *rootfs* \
+          *.sha \
           *info \
           *kernel.bin \
           *sha \
