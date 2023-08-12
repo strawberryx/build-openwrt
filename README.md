@@ -114,6 +114,8 @@ Amlogic 打包：
 
 <hr/>
 
-<div style="text-align: right; margin-top:20px">
-  <img src="./img/moeorange.svg" width=auto height="45">
+<div align="right" style=" margin-top:20px">
+  <img src="./img/moeorange-dark.svg#gh-light-mode-only" width=auto height="45">
+
+   <img src="./img/moeorange.svg#gh-dark-mode-only" width=auto height="45">
 </div>
