@@ -81,7 +81,7 @@ A: 安装固件的过程可能因设备而异，你可以在视频网站或搜�
 
 **Q:如何升级固件？**
 
-A: 你可以在我们的 [Releases](https://github.com/moemoe-orange/openwrt-redstone/releases) 页面下载最新版本的固件，然后按照设备文档中的说明刷写新固件。
+A: 你可以在我们的 [Releases](https://github.com/c3p7f2/build-openwrt/releases) 页面下载最新版本的固件，然后按照设备文档中的说明刷写新固件。
 
 **Q:支持 IPv6 吗？**
 
