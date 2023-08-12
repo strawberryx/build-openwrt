@@ -1,4 +1,4 @@
-name: Build Redstone
+name: Build
 
 on:
   # push:
