@@ -529,7 +529,7 @@ jobs:
           # echo ${{ matrix.Device }} >> release.txt
 
       - run: |
-          echo "DEVICES=$(echo ${{ needs.generate-matrix.outputs.matrix }} | jq -r '.include[].device' | tr '\n' ' ')" >> $GITHUB_ENV
+          echo "DEVICES=$(echo '${{ needs.generate-matrix.outputs.matrix }}' | jq -r '.include[].device' | tr '\n' ' ')" >> $GITHUB_ENV
           echo "WORKFLOW=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
 
       - name: Upload firmware to release
