@@ -72,6 +72,7 @@
 - Rockchip
 - Raspberry Pi (4)
 - 虚拟机
+- [Docker镜像](https://hub.docker.com/r/shashiikora/openwrt-redstone)
 
 ## 常见问题解答
 
