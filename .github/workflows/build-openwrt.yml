@@ -532,6 +532,17 @@ jobs:
           echo "DEVICES=$(echo '${{ needs.generate-matrix.outputs.matrix }}' | jq -r '.include[].device' | tr '\n' ' ')" >> $GITHUB_ENV
           echo "WORKFLOW=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
 
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        env:
+          FIRMWARE: openwrt/bin/targets/*/*/*rootfs.tar.gz
+        with:
+          name: shashiikora/openwrt-redstone
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PAT }}
+          buildargs: FIRMWARE
+          tags: "latest,${{ env.DATE }}"
+
       - name: Upload firmware to release
         uses: softprops/action-gh-release@v1
         env:
