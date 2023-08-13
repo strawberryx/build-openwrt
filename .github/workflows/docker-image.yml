@@ -1,0 +1,56 @@
+name: Build Docker Image
+
+on:
+  # push:
+  #   paths:
+  #     - "configs/**"
+  #     - ".github/workflows/build-openwrt.yml"
+  #     - "scripts/openwrt/**"
+  #   branches-ignore:
+  #     - stable
+  # schedule:
+  #   - cron: "0 19 * * *"
+  workflow_dispatch:
+    inputs:
+      run:
+        description: "Build & Push"
+        required: true
+        default: "true"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [amd64, arm64]
+
+    steps:
+      - name: Set date
+        run: echo "DATE=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Download rootfs
+        run: |
+          mkdir -p openwrt && cd openwrt
+
+          if [ "${{ matrix.platform }}" = "amd64" ]; then
+            url=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases | grep browser_download_url | grep download | grep x86-64 | grep rootfs | head -n 1 | cut -d   '"' -f 4)
+            wget $url          
+          else
+            url=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases | grep browser_download_url | grep download | grep armvirt-64 | grep rootfs | head -n 1 | cut -d   '"' -f 4)
+            wget $url
+          fi
+
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@v5
+        env:
+          FIRMWARE: openwrt/*rootfs.tar.gz
+        with:
+          name: shashiikora/openwrt-redstone
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PAT }}
+          buildargs: FIRMWARE
+          tags: "latest,${{ env.DATE }}"
+          platforms: linux/${{ matrix.platform }}

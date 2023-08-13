@@ -485,7 +485,7 @@ jobs:
           find * | grep -v bin | xargs rm -rf
 
       - name: Organize files
-        if: ${{ !contains(matrix.Device, 'n1') }}
+        # if: ${{ !contains(matrix.Device, 'n1') }}
         run: |
 
           cd $OPENWRT_PATH/bin/targets/*/*
@@ -494,7 +494,7 @@ jobs:
           packages \
           sha256* \
           *manifest \
-          *rootfs* \
+          *.sha \
           *info \
           *kernel.bin \
           *sha \
@@ -512,10 +512,10 @@ jobs:
           PACKAGE_SOC: s905d
           WHOAMI: Redstone
 
-      - name: Organize files
+      - name: Organize files (n1)
         if: ${{ contains(matrix.Device, 'n1') }}
         run: |
-          rm -f ${{ env.PACKAGED_OUTPUTPATH }}/*.tar.gz
+          # rm -f ${{ env.PACKAGED_OUTPUTPATH }}/*.tar.gz
 
       - name: Set date
         id: date
@@ -529,7 +529,7 @@ jobs:
           # echo ${{ matrix.Device }} >> release.txt
 
       - run: |
-          echo "DEVICES=$(echo ${{ needs.generate-matrix.outputs.matrix }} | jq -r '.include[].device' | tr '\n' ' ')" >> $GITHUB_ENV
+          echo "DEVICES=$(echo '${{ needs.generate-matrix.outputs.matrix }}' | jq -r '.include[].device' | tr '\n' ' ')" >> $GITHUB_ENV
           echo "WORKFLOW=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
 
       - name: Upload firmware to release
