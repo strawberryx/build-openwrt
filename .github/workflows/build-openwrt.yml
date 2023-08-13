@@ -485,7 +485,7 @@ jobs:
           find * | grep -v bin | xargs rm -rf
 
       - name: Organize files
-        if: ${{ !contains(matrix.Device, 'n1') }}
+        # if: ${{ !contains(matrix.Device, 'n1') }}
         run: |
 
           cd $OPENWRT_PATH/bin/targets/*/*
@@ -512,10 +512,10 @@ jobs:
           PACKAGE_SOC: s905d
           WHOAMI: Redstone
 
-      - name: Organize files
+      - name: Organize files (n1)
         if: ${{ contains(matrix.Device, 'n1') }}
         run: |
-          rm -f ${{ env.PACKAGED_OUTPUTPATH }}/*.tar.gz
+          # rm -f ${{ env.PACKAGED_OUTPUTPATH }}/*.tar.gz
 
       - name: Set date
         id: date
@@ -551,18 +551,6 @@ jobs:
 
             😇 测试后会手动将每夜版更改为稳定版。
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
-
-      - name: Publish to Registry
-        uses: elgohr/Publish-Docker-Github-Action@v5
-        env:
-          FIRMWARE: openwrt/bin/targets/*/*/*rootfs.tar.gz
-        with:
-          name: shashiikora/openwrt-redstone
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PAT }}
-          buildargs: FIRMWARE
-          tags: "latest,${{ env.DATE }}"
-
 
       - name: TG Notification - ❌
         if: ${{ !success() }}
