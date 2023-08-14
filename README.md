@@ -72,7 +72,7 @@
 - Rockchip
 - Raspberry Pi (4)
 - 虚拟机
-- [Docker镜像](https://hub.docker.com/r/shashiikora/openwrt-redstone)
+- [Docker 镜像](https://hub.docker.com/r/shashiikora/openwrt-redstone)
 
 ## 常见问题解答
 
@@ -87,6 +87,17 @@ A: 你可以在我们的 [Releases](https://github.com/c3p7f2/build-openwrt/rele
 **Q:支持 IPv6 吗？**
 
 A: 支持。
+
+**Q:ext4 和 squashfs 固件有什么区别？**
+
+A: OpenWrt 固件的格式有两种：ext4 和 squashfs。它们的区别主要有两点：  
+1、ext4 格式的固件可以扩展磁盘空间大小，而 squashfs 格式的固件不能。  
+2、squashfs 格式的固件可以使用重置功能（恢复出厂设置），而 ext4 格式的固件不能。
+
+如果你的固件是为了通用的使用，那么使用**squashfs**格式的固件可能更好，因为它可以让你方便地恢复出厂设置。  
+如果你的固件是为了特定的用途，比如 NAS，那么选择**ext4**格式的固件可能更好，因为它可以让你利用更多的磁盘空间。
+
+你可以根据你的需求和设备选择合适的固件格式。
 
 ## 使用到的开源项目：
 
