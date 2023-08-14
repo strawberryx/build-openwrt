@@ -39,7 +39,7 @@ jobs:
           mkdir -p openwrt && cd openwrt
 
           if [ "${{ matrix.platform }}" = "amd64" ]; then
-            url=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases | grep browser_download_url | grep download | grep x86-64 | grep rootfs | head -n 1 | cut -d   '"' -f 4)
+            url=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases | grep browser_download_url | grep download | grep x86-64 | grep rootfs | tar.gz | head -n 1 | cut -d   '"' -f 4)
             wget $url          
           else
             url=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases | grep browser_download_url | grep download | grep armvirt-64 | grep rootfs | head -n 1 | cut -d   '"' -f 4)
