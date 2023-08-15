@@ -537,19 +537,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: "固件下载 | Nightly Build"
+          name: "Redstone 固件 | 稳定版"
           tag_name: ${{ env.release_tag }}
           body: |
-            **编译日期：${{ env.DATE }}**
-            * 编译分支：${{ env.CURRENT_BRANCH }}
+            **日期：${{ env.DATE }}**
+            * 分支：${{ env.CURRENT_BRANCH }}
             * 设备/平台：${{ env.DEVICES }}
             * 工作流： ${{ env.WORKFLOW}}
 
-            😰 由GitHub Action根据OpenWrt源码自动编译，应该能开机吧，具体有什么问题得看上游OP代码改了什么。
-                我们更多使用的是里面的插件，主要还是这些插件更新，我不是很推荐直接在op里更新插件，感觉挺容易更新崩的。（
-                找个稳定版用用就挺好的，除非你特别喜欢最新版，在最新版中可能会遇到更多的BUG。
+            ⏲ 不是每天编译，根据情况手动触发编译
+            😪 树莓派设备由于近期无法编译成功，所以均没有固件。可前往其他大佬仓库下载相应历史固件：https://github.com/bigbugcc/OpenWrts
 
-            😇 测试后会手动将每夜版更改为稳定版。
+            🎇 让我们的兴趣成为美好生活的驱动力 🎇
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
