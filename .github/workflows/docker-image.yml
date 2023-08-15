@@ -55,5 +55,5 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PAT }}
           buildargs: FIRMWARE
-          tags: "${{ matrix.platform }}-${{ env.DATE }}"
+          tags: "latest,${{ matrix.platform }}-${{ env.DATE }}"
           platforms: linux/${{ matrix.platform }}
