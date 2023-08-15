@@ -12,7 +12,7 @@
 
 ## 插件
 
-<details><summary><b>插件列表</b> （展开/收起）</summary>
+<details><summary><b>插件列表</b> （点击展开/收起）</summary>
 
 - luci-app-accesscontrol
 - luci-app-adguardhome
@@ -99,22 +99,30 @@ A: OpenWrt 固件的格式有两种：ext4 和 squashfs。它们的区别主要�
 
 你可以根据你的需求和设备选择合适的固件格式。
 
-## 使用到的开源项目：
+## 感谢以下开源项目：
 
-OpenWrt 源码：
+源码：
 
 - [openwrt/openwrt](https://github.com/openwrt/openwrt)
 - [coolsnowwolf/lede](https://github.com/coolsnowwolf/lede)
 
-OpenWrt 软件包：
+软件包：
 
 - [kenzok8/openwrt-packages](https://github.com/kenzok8/openwrt-packages)
 - [kenzok8/small](https://github.com/kenzok8/small)
 - [ophub/luci-app-amlogic](https://github.com/ophub/luci-app-amlogic)
 
-Amlogic 打包：
+打包：
 
+- [unifreq/openwrt_packit](https://github.com/unifreq/openwrt_packit)
 - [ophub/flippy-openwrt-actions](https://github.com/ophub/flippy-openwrt-actions)
+- [elgohr/Publish-Docker-Github-Action](https://github.com/elgohr/Publish-Docker-Github-Action)
+
+相关内容参考：
+
+- [summary/openwrt-aarch64](https://hub.docker.com/r/summary/openwrt-aarch64)
+- [haiibo/OpenWrt](https://github.com/haiibo/OpenWrt)
+- [bigbugcc/OpenWrts](https://github.com/bigbugcc/OpenWrts)
 
 ## 贡献
 
@@ -127,7 +135,7 @@ Amlogic 打包：
 <hr/>
 
 <div align="right" style=" margin-top:20px">
-  <img src="./img/moeorange-dark.svg#gh-light-mode-only" width=auto height="45">
+  <img src="./img/moeorange-dark.svg#gh-light-mode-only" width=auto height="35">
 
-   <img src="./img/moeorange.svg#gh-dark-mode-only" width=auto height="45">
+   <img src="./img/moeorange.svg#gh-dark-mode-only" width=auto height="35">
 </div>
