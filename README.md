@@ -70,7 +70,7 @@
 - X86
 - N1
 - Rockchip
-- Raspberry Pi (4)
+- Raspberry Pi (4,3)
 - 虚拟机
 - [Docker 镜像](https://hub.docker.com/r/shashiikora/openwrt-redstone)
 
