@@ -537,18 +537,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: "Redstone 固件 | 稳定版"
+          name: "OpenWrt固件下载-OpenWrt固件下载地址"
           tag_name: ${{ env.release_tag }}
           body: |
-            **日期：${{ env.DATE }}**
+            **编译日期：${{ env.DATE }}**
+            
+            * 编译详情： ${{ env.WORKFLOW}}
             * 分支：${{ env.CURRENT_BRANCH }}
             * 设备/平台：${{ env.DEVICES }}
-            * 工作流： ${{ env.WORKFLOW}}
 
-            ⏲ 不是每天编译，根据情况手动触发编译
-            😪 树莓派设备由于近期无法编译成功，所以均没有固件。可前往其他大佬仓库下载相应历史固件：https://github.com/bigbugcc/OpenWrts
-
-            🎇 让我们的兴趣成为美好生活的驱动力 🎇
+            🎇 让我们的兴趣成为美好生活的驱动力
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
