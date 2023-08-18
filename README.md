@@ -67,11 +67,11 @@
 
 ## 设备
 
-- X86
-- N1
-- Rockchip
-- Raspberry Pi (4,3)
-- 虚拟机
+- X86-64
+- 斐讯 N1
+- Rockchip (Orange-Pi-R1-Plus,Nanopi-R4s,Nanopi-R2s)
+- Raspberry Pi (4,3,3b+)
+- 虚拟机 (vmdk)
 - [Docker 镜像](https://hub.docker.com/r/shashiikora/openwrt-redstone)
 
 ## 常见问题解答
@@ -84,7 +84,7 @@ A: 安装固件的过程可能因设备而异，你可以在视频网站或搜�
 
 A: 你可以在我们的 [Releases](https://github.com/c3p7f2/build-openwrt/releases) 页面下载最新版本的固件，然后按照设备文档中的说明刷写新固件。
 
-**Q:支持 IPv6 吗？**
+**Q:支持 DHCPv6 吗？**
 
 A: 支持。
 
@@ -94,12 +94,27 @@ A: OpenWrt 固件的格式有两种：ext4 和 squashfs。它们的区别主要�
 1、ext4 格式的固件可以扩展磁盘空间大小，而 squashfs 格式的固件不能。  
 2、squashfs 格式的固件可以使用重置功能（恢复出厂设置），而 ext4 格式的固件不能。
 
-如果你的固件是为了通用的使用，那么使用**squashfs**格式的固件可能更好，因为它可以让你方便地恢复出厂设置。  
-如果你的固件是为了特定的用途，比如 NAS，那么选择**ext4**格式的固件可能更好，因为它可以让你利用更多的磁盘空间。
+## 开发
 
-你可以根据你的需求和设备选择合适的固件格式。
+这是**学习**编译 OpenWrt 的项目，很高兴你能看到这里。  
+欢迎 一起 以改善垃圾代码。QAQ
 
-## 感谢以下开源项目：
+```
+# 大体目录结构
+
+.github\workflows\build-openwrt.yml 编译流程（Action工作流）
+                 |docker-image.yml  提交Docker镜像
+configs\*\.config                   相应设备配置
+       |app.config                  共有插件
+scripts\openwrt\add-package.sh      添加软件包
+               |init-settings.sh    修改固件信息
+               |rewrite.sh          修改固件信息
+files\*                             替换文件（源码内）
+Dockerfile                          制作Docker镜像
+...                                 ...
+```
+
+## 鸣谢：
 
 源码：
 
@@ -118,15 +133,11 @@ A: OpenWrt 固件的格式有两种：ext4 和 squashfs。它们的区别主要�
 - [ophub/flippy-openwrt-actions](https://github.com/ophub/flippy-openwrt-actions)
 - [elgohr/Publish-Docker-Github-Action](https://github.com/elgohr/Publish-Docker-Github-Action)
 
-相关内容参考：
+学习：
 
 - [summary/openwrt-aarch64](https://hub.docker.com/r/summary/openwrt-aarch64)
 - [haiibo/OpenWrt](https://github.com/haiibo/OpenWrt)
 - [bigbugcc/OpenWrts](https://github.com/bigbugcc/OpenWrts)
-
-## 贡献
-
-欢迎为本项目做出贡献。
 
 ## 许可证
 
