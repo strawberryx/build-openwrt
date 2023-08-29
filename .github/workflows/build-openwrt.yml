@@ -226,6 +226,13 @@ jobs:
       MSG_PREFIX: "Ref: ${{ github.ref }}\nDevice: ${{ matrix.Device }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
 
     steps:
+      - name: 精简系统释放磁盘空间 (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          # this might remove tools that are actually needed,
+          # if set to "true" but frees about 6 GB
+          tool-cache: true
+
       - name: 组合磁盘
         run: |
           export ROOT_FREE_KB=$(df --block-size=1024 --output=avail / | tail -1)
@@ -261,15 +268,6 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo rm -rf /etc/apt/sources.list.d/*
-          sudo apt update -y
-          # sudo apt full-upgrade -y
-          sudo apt install -y ack antlr3 aria2 asciidoc autoconf automake autopoint binutils bison build-essential \
-          bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib \
-          git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev \
-          libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz \
-          mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip libpython3-dev qemu-utils \
-          rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev python3-pyelftools
 
           ulimit -u 10000
           ulimit -n 4096
@@ -277,25 +275,30 @@ jobs:
           ulimit -m unlimited
           ulimit -s unlimited
           ulimit -t unlimited
-          ulimit -v unlimited
+          ulimit -v unlimited       
+           
+          sudo timedatectl set-timezone "$TZ"
+
+          sudo apt update -y
+
+          sudo apt install -y ack antlr3 aria2 asciidoc autoconf automake autopoint binutils bison build-essential \
+          bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib \
+          git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev \
+          libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz \
+          mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip libpython3-dev qemu-utils \
+          rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev python3-pyelftools
+
+          sudo -E apt-get -qq autoremove --purge
+          sudo -E apt-get -qq clean
 
           # docker rmi `docker images -q`
 
-          sudo timedatectl set-timezone "$TZ"
-
-          sudo -E swapoff -a
-
-          rm -rf ~/.config/rclone
-          mkdir -p ~/.config/rclone
-
-          # download rclone config
+          # rm -rf ~/.config/rclone
+          # mkdir -p ~/.config/rclone
+          ## download rclone config
           # curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
           ## check server status
           # rclone mkdir od:/openwrt/check-status-for-github-action
-
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /etc/mysql /etc/php /swapfile
-          sudo -E apt-get -qq autoremove --purge
-          sudo -E apt-get -qq clean
 
       #- name: Checkout private tools
       #  if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && contains(matrix.Device, 'x86')}}
@@ -327,8 +330,6 @@ jobs:
           echo "--------------------------硬盘信息--------------------------"
           echo "硬盘数量：$(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
 
-      ###########################################################################################
-
       - name: 准备Toolchain Image
         run: |
 
@@ -344,8 +345,6 @@ jobs:
           echo $OPENWRT_PATH
           cd $OPENWRT_PATH
           git pull
-
-      ###########################################################################################
 
       - name: Add packages
         run: |
@@ -367,8 +366,6 @@ jobs:
 
           # cd $OPENWRT_PATH
           # make defconfig
-
-      ###########################################################################################
 
       - name: echo openwrt config
         run: cat $OPENWRT_PATH/.config
@@ -416,8 +413,6 @@ jobs:
           if [ -n "$(ls -A "$GITHUB_WORKSPACE/files" 2>/dev/null)" ]; then
            cp -Rf $GITHUB_WORKSPACE/files/* ./
           fi
-
-      ###########################################################################################
 
       - name: ssh to action
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && contains(matrix.Device, 'x86')}}
@@ -472,8 +467,6 @@ jobs:
           echo "status=success" >> $GITHUB_OUTPUT
           make json_overview_image_info
           make checksum
-
-      ###########################################################################################
 
       - name: Storage Spaces
         run: |
@@ -537,11 +530,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: "OpenWrt固件下载-OpenWrt固件下载地址"
+          name: "固件下载集 | R${{ env.DATE }}"
           tag_name: ${{ env.release_tag }}
           body: |
             **编译日期：${{ env.DATE }}**
-            
+
             * 编译详情： ${{ env.WORKFLOW}}
             * 分支：${{ env.CURRENT_BRANCH }}
             * 设备/平台：${{ env.DEVICES }}
