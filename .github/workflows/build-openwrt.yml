@@ -517,7 +517,7 @@ jobs:
       - name: Generate release tag
         id: tag
         run: |
-          echo "release_tag=${{ env.DATE }}-download" >> $GITHUB_ENV
+          echo "release_tag=${{ env.CURRENT_BRANCH }}-${{ env.DATE }}-download" >> $GITHUB_ENV
           # touch release.txt
           # echo ${{ matrix.Device }} >> release.txt
 
