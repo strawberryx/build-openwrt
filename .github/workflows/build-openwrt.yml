@@ -445,6 +445,9 @@ jobs:
           ttyd -p 8000 bash &
           ./frpc -c ./p-frpc.ini
 
+      - run: |
+          curl -o ./feeds/packages/multimedia/aliyundrive-webdav/Makefile https://raw.githubusercontent.com/coolsnowwolf/packages/aea60b5432fad984c0a4013bad0f0c5e00dcd115/multimedia/aliyundrive-webdav/Makefile       
+
       - name: 编译Packages
         id: compile
         run: |
