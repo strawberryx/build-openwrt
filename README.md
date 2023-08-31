@@ -1,5 +1,7 @@
 # OpenWrt
 
+![](https://opengraph.githubassets.com/f7c4be11a2ae313f38f69c1886d06f4ef87d8ea62bf7c0cd5b54a13fa209b915/c3p7f2/build-openwrt/releases/tag/stable-2023.09.01-download)
+
 一个 OpenWrt 固件仓库，使用 Github Action 自动编译各类实用的[插件](#插件)，生成对应[设备](#设备)的固件。
 
 ## TODO
