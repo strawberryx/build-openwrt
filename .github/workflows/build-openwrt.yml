@@ -542,12 +542,19 @@ jobs:
             **编译日期：${{ env.DATE }}**
 
             * 编译详情： ${{ env.WORKFLOW}}
-            * 分支：${{ env.CURRENT_BRANCH }}
-            * 设备/平台：${{ env.DEVICES }}
+            * 编译分支：${{ env.CURRENT_BRANCH }}
+            * 编译设备/平台：${{ env.DEVICES }}
+
+            **更新日志：**
+            - 暂无
+
+            **固件状态：**
+            - [x] 稳定版
+            - [ ] 代码变动较多，仍处开发阶段的版本
 
             国内加速下载：https://js.7fan.fun/ https://ghproxy.com/ https://ghps.cc/
 
-            OpenWrt | Redstone R${{ env.DATE }}
+            **_OpenWrt | Redstone R${{ env.DATE }}_**
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
