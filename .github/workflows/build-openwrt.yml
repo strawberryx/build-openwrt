@@ -540,7 +540,7 @@ jobs:
             * 分支：${{ env.CURRENT_BRANCH }}
             * 设备/平台：${{ env.DEVICES }}
 
-            🎇 让我们的兴趣成为美好生活的驱动力
+            OpenWrt | Redstone R${{ env.DATE }}
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
