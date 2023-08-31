@@ -232,6 +232,7 @@ jobs:
           # this might remove tools that are actually needed,
           # if set to "true" but frees about 6 GB
           tool-cache: true
+          docker-images: false
 
       - name: 组合磁盘
         run: |
