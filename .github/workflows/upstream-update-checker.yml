@@ -1,0 +1,40 @@
+name: Check for Version Update
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+
+jobs:
+  check-update:
+    runs-on: ubuntu-latest
+
+    env:
+      REMOTE_REPO: "https://github.com/coolsnowwolf/lede.git"
+      BRANCH_NAME: "master"
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Get Latest Commit Message
+        id: commit_message
+        run: |
+          git remote add upstream ${{ env.REMOTE_REPO }}
+          git pull upstream ${{ env.BRANCH_NAME }} --depth=1
+          git log -1 --pretty=%B > commit_message.txt
+
+      - name: Check Commit Message and Author
+        id: check_commit
+        run: |
+          if grep -q "Version update" commit_message.txt; then
+            if git log --format="%an" -n 1 | grep -q "coolsnowwolf"; then
+              echo "trigger_build=true" >> $GITHUB_ENV
+            fi
+          fi
+
+      - name: Trigger Other Workflow
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: c3p7f2/build-openwrt
+          event-type: trigger-build

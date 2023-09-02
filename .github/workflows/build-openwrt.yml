@@ -17,6 +17,9 @@ on:
         required: false
         default: ""
 
+  repository_dispatch:
+    types: [trigger-build]        
+
 env:
   SOURCE_URL: https://github.com/coolsnowwolf/lede
   SOURCE_BRANCH: master
