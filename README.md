@@ -12,7 +12,8 @@
 
 ## 插件
 
-<details><summary><b>插件列表</b> （点击展开/收起）</summary>
+<details><summary><b>插件列表及页面预览</b> （点击展开/收起）</summary>
+<img src="./img/preview.png"/>
 
 - luci-app-accesscontrol
 - luci-app-adguardhome

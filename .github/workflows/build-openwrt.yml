@@ -17,6 +17,9 @@ on:
         required: false
         default: ""
 
+  repository_dispatch:
+    types: [trigger-build]        
+
 env:
   SOURCE_URL: https://github.com/coolsnowwolf/lede
   SOURCE_BRANCH: master
@@ -232,6 +235,7 @@ jobs:
           # this might remove tools that are actually needed,
           # if set to "true" but frees about 6 GB
           tool-cache: true
+          docker-images: false
 
       - name: 组合磁盘
         run: |
@@ -445,6 +449,11 @@ jobs:
           ttyd -p 8000 bash &
           ./frpc -c ./p-frpc.ini
 
+      - name: 编译前执行脚本以修改一些内容
+        run: |
+          cd $OPENWRT_PATH
+          /bin/bash $GITHUB_WORKSPACE/scripts/openwrt/vektor-exec.sh
+
       - name: 编译Packages
         id: compile
         run: |
@@ -536,10 +545,19 @@ jobs:
             **编译日期：${{ env.DATE }}**
 
             * 编译详情： ${{ env.WORKFLOW}}
-            * 分支：${{ env.CURRENT_BRANCH }}
-            * 设备/平台：${{ env.DEVICES }}
+            * 编译分支：${{ env.CURRENT_BRANCH }}
+            * 编译设备/平台：${{ env.DEVICES }}
 
-            🎇 让我们的兴趣成为美好生活的驱动力
+            **更新日志：**
+            - 暂无
+
+            **固件状态：**
+            - [x] 稳定版
+            - [ ] 代码变动较多，仍处开发阶段的版本
+
+            国内加速下载：https://js.7fan.fun/ https://ghproxy.com/ https://ghps.cc/
+
+            **_OpenWrt | Redstone R${{ env.DATE }}_**
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
