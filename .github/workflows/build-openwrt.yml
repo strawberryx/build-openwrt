@@ -584,7 +584,7 @@ jobs:
             设备/平台：${{ matrix.Device }}
             分支：${{ env.CURRENT_BRANCH }}
 
-            下载地址：https://github.com/c3p7f2/build-openwrt/releases/tag/${{ env.release_tag }}
+            下载地址：https://github.com/${{ github.repository }}/releases/tag/${{ env.release_tag }}
 
       # - name: Delete workflow runs
       #   uses: GitRML/delete-workflow-runs@main
