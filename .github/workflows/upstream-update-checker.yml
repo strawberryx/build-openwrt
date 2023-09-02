@@ -32,9 +32,7 @@ jobs:
             fi
           fi
 
-      - name: Trigger Other Workflow
-        uses: peter-evans/repository-dispatch@v1
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: c3p7f2/build-openwrt
           event-type: trigger-build
