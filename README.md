@@ -1,18 +1,6 @@
 # OpenWrt
 
-![](https://opengraph.githubassets.com/f7c4be11a2ae313f38f69c1886d06f4ef87d8ea62bf7c0cd5b54a13fa209b915/c3p7f2/build-openwrt/releases/tag/stable-2023.09.01-download)
-
 一个 OpenWrt 固件仓库，使用 Github Action 自动编译各类实用的[插件](#插件)，生成对应[设备](#设备)的固件。
-
-## TODO
-
-> ↑↓ 按优先级排序
-
-- 下载：国内加速地址
-- 模板：DIY 编译固件模板 （只需要配置文件就能自己制作各种设备的固件啦）
-- 编译：官方源码编译
-- 编译：硬路由固件（独立配置）
-- 固件：在线更新
 
 ## 快速开始
 
@@ -24,7 +12,8 @@
 
 ## 插件
 
-<details><summary><b>插件列表</b> （点击展开/收起）</summary>
+<details><summary><b>插件列表及页面预览</b> （点击展开/收起）</summary>
+<img src="./img/preview.png"/>
 
 - luci-app-accesscontrol
 - luci-app-adguardhome
