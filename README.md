@@ -144,10 +144,13 @@ Dockerfile                          制作Docker镜像
 
 本项目采用[MIT 许可证](LICENSE)。
 
+[![Page Views Count](https://badges.toozhao.com/badges/01H9AS9VDKAKXEWV8N076FSJ2Z/green.svg)](https://badges.toozhao.com/stats/01H9AS9VDKAKXEWV8N076FSJ2Z)
+
 <hr/>
 
 <div align="right" style=" margin-top:20px">
   <img src="./img/moeorange-dark.svg#gh-light-mode-only" width=auto height="35">
 
    <img src="./img/moeorange.svg#gh-dark-mode-only" width=auto height="35">
+   
 </div>
