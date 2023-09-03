@@ -14,7 +14,7 @@ jobs:
       BRANCH_NAME: "master"
 
     steps:
-      - name: Get Latest Commit Message
+      - name: coolsnowwolf/lede | check commit Message
         id: commit_message
         run: |
           mkdir op-code
@@ -22,16 +22,10 @@ jobs:
           git init
           git remote add upstream ${{ env.REMOTE_REPO }}
           git pull upstream ${{ env.BRANCH_NAME }} --depth=1
-          git log -1 --pretty=%B > commit_message.txt
 
-      - name: Check Commit Message and Author
-        id: check_commit
-        run: |
-          cd op-code
-          if grep -q "Version update" commit_message.txt; then
-            if git log --format="%an" -n 1 | grep -q "coolsnowwolf"; then
+          if git log --since="1 day ago" --grep="Version update" --author="coolsnowwolf" >/dev/null 2>&1
+          then
               echo "trigger_build=true" >> $GITHUB_ENV
-            fi
           fi
 
       - name: Repository Dispatch
