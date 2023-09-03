@@ -13,12 +13,12 @@ on:
   workflow_dispatch:
     inputs:
       ssh:
-        description: "连接到Action"
+        description: "SSH"
         required: false
         default: ""
 
   repository_dispatch:
-    types: [trigger-build]        
+    types: [trigger-build]
 
 env:
   SOURCE_URL: https://github.com/coolsnowwolf/lede
@@ -213,8 +213,6 @@ jobs:
     needs: [generate-matrix, Toolchain]
     runs-on: ubuntu-latest
     permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push the
-      # added or changed files to the repository.
       contents: write
     strategy:
       fail-fast: false
@@ -232,8 +230,6 @@ jobs:
       - name: 精简系统释放磁盘空间 (Ubuntu)
         uses: jlumbroso/free-disk-space@main
         with:
-          # this might remove tools that are actually needed,
-          # if set to "true" but frees about 6 GB
           tool-cache: true
           docker-images: false
 
@@ -263,7 +259,7 @@ jobs:
 
           # 这里挂载会影响到$GITHUB_WORKSPACE，不要在后续步骤挂载，最好在编译步骤开启就跑
 
-      - name: SSH环境下关闭其他工作流
+      - name: SSH 下关闭其他工作流
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && matrix.Device != 'x86' }}
         run: |
           sudo halt
@@ -272,6 +268,7 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
+          sudo timedatectl set-timezone "$TZ"
 
           ulimit -u 10000
           ulimit -n 4096
@@ -281,36 +278,15 @@ jobs:
           ulimit -t unlimited
           ulimit -v unlimited       
            
-          sudo timedatectl set-timezone "$TZ"
-
           sudo apt update -y
-
           sudo apt install -y ack antlr3 aria2 asciidoc autoconf automake autopoint binutils bison build-essential \
           bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib \
           git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev \
           libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz \
           mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip libpython3-dev qemu-utils \
           rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev python3-pyelftools
-
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
-
-          # docker rmi `docker images -q`
-
-          # rm -rf ~/.config/rclone
-          # mkdir -p ~/.config/rclone
-          ## download rclone config
-          # curl -Lo ~/.config/rclone/rclone.conf "${{secrets.RCLONE_CONFIG_LINK}}"
-          ## check server status
-          # rclone mkdir od:/openwrt/check-status-for-github-action
-
-      #- name: Checkout private tools
-      #  if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && contains(matrix.Device, 'x86')}}
-      #  uses: actions/checkout@v3
-      #  with:
-      #    repository: c3p7f2/dc-action
-      #    token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
-      #    path: dc
 
       - name: Checkout
         run: |
@@ -319,20 +295,6 @@ jobs:
           git remote add origin https://github.com/$GITHUB_REPOSITORY
           git fetch
           git checkout -t origin/$CURRENT_BRANCH
-
-      - name: 检查服务器配置
-        run: |
-          echo "警告⚠"
-          echo "分配的服务器性能有限，若选择的插件过多，务必注意CPU性能！"
-          echo -e "已知CPU型号（降序）：8370C，8272CL，8171M，E5-2673 \n"
-          echo "--------------------------CPU信息--------------------------"
-          echo "CPU物理数量：$(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)"
-          echo -e "CPU核心信息：$(cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c) \n"
-          echo "--------------------------内存信息--------------------------"
-          echo "已安装内存详细信息："
-          echo -e "$(sudo lshw -short -C memory | grep GiB) \n"
-          echo "--------------------------硬盘信息--------------------------"
-          echo "硬盘数量：$(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
 
       - name: 准备Toolchain Image
         run: |
@@ -366,11 +328,6 @@ jobs:
           cd $OPENWRT_PATH && make defconfig
           sed -i '/CONFIG_DEFAULT_luci/'d .config
 
-
-
-          # cd $OPENWRT_PATH
-          # make defconfig
-
       - name: echo openwrt config
         run: cat $OPENWRT_PATH/.config
 
@@ -402,17 +359,11 @@ jobs:
           cd $OPENWRT_PATH
           make download -j8
 
-      - name: Storage Spaces
+      - name: 固件：文件替换和配置重写
         run: |
-          df -h /
-
-      - name: 替换banner
-        run: |
-
           cd $OPENWRT_PATH
 
           /bin/bash $GITHUB_WORKSPACE/scripts/openwrt/rewrite.sh
-
 
           if [ -n "$(ls -A "$GITHUB_WORKSPACE/files" 2>/dev/null)" ]; then
            cp -Rf $GITHUB_WORKSPACE/files/* ./
@@ -422,9 +373,6 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && contains(matrix.Device, 'x86')}}
         run: |
           sudo snap install ttyd --classic
-          sudo apt install btop -y
-
-
 
           curl -fsSLO https://starship.rs/install.sh  && sh ./install.sh --yes
           rm ./install.sh
@@ -477,17 +425,7 @@ jobs:
           make json_overview_image_info
           make checksum
 
-      - name: Storage Spaces
-        run: |
-          df -h /
-
-      - name: clear space
-        run: |
-          cd $OPENWRT_PATH
-          find * | grep -v bin | xargs rm -rf
-
       - name: Organize files
-        # if: ${{ !contains(matrix.Device, 'n1') }}
         run: |
 
           cd $OPENWRT_PATH/bin/targets/*/*
@@ -502,8 +440,6 @@ jobs:
           *sha \
           *json
 
-          # *bin
-
           echo "PACKAGED_OUTPUTPATH=$PWD" >> $GITHUB_ENV
 
       - name: Package Armvirt as OpenWrt
@@ -514,17 +450,10 @@ jobs:
           PACKAGE_SOC: s905d
           WHOAMI: Redstone
 
-      - name: Organize files (n1)
-        if: ${{ contains(matrix.Device, 'n1') }}
-        run: |
-          # rm -f ${{ env.PACKAGED_OUTPUTPATH }}/*.tar.gz
-
       - name: Set date
-        id: date
         run: echo "DATE=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
 
       - name: Generate release tag
-        id: tag
         run: |
           echo "release_tag=${{ env.CURRENT_BRANCH }}-${{ env.DATE }}-download" >> $GITHUB_ENV
           # touch release.txt
@@ -585,14 +514,6 @@ jobs:
             分支：${{ env.CURRENT_BRANCH }}
 
             下载地址：https://github.com/${{ github.repository }}/releases/tag/${{ env.release_tag }}
-
-      # - name: Delete workflow runs
-      #   uses: GitRML/delete-workflow-runs@main
-      #   with:
-      #     retain_days: 3
-      #     keep_minimum_runs: 2
-      #   env:
-      #     token: ${{ secrets.GH_PAT }}
 
       - name: Delete Older Releases
         uses: dev-drprasad/delete-older-releases@v0.2.1
