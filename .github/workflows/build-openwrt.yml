@@ -23,13 +23,10 @@ on:
 env:
   SOURCE_URL: https://github.com/coolsnowwolf/lede
   SOURCE_BRANCH: master
-  EXTERNAL_FILE: configs/external.config
   TOOLCHAIN_TAG: Toolchain
   SOURCE: lede
   TZ: Asia/Shanghai
   APP_CONFIG: configs/app.config
-
-  CONFIG_FILE: configs/n1.config
 
 jobs:
   generate-matrix:
@@ -44,7 +41,6 @@ jobs:
         run: |
           # Change directory to configs
           cd configs
-
           # Initialize the matrix variable
           matrix="{\"include\":["
 
@@ -58,17 +54,12 @@ jobs:
 
           # Remove the trailing comma from the matrix variable
           matrix=${matrix%,}
-
           # Close the matrix variable
           matrix="$matrix]}"
-
           # Change back to the previous directory
           cd ..
-
           # Set the matrix output
           echo "matrix=$matrix" >> $GITHUB_OUTPUT
-
-
           echo $matrix
 
   Toolchain:
@@ -223,8 +214,6 @@ jobs:
       VERSION_INFO: ${{ needs.Toolchain.outputs.VERSION_INFO }}
       CURRENT_BRANCH: ${{ needs.Toolchain.outputs.CURRENT_BRANCH }}
       SOURCE_REPO: ${{ needs.Toolchain.outputs.SOURCE_REPO }}
-
-      MSG_PREFIX: "Ref: ${{ github.ref }}\nDevice: ${{ matrix.Device }}\nCommit message: ${{ github.event.head_commit.message }}\n\n"
 
     steps:
       - name: 精简系统释放磁盘空间 (Ubuntu)
@@ -450,16 +439,10 @@ jobs:
           PACKAGE_SOC: s905d
           WHOAMI: Redstone
 
-      - name: Set date
-        run: echo "DATE=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
-
-      - name: Generate release tag
+      - name: 生成变量
         run: |
+          echo "DATE=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
           echo "release_tag=${{ env.CURRENT_BRANCH }}-${{ env.DATE }}-download" >> $GITHUB_ENV
-          # touch release.txt
-          # echo ${{ matrix.Device }} >> release.txt
-
-      - run: |
           echo "DEVICES=$(echo '${{ needs.generate-matrix.outputs.matrix }}' | jq -r '.include[].device' | tr '\n' ' ')" >> $GITHUB_ENV
           echo "WORKFLOW=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
 
@@ -478,7 +461,7 @@ jobs:
             * 编译设备/平台：${{ env.DEVICES }}
 
             **更新日志：**
-            - 暂无
+            - 无
 
             **固件状态：**
             - [x] 稳定版
@@ -491,6 +474,7 @@ jobs:
 
       - name: TG Notification - ❌
         if: ${{ !success() }}
+        continue-on-error: true
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -503,6 +487,7 @@ jobs:
 
       - name: TG Notification - ✔️
         if: ${{ success() }}
+        continue-on-error: true
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
