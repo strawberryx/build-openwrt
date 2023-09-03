@@ -29,6 +29,7 @@ jobs:
           fi
 
       - name: Repository Dispatch
+        if: ${{ env.trigger_build }}
         uses: peter-evans/repository-dispatch@v2
         with:
           event-type: trigger-build
