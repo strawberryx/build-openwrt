@@ -30,7 +30,7 @@ env:
 
 jobs:
   generate-matrix:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
@@ -68,7 +68,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{fromJson(needs.generate-matrix.outputs.matrix)}}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     outputs:
       OPENWRT_PATH: ${{ steps.clone.outputs.OPENWRT_PATH }}
@@ -202,7 +202,7 @@ jobs:
 
   build:
     needs: [generate-matrix, Toolchain]
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     strategy:
