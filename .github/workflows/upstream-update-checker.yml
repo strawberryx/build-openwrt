@@ -1,7 +1,7 @@
 name: Check for Version Update
 
 on:
-  push:
+  
   schedule:
     - cron: "0 2 * * *"
 
