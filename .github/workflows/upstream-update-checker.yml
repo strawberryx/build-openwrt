@@ -1,6 +1,7 @@
 name: Check for Version Update
 
 on:
+  push:
   schedule:
     - cron: "0 2 * * *"
 
@@ -13,12 +14,11 @@ jobs:
       BRANCH_NAME: "master"
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
       - name: Get Latest Commit Message
         id: commit_message
         run: |
+          mkdir op-code
+          cd op-code
           git remote add upstream ${{ env.REMOTE_REPO }}
           git pull upstream ${{ env.BRANCH_NAME }} --depth=1
           git log -1 --pretty=%B > commit_message.txt
