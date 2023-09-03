@@ -19,6 +19,7 @@ jobs:
         run: |
           mkdir op-code
           cd op-code
+          git init
           git remote add upstream ${{ env.REMOTE_REPO }}
           git pull upstream ${{ env.BRANCH_NAME }} --depth=1
           git log -1 --pretty=%B > commit_message.txt
