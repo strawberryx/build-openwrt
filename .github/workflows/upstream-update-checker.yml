@@ -27,6 +27,7 @@ jobs:
       - name: Check Commit Message and Author
         id: check_commit
         run: |
+          cd op-code
           if grep -q "Version update" commit_message.txt; then
             if git log --format="%an" -n 1 | grep -q "coolsnowwolf"; then
               echo "trigger_build=true" >> $GITHUB_ENV
