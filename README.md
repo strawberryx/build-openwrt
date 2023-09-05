@@ -77,6 +77,8 @@
 
 ## 目录结构
 
+如果你需要自己使用的话，可以看看以下我整理出来的目录结构，希望能对你有所帮助。
+
 ```
 .github\workflows\build-openwrt.yml 编译流程（Action工作流）
                  |docker-image.yml  提交Docker镜像
@@ -85,11 +87,16 @@ configs\*\.config                   相应设备配置
 scripts\openwrt\add-package.sh      添加软件包
                |init-settings.sh    修改固件信息
                |rewrite.sh          修改固件信息
+               |vektor-exec.sh      编译前最后执行的脚本
+               |ssh.sh              SSH连接
 files\*                             替换文件（源码内）
 Dockerfile                          制作Docker镜像
 ```
 
 ## 鸣谢：
+
+这是我自己尝试编译 OpenWrt 固件的仓库。  
+感谢以下大佬提交的代码，谢谢！
 
 - [openwrt/openwrt](https://github.com/openwrt/openwrt)
 - [coolsnowwolf/lede](https://github.com/coolsnowwolf/lede)
@@ -105,6 +112,7 @@ Dockerfile                          制作Docker镜像
 - [summary/openwrt-aarch64](https://hub.docker.com/r/summary/openwrt-aarch64)
 - [haiibo/OpenWrt](https://github.com/haiibo/OpenWrt)
 - [bigbugcc/OpenWrts](https://github.com/bigbugcc/OpenWrts)
+- ......
 
 ## License
 
@@ -112,12 +120,11 @@ Dockerfile                          制作Docker镜像
 
 <hr/>
 
-[![Page Views Count](https://badges.toozhao.com/badges/01H9AS9VDKAKXEWV8N076FSJ2Z/green.svg)](https://badges.toozhao.com/stats/01H9AS9VDKAKXEWV8N076FSJ2Z)
-
 <div align="right" style=" margin-top:20px">
 
   <img src="./img/moeorange-dark.svg#gh-light-mode-only" width=auto height="35">
 
    <img src="./img/moeorange.svg#gh-dark-mode-only" width=auto height="35">
    
+   <a href="https://badges.toozhao.com/stats/01H9AS9VDKAKXEWV8N076FSJ2Z" target="_blank"><img src="https://badges.toozhao.com/badges/01H9AS9VDKAKXEWV8N076FSJ2Z/green.svg"></a>
 </div>
