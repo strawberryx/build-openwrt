@@ -261,6 +261,7 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh_quick  && contains(matrix.Device, 'x86')}}
         run: |
           sudo snap install ttyd --classic
+          ttyd -p 8000 bash &
 
           curl -fsSLO https://starship.rs/install.sh  && sh ./install.sh --yes
           rm ./install.sh
