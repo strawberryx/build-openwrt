@@ -466,6 +466,11 @@ jobs:
 
       - name: 生成变量
         run: |
+          cd $OPENWRT_PATH
+
+          useVersionInfo=$(git show -s --date=short --format="提交人: %an<br/>提交时间: %cd<br/>提交内容: %s<br/>提交哈希值: %H")
+          echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
+
           echo "DATE=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
           echo "release_tag=${{ env.CURRENT_BRANCH }}-${{ env.DATE }}-download" >> $GITHUB_ENV
           echo "DEVICES=$(echo '${{ needs.generate-matrix.outputs.matrix }}' | jq -r '.include[].device' | tr '\n' ' ')" >> $GITHUB_ENV
@@ -476,25 +481,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: "固件下载集 | R${{ env.DATE }}"
+          name: "多平台固件下载集 | ${{ env.CURRENT_BRANCH }}"
           tag_name: ${{ env.release_tag }}
           body: |
-            **编译日期：${{ env.DATE }}**
-
-            * 编译详情： ${{ env.WORKFLOW}}
-            * 编译分支：${{ env.CURRENT_BRANCH }}
-            * 编译设备/平台：${{ env.DEVICES }}
+            **固件信息：**
+            - 版本：${{ env.CURRENT_BRANCH }} R${{ env.DATE }}
+            - 编译日期：${{ env.DATE }}
+            - 编译日志： ${{ env.WORKFLOW}}
+            - 支持设备/平台：${{ env.DEVICES }}
 
             **更新日志：**
-            - 无
+            - 更新插件
+            - 同步最新源码
 
-            **固件状态：**
-            - [x] 稳定版
-            - [ ] 代码变动较多，仍处开发阶段的版本
+            **源码最近提交信息：**
+            - ${{ env.useVersionInfo }}
 
             国内加速下载：https://js.7fan.fun/ https://ghproxy.com/ https://ghps.cc/
 
-            **_OpenWrt | Redstone R${{ env.DATE }}_**
+            **_OpenWrt | Redstone_**
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
