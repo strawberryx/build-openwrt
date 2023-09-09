@@ -55,8 +55,5 @@ jobs:
           # 安装cloudflared
           Start-Process msiexec.exe -Wait -ArgumentList '/i cloudflared-windows-amd64.msi /quiet'
 
-          # 以管理员身份打开命令提示符
-          Start-Process cmd.exe -Verb runAs
-
           # 运行以下命令
-          "C:\Program Files\Cloudflare\Cloudflared\cloudflared.exe" service install $env:CLOUDFLARED_TOKEN
+          cloudflared service install $env:CLOUDFLARED_TOKEN
