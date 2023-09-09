@@ -56,4 +56,4 @@ jobs:
           Start-Process msiexec.exe -Wait -ArgumentList '/i cloudflared-windows-amd64.msi /quiet'
 
           # 运行以下命令
-          cloudflared service install $env:CLOUDFLARED_TOKEN
+          cloudflared.exe service install $env:CLOUDFLARED_TOKEN
