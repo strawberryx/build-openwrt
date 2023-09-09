@@ -27,15 +27,17 @@ jobs:
         env:
           NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
         run: |
-          # choco install --yes --no-progress ngrok
-          # ngrok.exe authtoken $env:NGROK_TOKEN
+          choco install --yes --no-progress ngrok
+          ngrok.exe authtoken $env:NGROK_TOKEN
 
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
           Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "12345Ab@" -Force)
           Set-ItemProperty -Path 'REGISTRY::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa' -Name 'LimitBlankPasswordUse' -Value 0 -force
-          # ngrok.exe tcp --region=jp 3389        
+         
+          Start-Process -NoNewWindow -FilePath ngrok.exe -ArgumentList "tcp --region=jp 3389"
+
 
 
           # Invoke-WebRequest -Uri "https://github.com/fatedier/frp/releases/download/v0.45.0/frp_0.45.0_windows_amd64.zip" -OutFile "frp"
@@ -53,4 +55,4 @@ jobs:
 
 
           cloudflared.exe service install $env:CLOUDFLARED_TOKEN
-          ping -t 127.0.0.1 > null
+          ping -t 127.0.0.1 > $null
