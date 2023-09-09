@@ -49,11 +49,6 @@ jobs:
           # cd ~
           # ./frpc.exe -c ./p
 
-           # 下载cloudflared
-          Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.msi" -OutFile "cloudflared-windows-amd64.msi"
-
-          # 安装cloudflared
-          Start-Process msiexec.exe -Wait -ArgumentList '/i cloudflared-windows-amd64.msi /quiet'
-
-          # 运行以下命令
-          cloudflared.exe service install $env:CLOUDFLARED_TOKEN
+          curl -sL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.msi -o cloudflared.msi
+          start /wait msiexec /i cloudflared.msi /quiet
+          .\cloudflared.exe service install $env:CLOUDFLARED_TOKEN
