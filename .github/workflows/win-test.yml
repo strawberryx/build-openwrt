@@ -53,3 +53,4 @@ jobs:
 
 
           cloudflared.exe service install $env:CLOUDFLARED_TOKEN
+          pause
