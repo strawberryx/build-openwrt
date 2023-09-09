@@ -1,7 +1,7 @@
 name: build on windows
 
 on:
-  #push:
+  push:
   # schedule:
   #   - cron: "0 10 * * *"
   workflow_dispatch:
@@ -51,4 +51,5 @@ jobs:
 
           Invoke-WebRequest -Uri 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.msi' -OutFile 'cloudflared.msi'
           Start-Process -Wait msiexec.exe -ArgumentList '/i', 'cloudflared.msi', '/quiet'
-          .\cloudflared.exe service install $env:CLOUDFLARED_TOKEN
+          echo "C:\Program Files\Cloudflared" >> $env:PATH
+          cloudflared.exe service install $env:CLOUDFLARED_TOKEN
