@@ -51,12 +51,12 @@ jobs:
 
            # 下载cloudflared
           Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.msi" -OutFile "cloudflared-windows-amd64.msi"
-                  
+
           # 安装cloudflared
           Start-Process msiexec.exe -Wait -ArgumentList '/i cloudflared-windows-amd64.msi /quiet'
-                  
+
           # 以管理员身份打开命令提示符
           Start-Process cmd.exe -Verb runAs
-                  
+
           # 运行以下命令
-          "C:\Program Files\Cloudflare\Cloudflared\cloudflared.exe" service install ${{ secrets.CLOUDFLARED_TOKEN }}
+          "C:\Program Files\Cloudflare\Cloudflared\cloudflared.exe" service install $env:CLOUDFLARED_TOKEN
