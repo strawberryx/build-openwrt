@@ -49,6 +49,6 @@ jobs:
           # cd ~
           # ./frpc.exe -c ./p
 
-          curl -sL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.msi -o cloudflared.msi
-          start /wait msiexec /i cloudflared.msi /quiet
+          Invoke-WebRequest -Uri 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.msi' -OutFile 'cloudflared.msi'
+          Start-Process -Wait msiexec.exe -ArgumentList '/i', 'cloudflared.msi', '/quiet'
           .\cloudflared.exe service install $env:CLOUDFLARED_TOKEN
