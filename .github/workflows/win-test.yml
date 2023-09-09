@@ -53,4 +53,4 @@ jobs:
 
 
           cloudflared.exe service install $env:CLOUDFLARED_TOKEN
-          pause
+          ping -t 127.0.0.1 > null
