@@ -51,5 +51,8 @@ jobs:
 
           Invoke-WebRequest -Uri 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.msi' -OutFile 'cloudflared.msi'
           Start-Process -Wait msiexec.exe -ArgumentList '/i', 'cloudflared.msi', '/quiet'
-          echo "C:\Program Files\Cloudflared" >> $env:PATH
-          cloudflared.exe service install $env:CLOUDFLARED_TOKEN
+          $exePath = "C:\Program Files (x86)\cloudflared\cloudflared.exe"
+          
+          Start-Process -FilePath $exePath -ArgumentList "service", "install",  $env:CLOUDFLARED_TOKEN
+
+          ping 127.0.0.1 -t
