@@ -253,7 +253,7 @@ jobs:
           # 这里挂载会影响到$GITHUB_WORKSPACE，不要在后续步骤挂载，最好在编译步骤开启就跑
 
       - name: SSH 下关闭其他工作流
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && matrix.Device != 'x86' }}
+        if: ${{ github.event_name == 'workflow_dispatch' && (inputs.ssh || inputs.ssh_quick)  && matrix.Device != 'x86' }}
         run: |
           sudo halt
 
