@@ -523,12 +523,24 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            编译成功 ✔️
+            **固件信息：**
+            - 版本：${{ env.CURRENT_BRANCH }} R${{ env.DATE }}
+            - 编译日期：${{ env.DATE }}
+            - 编译日志： ${{ env.WORKFLOW}}
+            - 支持设备/平台：${{ env.DEVICES }}
 
-            设备/平台：${{ matrix.Device }}
-            分支：${{ env.CURRENT_BRANCH }}
+            **更新日志：**
+            - 更新插件
+            - 同步最新源码
 
-            下载地址：https://github.com/${{ github.repository }}/releases/tag/${{ env.release_tag }}
+            **源码最近提交信息：**
+            - ${{ env.useVersionInfo }}
+
+            **下载：**
+            - 下载地址：https://github.com/${{ github.repository }}/releases/tag/${{ env.release_tag }}
+            - 国内加速：https://js.7fan.fun/ https://ghproxy.com/ https://ghps.cc/
+
+            **_OpenWrt | Redstone_**
 
       - name: Delete Older Releases
         uses: dev-drprasad/delete-older-releases@v0.2.1
