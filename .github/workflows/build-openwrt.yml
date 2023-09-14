@@ -221,7 +221,7 @@ jobs:
 
     steps:
       - name: 精简系统释放磁盘空间 (Ubuntu)
-        uses: jlumbroso/free-disk-space@main
+        uses: c3p7f2/free-disk-space@main
         with:
           tool-cache: true
           docker-images: false
