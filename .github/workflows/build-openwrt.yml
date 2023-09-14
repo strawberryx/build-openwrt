@@ -383,10 +383,16 @@ jobs:
            cp -Rf $GITHUB_WORKSPACE/files/* ./
           fi
 
+      - name: 编译前执行脚本以修改一些内容
+        run: |
+          cd $OPENWRT_PATH
+          /bin/bash $GITHUB_WORKSPACE/scripts/openwrt/vektor-exec.sh
+
       - name: ssh to action
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && contains(matrix.Device, 'x86')}}
         run: |
           sudo snap install ttyd --classic
+          # ttyd -p 8000 bash &
 
           curl -fsSLO https://starship.rs/install.sh  && sh ./install.sh --yes
           rm ./install.sh
@@ -401,20 +407,7 @@ jobs:
           echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpN4ZLZCLDnINMNIwRRkHgy90LtGTRbk/EEGk5q7skStUkTFAtm1IarT12qicZJozfDVciM9BpuYchH+bSVAdKCAo+kv1Z7xVqxpjmPwGRGXju3p5vucOIF2F8B58h6ddsyEzvcqiN4du+VBZsWJR+ZO6XCrZO0ejO+5aBloUfqCOSd/f3pp6PQ1Hw55pXvwMIDkj8kiDJcDa9NvbLrjgwJ2DEqihOC4MkCyr+CfZd5Tz5URmNf0aXUKWQJcQPDltngXa94MihE6PJCA/ftBkBVXtQBIa1fcO+Tx56Nsvlpu7GS7RgQ5EkkeVNmQ2VR50ZPme0G+SFrfsqElez2KyCuXCD/AcQl7rBmP5d6K9Z8aGnom8hVrJY7Mk3NYuPgkVRWfDm2uEEy5DpowfMwsdrrL4D6ml1nDvrIjXdcWqd21E4/aJGRmPcDWXb9cQy2J4LdYuaupjzLzPAv1x/wL7lUXtzjeoMNeIY9pZhAYMULZ0G58l4DqlC0fN3zqzAQA8=" >> /home/runner/.ssh/authorized_keys
           echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpN4ZLZCLDnINMNIwRRkHgy90LtGTRbk/EEGk5q7skStUkTFAtm1IarT12qicZJozfDVciM9BpuYchH+bSVAdKCAo+kv1Z7xVqxpjmPwGRGXju3p5vucOIF2F8B58h6ddsyEzvcqiN4du+VBZsWJR+ZO6XCrZO0ejO+5aBloUfqCOSd/f3pp6PQ1Hw55pXvwMIDkj8kiDJcDa9NvbLrjgwJ2DEqihOC4MkCyr+CfZd5Tz5URmNf0aXUKWQJcQPDltngXa94MihE6PJCA/ftBkBVXtQBIa1fcO+Tx56Nsvlpu7GS7RgQ5EkkeVNmQ2VR50ZPme0G+SFrfsqElez2KyCuXCD/AcQl7rBmP5d6K9Z8aGnom8hVrJY7Mk3NYuPgkVRWfDm2uEEy5DpowfMwsdrrL4D6ml1nDvrIjXdcWqd21E4/aJGRmPcDWXb9cQy2J4LdYuaupjzLzPAv1x/wL7lUXtzjeoMNeIY9pZhAYMULZ0G58l4DqlC0fN3zqzAQA8=" | sudo tee /root/.ssh/authorized_keys
 
-
-          curl -OL https://github.com/fatedier/frp/releases/download/v0.47.0/frp_0.47.0_linux_amd64.tar.gz
-          tar -xvf *.tar.gz
-          cd frp_0.47.0_linux_amd64
-          chmod +x frpc
-          curl -Lo ./p-frpc.ini "${{secrets.FRPC_CONFIG_LINK}}"
-
-          ttyd -p 8000 bash &
-          ./frpc -c ./p-frpc.ini
-
-      - name: 编译前执行脚本以修改一些内容
-        run: |
-          cd $OPENWRT_PATH
-          /bin/bash $GITHUB_WORKSPACE/scripts/openwrt/vektor-exec.sh
+          docker run  --net=host cloudflare/cloudflared:latest tunnel --no-autoupdate run --token ${{ secrets.CLOUDFLARED_TOKEN }}
 
       - name: 编译Packages
         id: compile
