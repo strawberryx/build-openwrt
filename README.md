@@ -1,18 +1,18 @@
-# Build-OpenWrt
+# Redstone | OpenWrt firmware
 
 项目使用 Github Actions 拉取源码仓库进行云编译 OpenWrt
 
-## 使用
+## 固件
 
-1. **下载固件**：固件可在 [Releases](https://github.com/c3p7f2/build-openwrt/releases) 页面下载。
+下载： [Releases](https://github.com/c3p7f2/build-openwrt/releases)
 
-2. **安装固件**：安装 OpenWrt 固件的过程可能因设备而异。通常，你需要了解你设备的型号，以便选择正确的固件。此外，你还需要了解如何刷写新固件。请注意，在安装过程中，你的互联网访问可能会中断几分钟。请确保你已离线拥有所有必需的信息，或者有备用的网络连接来访问互联网。
+| 默认 IP     | 默认账号 |          | 默认密码 |
+| ----------- | -------- | -------- | -------- |
+| 192.168.1.1 | root     | password |
 
-3. **配置固件**：固件使用的默认 IP 地址是 **192.168.1.1**，默认账号是 **root**，默认密码是 **password**。你可以连接设备来配置后台。
+### 分支
 
-## 插件
-
-<details><summary><b>插件列表及页面预览</b> （点击展开/收起）</summary>
+<details><summary><b>Stable：插件列表及页面预览</b> （点击展开/收起）</summary>
 <img src="./img/preview.png"/>
 
 - luci-app-accesscontrol
@@ -66,6 +66,14 @@
 
 </details>
 
+<details><summary><b>Official：插件列表及页面预览</b> （点击展开/收起）</summary>
+
+<img src="./img/preview-official.png"/>
+
+- luci-app-OpenClash
+
+</details>
+
 ## 设备
 
 - X86-64
@@ -75,9 +83,7 @@
 - 虚拟机 (vmdk)
 - [Docker 镜像](https://hub.docker.com/r/shashiikora/openwrt-redstone)
 
-## 目录结构
-
-如果你需要自己使用的话，可以看看以下我整理出来的目录结构，希望能对你有所帮助。
+## 目录
 
 ```
 .github\workflows\build-openwrt.yml 编译流程（Action工作流）
@@ -95,9 +101,6 @@ Dockerfile                          制作Docker镜像
 
 ## 鸣谢：
 
-这是我自己尝试编译 OpenWrt 固件的仓库。  
-感谢以下大佬提交的代码，谢谢！
-
 - [openwrt/openwrt](https://github.com/openwrt/openwrt)
 - [coolsnowwolf/lede](https://github.com/coolsnowwolf/lede)
 
@@ -112,7 +115,6 @@ Dockerfile                          制作Docker镜像
 - [summary/openwrt-aarch64](https://hub.docker.com/r/summary/openwrt-aarch64)
 - [haiibo/OpenWrt](https://github.com/haiibo/OpenWrt)
 - [bigbugcc/OpenWrts](https://github.com/bigbugcc/OpenWrts)
-- ......
 
 ## License
 
