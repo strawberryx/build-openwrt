@@ -12,7 +12,7 @@
 
 ### 分支
 
-<details><summary><b>Stable：插件列表及页面预览</b> （点击展开/收起）</summary>
+<details><summary><b>coolsnowwolf/lede：插件列表及页面预览</b> （点击展开/收起）</summary>
 <img src="./img/preview.png"/>
 
 - luci-app-accesscontrol
@@ -66,7 +66,7 @@
 
 </details>
 
-<details><summary><b>Official：插件列表及页面预览</b> （点击展开/收起）</summary>
+<details><summary><b>openwrt/openwrt/tree/openwrt-23.05：插件列表及页面预览</b> （点击展开/收起）</summary>
 
 <img src="./img/preview-official.png"/>
 
