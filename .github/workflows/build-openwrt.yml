@@ -485,7 +485,7 @@ jobs:
 
             国内加速下载：https://js.7fan.fun/ https://ghproxy.com/ https://ghps.cc/
 
-            **_Redstone | Powered by LuCI ${{ SOURCE_URL }}-${{ SOURCE_BRANCH }} branch_**
+            **_Redstone | Powered by LuCI ${{ env.SOURCE_URL }}-${{ env.SOURCE_BRANCH }} branch_**
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
       - name: TG Notification - ❌
