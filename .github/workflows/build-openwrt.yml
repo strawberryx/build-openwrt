@@ -373,12 +373,9 @@ jobs:
           cd $OPENWRT_PATH
           make download -j8
 
-      - name: 固件：文件替换和配置重写
+      - name: 定制
         run: |
           cd $OPENWRT_PATH
-
-          /bin/bash $GITHUB_WORKSPACE/scripts/openwrt/rewrite.sh
-
 
           if [[ ${{ matrix.Device }} == *"x86"* ]]; then
             arch="amd64"
@@ -386,17 +383,11 @@ jobs:
             arch="arm64"
           fi
                   
-          /bin/bash $GITHUB_WORKSPACE/scripts/openwrt/preset-clash-core.sh $arch
-
+          /bin/bash $GITHUB_WORKSPACE/scripts/openwrt/vektor-exec.sh $arch
 
           if [ -n "$(ls -A "$GITHUB_WORKSPACE/files" 2>/dev/null)" ]; then
            cp -Rf $GITHUB_WORKSPACE/files/* ./
           fi
-
-      - name: 编译前执行脚本以修改一些内容
-        run: |
-          cd $OPENWRT_PATH
-          /bin/bash $GITHUB_WORKSPACE/scripts/openwrt/vektor-exec.sh
 
       - name: ssh to action
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.ssh  && contains(matrix.Device, 'x86')}}
