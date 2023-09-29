@@ -42,4 +42,7 @@ sed -i 's/LuCI openwrt-21.02 branch/Redstone/g' /usr/lib/lua/luci/version.lua
 sed -i '/luciversion/d' /usr/lib/lua/luci/version.lua
 echo "luciversion = '$(TZ=UTC-8 date "+%Y.%-m.%-d")'" >> /usr/lib/lua/luci/version.lua
 
+# 禁用ipv6前缀
+sed -i 's/^[^#].*option ula/#&/' /etc/config/network
+
 exit 0
