@@ -38,7 +38,7 @@ chmod +x files/etc/openclash/core/clash*
 sed -i '/uci commit system/i\uci set system.@system[0].hostname='Redstone'' package/lean/default-settings/files/zzz-default-settings
 
 # 版本号里显示一个自己的名字（build $(TZ=UTC-8 date "+%Y.%m.%d") @ 这些都是后增加的）
-sed -i "s/Redstone /Redstone | Built on $(TZ=UTC-8 date "+%Y.%m.%d") | https://github.com/c3p7f2/build-openwrt/g" package/lean/default-settings/files/zzz-default-settings
+sed -i "s/Redstone /Redstone | Built on $(TZ=UTC-8 date "+%Y.%m.%d") | Repo:https:\/\/github.com\/c3p7f2\/build-openwrt | TG Channel:https:\/\/t.me\/openwrt_redstone /g" package/lean/default-settings/files/zzz-default-settings
 
 # 修改 argon 为默认主题,可根据你喜欢的修改成其他的（不选择那些会自动改变为默认主题的主题才有效果）
 # sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
