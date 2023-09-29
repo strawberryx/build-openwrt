@@ -83,18 +83,21 @@
 - 虚拟机 (vmdk)
 - [Docker 镜像](https://hub.docker.com/r/shashiikora/openwrt-redstone)
 
-## 目录
+## DIY&Contribute
+
+DIY：Fork 项目自己修改配置产出固件，只是完成编译无需添加 GitHub 变量，只需要修改你想更改的内容即可，以下是项目的目录结构。  
+Contribute：可以为固件添加好用的 Luci App，修改工作流等等。
 
 ```
 .github\workflows\build-openwrt.yml 编译流程（Action工作流）
                  |docker-image.yml  提交Docker镜像
 configs\*\.config                   相应设备配置
-       |app.config                  共有插件
+       |app.config                  插件配置
 scripts\openwrt\add-package.sh      添加软件包
                |init-settings.sh    修改固件信息
                |rewrite.sh          修改固件信息
                |vektor-exec.sh      编译前最后执行的脚本
-               |ssh.sh              SSH连接
+       |ssh.sh                      SSH连接
 files\*                             替换文件（源码内）
 Dockerfile                          制作Docker镜像
 ```
