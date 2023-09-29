@@ -13,7 +13,7 @@
 ### 分支
 
 <details><summary><b>coolsnowwolf/lede：插件列表及页面预览</b> （点击展开/收起）</summary>
-<img src="./img/preview.png"/>
+<img src="./img/preview-lede.png"/>
 
 - luci-app-accesscontrol
 - luci-app-adguardhome
