@@ -1,0 +1,19 @@
+name: Action-Cleaner
+on:
+  workflow_dispatch:
+  inputs:
+    ready:
+      description: "ready"
+      required: false
+      default: "GO!"
+
+jobs:
+  cleaner:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: otto-de/purge-deprecated-workflow-runs@v2
+        with:
+          remove-failed: true
+          remove-cancelled: true
+          remove-skipped: true
