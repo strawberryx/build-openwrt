@@ -31,6 +31,8 @@ env:
   SOURCE: lede
   TZ: Asia/Shanghai
   APP_CONFIG: configs/app.config
+  WEB_BRANCH: web
+  WEB_PATH: web
 
 jobs:
   generate-matrix:
@@ -442,6 +444,8 @@ jobs:
           echo "DEVICES=$(echo '${{ needs.generate-matrix.outputs.matrix }}' | jq -r '.include[].device' | tr '\n' ' ')" >> $GITHUB_ENV
           echo "WORKFLOW=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
 
+          echo "BIN_PATH=openwrt/${{ matrix.Device }}/${{ env.CURRENT_BRANCH }}" >> $GITHUB_ENV
+
       - name: Upload firmware to release
         uses: softprops/action-gh-release@v1
         env:
@@ -460,6 +464,28 @@ jobs:
 
             **_Redstone | Powered by ${{ env.SOURCE_URL }} ${{ env.SOURCE_BRANCH }} branch_**
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
+
+      - name: 提交固件
+        run: |
+          git checkout ${{env.WEB_BRANCH}}
+          git pull
+
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+          # the path that the root of web-branch
+          git lfs install
+
+          mkdir -p ${{env.BIN_PATH}}
+          mv ${{ env.PACKAGED_OUTPUTPATH }}/* ${{env.BIN_PATH}}/
+          git lfs track "${{env.BIN_PATH}}/*.gz"
+          git add .gitattributes || echo 'Err, but continue.'
+          git commit -m - || echo 'Err, but continue.'
+          git push --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY"  HEAD:$WEB_BRANCH || echo 'Err, but continue.'
+
+          git add .
+          git commit -m -
+          git push --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY" HEAD:$WEB_BRANCH
 
       - name: TG Notification - ❌
         if: ${{ !success() }}
