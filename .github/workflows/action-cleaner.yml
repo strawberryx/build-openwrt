@@ -1,7 +1,7 @@
 name: Action-Cleaner
 on:
   workflow_dispatch:
-  inputs:
+    inputs:
     ready:
       description: "ready"
       required: false
