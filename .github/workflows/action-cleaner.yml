@@ -1,5 +1,6 @@
 name: Action-Cleaner
 on:
+  push:
   workflow_dispatch:
     inputs:
     ready:
@@ -17,3 +18,9 @@ jobs:
           remove-failed: true
           remove-cancelled: true
           remove-skipped: true
+
+      - name: Delete workflow runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          retain_days: 5
+          keep_minimum_runs: 5
