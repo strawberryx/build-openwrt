@@ -467,6 +467,7 @@ jobs:
 
       - name: 提交固件
         run: |
+          git stash save .
           git checkout ${{env.WEB_BRANCH}}
           git pull
 
