@@ -70,3 +70,8 @@ sed -i 's@.*CYXluq4wUazHjmCDBCqXF*@#&@g' package/lean/default-settings/files/zzz
 
 rustup update
 sed -i 's/option lang auto/option lang zh_cn/' feeds/luci/modules/luci-base/root/etc/config/luci
+
+
+# 暂时修正 # CURL HASH #
+sed -i 's/376D627767D6C4F05105AB6D497B0D9ABA7111770DD9D995225478209C37EA63/376d627767d6c4f05105ab6d497b0d9aba7111770dd9d995225478209c37ea63/g' feeds/packages/net/curl/Makefile
+###########################
