@@ -493,10 +493,24 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            编译失败 ❌
+            ERR!!
+              正在运行工作流但是遇到了错误
+              请查看具体日志(${{ env.WORKFLOW }})以探明发生错误的位置及原因
 
-            设备/平台：${{ matrix.Device }}
-            分支：${{ env.CURRENT_BRANCH }}
+            INFO
+              设备/平台：${{ matrix.Device }}
+              分支：${{ env.CURRENT_BRANCH }}
+              
+            What can I do
+              如果你具有仓库的管理权请检查报错的代码并修正
+              如果你对仓库没有权限请提交Issues(${{ github.server_url }}/${{ github.repository }}/issues/new)
+
+            ---END---
+
+            REDSTONE
+            An OpenWrt firmware that focuses on stability, beauty, and a modern experience.
+            一个OpenWrt固件，注重稳定、美观、现代化体验。
+            ${{ github.server_url }}/${{ github.repository }}
 
       - name: TG Notification - ✔️
         if: ${{ success() }}
@@ -506,12 +520,16 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           message: |
-            编译成功 ✔️
+            Succeed
+              ${{ matrix.Device }} 固件已制作完毕
+              下载地址：https://github.com/${{ github.repository }}/releases/tag/${{ env.release_tag }}
 
-            设备/平台：${{ matrix.Device }}
-            分支：${{ env.CURRENT_BRANCH }}
+            ---END---
 
-            下载地址：https://github.com/${{ github.repository }}/releases/tag/${{ env.release_tag }}
+            REDSTONE
+            An OpenWrt firmware that focuses on stability, beauty, and a modern experience.
+            一个OpenWrt固件，注重稳定、美观、现代化体验。
+            ${{ github.server_url }}/${{ github.repository }}
 
       - uses: otto-de/purge-deprecated-workflow-runs@v2
         with:
