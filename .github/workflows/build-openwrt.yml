@@ -32,7 +32,7 @@ env:
   TZ: Asia/Shanghai
   APP_CONFIG: configs/app.config
   WEB_BRANCH: web
-  WEB_PATH: ~/web
+  WEB_PATH: ${{ github.workspace }}/web
 
 jobs:
   generate-matrix:
@@ -474,6 +474,8 @@ jobs:
 
       - name: Commit and push if changed
         run: |
+          cd ${{ env.WEB_PATH }}
+
           mkdir -p ${{env.BIN_PATH}}
           mv ${{ env.PACKAGED_OUTPUTPATH }}/* ${{env.BIN_PATH}}/
 
