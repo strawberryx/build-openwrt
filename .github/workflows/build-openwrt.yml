@@ -32,7 +32,7 @@ env:
   TZ: Asia/Shanghai
   APP_CONFIG: configs/app.config
   WEB_BRANCH: web
-  WEB_PATH: web
+  WEB_PATH: ~/web
 
 jobs:
   generate-matrix:
@@ -465,28 +465,23 @@ jobs:
             **_Redstone | Powered by ${{ env.SOURCE_URL }} ${{ env.SOURCE_BRANCH }} branch_**
           files: ${{ env.PACKAGED_OUTPUTPATH }}/*
 
-      - name: 提交固件
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ env.WEB_BRANCH }}
+          path: ${{ env.WEB_PATH }}
+          lfs: true
+
+      - name: Commit and push if changed
         run: |
-          git stash save .
-          git checkout ${{env.WEB_BRANCH}}
-          git pull
-
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-
-          # the path that the root of web-branch
-          git lfs install
-
           mkdir -p ${{env.BIN_PATH}}
           mv ${{ env.PACKAGED_OUTPUTPATH }}/* ${{env.BIN_PATH}}/
-          git lfs track "${{env.BIN_PATH}}/*.gz"
-          git add .gitattributes || echo 'Err, but continue.'
-          git commit -m - || echo 'Err, but continue.'
-          git push --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY"  HEAD:$WEB_BRANCH || echo 'Err, but continue.'
 
-          git add .
-          git commit -m -
-          git push --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY" HEAD:$WEB_BRANCH
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git lfs track "${{env.BIN_PATH}}/*.gz"
+          git add -A
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Add changes" ; git push)
 
       - name: TG Notification - ❌
         if: ${{ !success() }}
