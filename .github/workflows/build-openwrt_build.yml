@@ -1,0 +1,447 @@
+name: Build OpenWrt => Build
+
+on:
+  repository_dispatch:
+    types: [trigger-build-openwrt_build]
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    strategy:
+      fail-fast: false
+    env:
+      OPENWRT_PATH: ${{  github.event.client_payload.variables.OPENWRT_PATH }}
+      CURRENT_BRANCH: ${{  github.event.client_payload.variables.CURRENT_BRANCH }}
+      SOURCE_REPO: ${{  github.event.client_payload.variables.SOURCE_REPO }}
+      DEVICE: ${{ github.event.client_payload.variables.DEVICE}}
+      SOURCE_BRANCH: ${{github.event.client_payload.variables.SOURCE_BRANCH}}
+      TOOLCHAIN_TAG: ${{github.event.client_payload.variables.TOOLCHAIN_TAG}}
+      APP_CONFIG: ${{github.event.client_payload.variables.APP_CONFIG}}
+      ssh: ${{github.event.client_payload.variables.ssh}}
+      ssh_quick: ${{github.event.client_payload.variables.ssh_quick}}
+
+    steps:
+      - name: 生成变量
+        run: |
+          echo "WORKFLOW=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_ENV
+
+      - name: 服务器配置
+        run: |
+          echo "--------------------------CPU信息--------------------------"
+          echo "CPU物理数量：$(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)"
+          echo -e "CPU核心信息：$(cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c) \n"
+          echo "--------------------------内存信息--------------------------"
+          echo "已安装内存详细信息："
+          echo -e "$(sudo lshw -short -C memory | grep GiB) \n"
+          echo "--------------------------硬盘信息--------------------------"
+          echo "硬盘数量：$(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
+
+          # 获取 CPU 信息
+          cpu_info=$(cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c)
+
+          # 配置不足的情况
+          if [[ $cpu_info == *"EPYC 7763"* ]]; then
+            echo "cpu_info contains EPYC 7763"
+            echo "RUNNER_PASS=true" >> $GITHUB_ENV
+          else
+            echo "cpu_info not contains EPYC 7763"
+            echo "RUNNER_PASS=false" >> $GITHUB_ENV
+          fi
+
+      # - name: Trigger Another Workflow
+      #   uses: peter-evans/repository-dispatch@v2
+      #   if: ${{ env.RUNNER_PASS == 'false' }}
+      #   with:
+      #     event-type: trigger-build-openwrt_build
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     client-payload: |-
+      #       {
+      #         "variables": {
+      #         }
+      #       }
+
+      - name: TG Notification - 终止原因
+        if: ${{ env.RUNNER_PASS == 'false' }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            任务：${{ env.DEVICE }}     
+            服务器配置低，终止。
+
+      - name: 取消工作流
+        if: ${{ env.RUNNER_PASS == 'false' }}
+        run: |
+          curl -L \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/cancel
+
+      #- name: TG Notification - 配置
+      #  uses: appleboy/telegram-action@master
+      #  with:
+      #    to: ${{ secrets.TELEGRAM_CHAT_ID }}
+      #    token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      #    message: |
+      #      任务：${{ env.DEVICE }}
+      #
+      #      服务器配置：
+      #        ${{ env.CPU_INFO }}
+      #
+      #        ${{ env.MEMORY_INFO }}
+      #
+      #        ${{ env.DISK_INFO }}
+      #
+      #        ${{ env.DISK_USAGE }}
+      #
+      #      备注：已知CPU型号（降序）：AMD EPYC 7763，8370C，8272CL，8171M，E5-2673
+
+      - name: SSH 下取消多余工作流
+        if: ${{ (env.ssh == 'true' || env.ssh_quick == 'true')  && env.DEVICE != 'x86' }}
+        run: |
+          curl -L \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/${{ github.repository }}/actions/runs/${{github.run_id}}/cancel
+
+      - name: 精简系统释放磁盘空间 (Ubuntu)
+        uses: c3p7f2/free-disk-space@main
+        with:
+          tool-cache: true
+          docker-images: false
+
+      - name: 组合磁盘
+        run: |
+          export ROOT_FREE_KB=$(df --block-size=1024 --output=avail / | tail -1)
+          export ROOT_LOOP_KB=$(expr $ROOT_FREE_KB - 1048576)
+          export ROOT_LOOP_BYTES=$(expr $ROOT_LOOP_KB \* 1024)
+          sudo fallocate -l $ROOT_LOOP_BYTES /root.img
+          export ROOT_LOOP_DEVNAME=$(sudo losetup -Pf --show /root.img)
+          sudo pvcreate -f $ROOT_LOOP_DEVNAME
+          export MNT_FREE_KB=$(df --block-size=1024 --output=avail /mnt | tail -1)
+          export MNT_LOOP_KB=$(expr $MNT_FREE_KB - 102400)
+          export MNT_LOOP_BYTES=$(expr $MNT_LOOP_KB \* 1024)
+          sudo fallocate -l $MNT_LOOP_BYTES /mnt/mnt.img
+          export MNT_LOOP_DEVNAME=$(sudo losetup -Pf --show /mnt/mnt.img)
+          sudo pvcreate -f $MNT_LOOP_DEVNAME
+          sudo vgcreate vgstorage $ROOT_LOOP_DEVNAME $MNT_LOOP_DEVNAME
+          sudo lvcreate -n lvstorage -l 100%FREE vgstorage
+          export LV_DEVNAME=$(sudo lvscan | awk -F "'" '{print $2}')
+          sudo mkfs.btrfs -L combinedisk $LV_DEVNAME
+          sudo mount -o compress=zstd $LV_DEVNAME $GITHUB_WORKSPACE
+          sudo chown -R runner:runner $GITHUB_WORKSPACE
+          mkdir -p $GITHUB_WORKSPACE/tmp && chmod 777 $GITHUB_WORKSPACE/tmp
+          sudo cp -rp /tmp/* $GITHUB_WORKSPACE/tmp
+          sudo mount -B $GITHUB_WORKSPACE/tmp /tmp && df -hT
+
+          # 这里挂载会影响到$GITHUB_WORKSPACE，不要在后续步骤挂载，最好在编译步骤开启就跑
+
+
+      - name: ssh to action
+        if: ${{ env.ssh_quick == 'true'}}
+        env:
+          CLOUDFLARED_TOKEN: ${{ secrets.CLOUDFLARED_TOKEN }}
+        run: |
+          /bin/bash $GITHUB_WORKSPACE/scripts/ssh.sh
+
+
+      - name: Checkout
+        run: |
+          cd $GITHUB_WORKSPACE
+          git init
+          git remote add origin https://github.com/$GITHUB_REPOSITORY
+          git fetch
+          git checkout -t origin/$CURRENT_BRANCH
+
+
+      - name: Initialization environment
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo timedatectl set-timezone "$TZ"
+
+          ulimit -u 10000
+          ulimit -n 4096
+          ulimit -d unlimited
+          ulimit -m unlimited
+          ulimit -s unlimited
+          ulimit -t unlimited
+          ulimit -v unlimited       
+           
+          sudo apt update -y
+          sudo apt install -y ack antlr3 aria2 asciidoc autoconf automake autopoint binutils bison build-essential \
+          bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib \
+          git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev \
+          libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz \
+          mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip libpython3-dev qemu-utils \
+          rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev python3-pyelftools
+          sudo -E apt-get -qq autoremove --purge
+          sudo -E apt-get -qq clean
+
+      - name: 准备Toolchain Image
+        run: |
+
+          for i in {0..9}
+          do
+            echo downloading..
+            curl -fsL -k https://github.com/$GITHUB_REPOSITORY/releases/download/$TOOLCHAIN_TAG/toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ env.DEVICE }}.img.0$i >> toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ env.DEVICE }}.img || break
+          done
+          mkdir -p openwrt-ro openwrt workdir overlay
+          sudo mount -o loop toolchain-$SOURCE_REPO-$SOURCE_BRANCH-${{ env.DEVICE }}.img openwrt-ro
+          sudo mount -t overlay overlay -o lowerdir=openwrt-ro,upperdir=overlay,workdir=workdir openwrt
+          echo $GITHUB_WORKSPACE
+          echo $OPENWRT_PATH
+          cd $OPENWRT_PATH
+          git pull
+
+      - name: Add packages
+        run: |
+          cd $OPENWRT_PATH          
+          chmod +x $GITHUB_WORKSPACE/scripts/openwrt/add-package.sh
+          $GITHUB_WORKSPACE/scripts/openwrt/add-package.sh
+          git pull
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      - name: Update configuration
+        run: |
+          cp $GITHUB_WORKSPACE/configs/${{ env.DEVICE }}/.config $OPENWRT_PATH/.config
+          cat $GITHUB_WORKSPACE/$APP_CONFIG >> $OPENWRT_PATH/.config
+          cd $OPENWRT_PATH && make defconfig
+          sed -i '/CONFIG_DEFAULT_luci/'d .config
+
+      - name: echo openwrt config
+        run: cat $OPENWRT_PATH/.config
+
+      - name: echo plugins
+        run: |
+          cd $OPENWRT_PATH
+
+          ## 输出LUCI-APP
+          echo
+          echo "=========================================="
+          grep -i CONFIG_PACKAGE_luci-app .config | grep  -v \# > Plug-in
+          grep -i CONFIG_PACKAGE_luci-theme .config | grep  -v \# >> Plug-in
+          sed -i '/INCLUDE/d' Plug-in > /dev/null 2>&1
+          sed -i 's/CONFIG_PACKAGE_/、/g' Plug-in
+          sed -i '/qbittorrent_static/d' Plug-in > /dev/null 2>&1
+          sed -i 's/=y/\ /g' Plug-in
+          awk '$0=NR$0' Plug-in > Plug-2
+          awk '{print "	" $0}' Plug-2 > Plug-in
+          echo
+          echo
+          echo "	      已选插件列表"
+          cat Plug-in
+          rm -rf {Plug-in,Plug-2}
+          echo
+          echo "=========================================="
+
+      - name: Make download
+        run: |
+          cd $OPENWRT_PATH
+          make download -j8
+
+      - name: 定制
+        run: |
+          cd $OPENWRT_PATH
+
+          if [[ ${{ env.DEVICE }} == *"x86"* ]]; then
+            arch="amd64"
+          else
+            arch="arm64"
+          fi
+                  
+          /bin/bash $GITHUB_WORKSPACE/scripts/openwrt/vektor-exec.sh $arch
+
+          if [ -n "$(ls -A "$GITHUB_WORKSPACE/files" 2>/dev/null)" ]; then
+           cp -Rf $GITHUB_WORKSPACE/files/* ./
+          fi
+
+      - name: ssh to action
+        if: ${{ env.ssh == 'true'}}
+        env:
+          CLOUDFLARED_TOKEN: ${{ secrets.CLOUDFLARED_TOKEN }}
+        run: |
+          /bin/bash $GITHUB_WORKSPACE/scripts/ssh.sh
+
+      - name: 生成defconfig
+        run: |
+          cd $OPENWRT_PATH
+          ./scripts/diffconfig.sh > defconfig
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: config-${{ env.DEVICE }}
+          path: ${{ env.OPENWRT_PATH }}/defconfig
+
+      - name: 编译Packages
+        id: compile
+        run: |
+          cd $OPENWRT_PATH
+          echo -e "$(nproc) thread compile"
+          make diffconfig
+          make target/compile -j$(nproc) IGNORE_ERRORS="m n" BUILD_LOG=1 || \
+          yes n | make target/compile -j1 V=s IGNORE_ERRORS=1
+          make package/compile -j$(nproc) IGNORE_ERRORS=1 || make package/compile -j1 V=s IGNORE_ERRORS=1
+          make package/index
+
+      - name: 生成固件
+        id: generate
+        run: |
+          cd $OPENWRT_PATH
+          mkdir -p files/etc/uci-defaults
+          cp $GITHUB_WORKSPACE/scripts/openwrt/init-settings.sh files/etc/uci-defaults/99-init-settings
+          make package/install -j$(nproc)  || make package/install -j1 V=s
+          make target/install -j$(nproc)  || make target/install -j1 V=s
+          echo "status=success" >> $GITHUB_OUTPUT
+          make json_overview_image_info
+          make checksum
+
+      - name: Organize files
+        run: |
+
+          cd $OPENWRT_PATH/bin/targets/*/*
+
+          rm -rf \
+          packages \
+          sha256* \
+          *manifest \
+          *.sha \
+          *info \
+          *kernel.bin \
+          *sha \
+          *json
+
+          echo "PACKAGED_OUTPUTPATH=$PWD" >> $GITHUB_ENV
+
+      - name: Package Armvirt as OpenWrt
+        if: ${{env.DEVICE=='n1'}}
+        uses: ophub/flippy-openwrt-actions@main
+        env:
+          OPENWRT_ARMVIRT: openwrt/bin/targets/*/*/*rootfs.tar.gz
+          PACKAGE_SOC: s905d
+          WHOAMI: Redstone
+
+      - name: 生成变量
+        run: |
+          cd $OPENWRT_PATH
+
+          useVersionInfo=$(git show -s --date=short --format="提交人: %an<br/>提交时间: %cd<br/>提交内容: %s<br/>提交哈希值: %H")
+          echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
+
+          echo "DATE=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+          echo "release_tag=${{ env.CURRENT_BRANCH }}-$(date +'%Y.%m.%d')-download" >> $GITHUB_ENV
+          # echo "DEVICES=$(echo '${{ needs.generate-matrix.outputs.matrix }}' | jq -r '.include[].device' | tr '\n' ' ')" >> $GITHUB_ENV
+
+
+          echo "BIN_PATH=openwrt/${{ env.DEVICE }}/${{ env.CURRENT_BRANCH }}" >> $GITHUB_ENV
+
+      - name: Upload firmware to release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: "${{ env.CURRENT_BRANCH }} | 多平台固件下载集"
+          tag_name: ${{ env.release_tag }}
+          body: |
+            **固件信息：**
+            - 分支：${{ env.CURRENT_BRANCH }}
+            - 编译日期：${{ env.DATE }}
+            - 编译日志： ${{ env.WORKFLOW}}
+
+            国内加速下载：https://js.7fan.fun/ https://ghproxy.com/ https://ghps.cc/
+
+            **_Redstone | Powered by ${{ env.SOURCE_URL }} ${{ env.SOURCE_BRANCH }} branch_**
+          files: ${{ env.PACKAGED_OUTPUTPATH }}/*
+
+      #- name: Checkout code
+      #  uses: actions/checkout@v2
+      #  with:
+      #    ref: ${{ env.WEB_BRANCH }}
+      #    path: ${{ env.WEB_PATH }}
+      #    lfs: true
+      #
+      #- name: Commit and push if changed
+      #  run: |
+      #    cd ${{ env.WEB_PATH }}
+      #
+      #    mkdir -p ${{env.BIN_PATH}}
+      #    mv ${{ env.PACKAGED_OUTPUTPATH }}/* ${{env.BIN_PATH}}/
+      #
+      #    git config --global user.email "actions@github.com"
+      #    git config --global user.name "GitHub Actions"
+      #    git lfs track "${{env.BIN_PATH}}/*.gz"
+      #    git add -A
+      #    git diff --quiet && git diff --staged --quiet || (git commit -m "Add changes" ; git push)
+
+      - name: TG Notification - ❌
+        if: ${{ !success() && env.RUNNER_PASS == 'true' }}
+        continue-on-error: true
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            ERR!!
+              正在运行工作流但是遇到了错误
+              具体日志：${{ env.WORKFLOW }}
+
+            INFO
+              设备/平台：${{ env.DEVICE }}
+              分支：${{ env.CURRENT_BRANCH }}
+              
+            What can I do
+              如果你具有仓库的管理权请检查报错的代码并修正
+              如果你对仓库没有权限请提交Issues(${{ github.server_url }}/${{ github.repository }}/issues/new)
+
+            ---END---
+
+            REDSTONE
+            An OpenWrt firmware that focuses on stability, beauty, and a modern experience.
+            一个OpenWrt固件，注重稳定、美观、现代化体验。
+            ${{ github.server_url }}/${{ github.repository }}
+
+      - name: TG Notification - ✔️
+        if: ${{ success() }}
+        continue-on-error: true
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          message: |
+            Success
+              ${{ env.DEVICE }} 固件已制作完毕
+              下载地址：https://github.com/${{ github.repository }}/releases/tag/${{ env.release_tag }}
+
+            ---END---
+
+            REDSTONE
+            An OpenWrt firmware that focuses on stability, beauty, and a modern experience.
+            一个OpenWrt固件，注重稳定、美观、现代化体验。
+            ${{ github.server_url }}/${{ github.repository }}
+
+      - uses: otto-de/purge-deprecated-workflow-runs@v2
+        with:
+          remove-failed: true
+          remove-cancelled: true
+          remove-skipped: true
+
+      - name: Delete Older Releases
+        uses: dev-drprasad/delete-older-releases@v0.2.1
+        with:
+          keep_latest: 7
+          delete_tag_pattern: download
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,35 @@
+name: Check for Version Update
+
+on:
+  
+  schedule:
+    - cron: "0 2 * * *"
+
+jobs:
+  check-update:
+    runs-on: ubuntu-latest
+
+    env:
+      REMOTE_REPO: "https://github.com/coolsnowwolf/lede.git"
+      BRANCH_NAME: "master"
+
+    steps:
+      - name: coolsnowwolf/lede | check commit Message
+        id: commit_message
+        run: |
+          mkdir op-code
+          cd op-code
+          git init
+          git remote add upstream ${{ env.REMOTE_REPO }}
+          git pull upstream ${{ env.BRANCH_NAME }} --depth=1
+
+          if git log --since="1 day ago" --grep="Version update" --author="coolsnowwolf" >/dev/null 2>&1
+          then
+              echo "trigger_build=true" >> $GITHUB_ENV
+          fi
+
+      - name: Repository Dispatch
+        if: ${{ env.trigger_build == 'true' }}
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          event-type: trigger-build

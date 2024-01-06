@@ -1,0 +1,59 @@
+name: build on windows
+
+on:
+  # push:
+  # schedule:
+  #   - cron: "0 10 * * *"
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "什么机型"
+        required: true
+        default: "n1"
+
+jobs:
+  b:
+    runs-on: windows-latest
+
+    env:
+      REPO_URL: https://github.com/coolsnowwolf/lede
+      REPO_BRANCH: master
+      TZ: Asia/Shanghai
+
+    steps:
+      - name: 亲自部署
+        env:
+          NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
+        run: |
+          choco install --yes --no-progress ngrok
+          ngrok.exe authtoken $env:NGROK_TOKEN
+          Start-Process -NoNewWindow -FilePath ngrok.exe -ArgumentList "tcp --region=jp 3389"
+
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+          Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+          Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "12345Ab@" -Force)
+          Set-ItemProperty -Path 'REGISTRY::HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Lsa' -Name 'LimitBlankPasswordUse' -Value 0 -force
+
+
+
+
+
+          # Invoke-WebRequest -Uri "https://github.com/fatedier/frp/releases/download/v0.45.0/frp_0.45.0_windows_amd64.zip" -OutFile "frp"
+          # 7z x frp -ofrpp
+          # cd frpp/frp_0.45.0_windows_amd64
+          # Invoke-WebRequest -Uri "${{secrets.FRPC_CONFIG_LINK}}" -OutFile "p"
+
+
+          # cd C:\Users\runneradmin\Desktop
+          # Invoke-WebRequest -Uri https://github.com/Fndroid/clash_for_windows_pkg/releases/download/0.20.17/Clash.for.Windows.Setup.0.20.17.exe -OutFile "clash.exe"
+          # cd ~
+          # ./frpc.exe -c ./p
+
+          ping -t 127.0.0.1 > $null
+
+      # - uses: debugci/setup-cloudflared@v1
+      # - run: nohup npx -y serve &
+      # - run: nohup cloudflared service install $env:CLOUDFLARED_TOKEN_RDP
+      # - run: echo 'To stop the server, click CANCEL in the workflow/job'
+      # - run: ping -t 127.0.0.1 > $null

@@ -1,0 +1,19 @@
+From 31a0eb7c7c6660cbc35dfb054361b47ff3df2fa9 Mon Sep 17 00:00:00 2001
+From: Your Name <you@example.com>
+Date: Fri, 28 May 2021 20:00:28 +0800
+Subject: [PATCH] support USB flash disk boot
+
+---
+ target/linux/bcm27xx/image/cmdline.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/target/linux/bcm27xx/image/cmdline.txt b/target/linux/bcm27xx/image/cmdline.txt
+index d9b7d867a..73241f644 100644
+--- a/target/linux/bcm27xx/image/cmdline.txt
++++ b/target/linux/bcm27xx/image/cmdline.txt
+@@ -1 +1 @@
+-console=serial0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=squashfs,ext4 rootwait
++console=serial0,115200 console=tty1 root=/dev/sda2 rootfstype=squashfs,ext4 rootwait
+-- 
+2.25.1
+

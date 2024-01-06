@@ -1,0 +1,95 @@
+name: 在线配置调整
+
+on:
+  # push:
+  # schedule:
+  #   - cron: "0 10 * * *"
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "什么机型"
+        required: true
+        default: "x86"
+
+jobs:
+  ssh:
+    runs-on: ubuntu-latest
+
+    env:
+      SOURCE_URL: https://github.com/coolsnowwolf/lede
+      SOURCE_BRANCH: master
+      TZ: Asia/Shanghai
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: clone repo
+        run: |
+          git clone $SOURCE_URL -b $SOURCE_BRANCH openwrt
+
+          cd openwrt
+
+          chmod +x $GITHUB_WORKSPACE/scripts/add-package.sh
+          $GITHUB_WORKSPACE/scripts/add-package.sh
+          git pull
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a          
+          cp ../configs/${{github.event.inputs.platform}}/.config .
+
+      - name: ssh to action
+        run: |
+          sudo snap install ttyd --classic
+          sudo apt install btop -y
+
+
+
+          curl -fsSLO https://starship.rs/install.sh  && sh ./install.sh --yes
+          rm ./install.sh
+          echo 'eval "$(starship init bash)"' >> /home/runner/.bashrc        
+          echo 'eval "$(starship init bash)"' | sudo tee /root/.bashrc   
+          mkdir -p /home/runner/.ssh
+          sudo mkdir -p /root/.ssh
+          echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7a9wzWBmnjDtO39GZ0Z1wEGMkR1YRxeZkVNvPQ8GkZKHYdtCrqX+SdRBczo2xdJbHM9cDJNtOJKZp1/n4MCuMVMD8ea93npMjIXpt+lP7cGvyEYAhRrzKEiy3+jAVxnK9wDRpAGAI6uL5mLk9TAO3bt42Tzf02GGjgHqPshiVsBee2Y+rNqPWOb1a0gp302DlORo5stW4zLmRgvwEaxbcEr02lct4ly1s0fjjTJIxXHfOcs+tviW77IcXh1BeE+OvKLAHvfCalMnmm8q1WxDHk4feqCt/pq5pMWnvqg+PQlOLFT1Ff7T4Hi22shmy0Jbuor3HksxrdIcpl6hNAzeH" >> /home/runner/.ssh/authorized_keys
+          echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC7a9wzWBmnjDtO39GZ0Z1wEGMkR1YRxeZkVNvPQ8GkZKHYdtCrqX+SdRBczo2xdJbHM9cDJNtOJKZp1/n4MCuMVMD8ea93npMjIXpt+lP7cGvyEYAhRrzKEiy3+jAVxnK9wDRpAGAI6uL5mLk9TAO3bt42Tzf02GGjgHqPshiVsBee2Y+rNqPWOb1a0gp302DlORo5stW4zLmRgvwEaxbcEr02lct4ly1s0fjjTJIxXHfOcs+tviW77IcXh1BeE+OvKLAHvfCalMnmm8q1WxDHk4feqCt/pq5pMWnvqg+PQlOLFT1Ff7T4Hi22shmy0Jbuor3HksxrdIcpl6hNAzeH" | sudo tee /root/.ssh/authorized_keys
+
+          # 2
+          echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpN4ZLZCLDnINMNIwRRkHgy90LtGTRbk/EEGk5q7skStUkTFAtm1IarT12qicZJozfDVciM9BpuYchH+bSVAdKCAo+kv1Z7xVqxpjmPwGRGXju3p5vucOIF2F8B58h6ddsyEzvcqiN4du+VBZsWJR+ZO6XCrZO0ejO+5aBloUfqCOSd/f3pp6PQ1Hw55pXvwMIDkj8kiDJcDa9NvbLrjgwJ2DEqihOC4MkCyr+CfZd5Tz5URmNf0aXUKWQJcQPDltngXa94MihE6PJCA/ftBkBVXtQBIa1fcO+Tx56Nsvlpu7GS7RgQ5EkkeVNmQ2VR50ZPme0G+SFrfsqElez2KyCuXCD/AcQl7rBmP5d6K9Z8aGnom8hVrJY7Mk3NYuPgkVRWfDm2uEEy5DpowfMwsdrrL4D6ml1nDvrIjXdcWqd21E4/aJGRmPcDWXb9cQy2J4LdYuaupjzLzPAv1x/wL7lUXtzjeoMNeIY9pZhAYMULZ0G58l4DqlC0fN3zqzAQA8=" >> /home/runner/.ssh/authorized_keys
+          echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCpN4ZLZCLDnINMNIwRRkHgy90LtGTRbk/EEGk5q7skStUkTFAtm1IarT12qicZJozfDVciM9BpuYchH+bSVAdKCAo+kv1Z7xVqxpjmPwGRGXju3p5vucOIF2F8B58h6ddsyEzvcqiN4du+VBZsWJR+ZO6XCrZO0ejO+5aBloUfqCOSd/f3pp6PQ1Hw55pXvwMIDkj8kiDJcDa9NvbLrjgwJ2DEqihOC4MkCyr+CfZd5Tz5URmNf0aXUKWQJcQPDltngXa94MihE6PJCA/ftBkBVXtQBIa1fcO+Tx56Nsvlpu7GS7RgQ5EkkeVNmQ2VR50ZPme0G+SFrfsqElez2KyCuXCD/AcQl7rBmP5d6K9Z8aGnom8hVrJY7Mk3NYuPgkVRWfDm2uEEy5DpowfMwsdrrL4D6ml1nDvrIjXdcWqd21E4/aJGRmPcDWXb9cQy2J4LdYuaupjzLzPAv1x/wL7lUXtzjeoMNeIY9pZhAYMULZ0G58l4DqlC0fN3zqzAQA8=" | sudo tee /root/.ssh/authorized_keys
+
+
+          curl -OL https://github.com/fatedier/frp/releases/download/v0.47.0/frp_0.47.0_linux_amd64.tar.gz
+          tar -xvf *.tar.gz
+          cd frp_0.47.0_linux_amd64
+          chmod +x frpc
+          curl -OL https://raw.githubusercontent.com/c3p7f2/build-openwrt/stable/frpc.ini
+
+
+          ./frpc -c ./frpc.ini &
+
+          curl -sX POST \
+          -H 'Content-Type: application/json' \
+          -d '{"chat_id": "${{ secrets.TELEGRAM_CHAT_ID }}", "text": "${{ env.MSG_PREFIX }} 准备好在线调整配置文件"}' \
+          https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage >> /dev/null
+
+
+          cd $GITHUB_WORKSPACE/openwrt && ttyd -p 8000 bash
+          # ps -ef | grep ttyd | grep -v grep | awk '{print $2}' | xargs kill
+          echo "继续以下步骤请在终端输入：ps -ef | grep ttyd | grep -v grep | awk '{print \$2}' | xargs kill"
+      ###########################################################################################
+      - name: diff 配置
+        run: |
+          cd openwrt
+          ./scripts/diffconfig.sh > ../configs/${{github.event.inputs.platform}}/.config
+
+      - name: 提交
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+
+
+          git pull
+          git add ./configs/${{github.event.inputs.platform}}
+          git commit -m "${{github.event.inputs.platform}}: 通过 在线调整 更新配置"
+          git push --quiet "https://${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY" HEAD:stable
