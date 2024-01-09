@@ -25,6 +25,7 @@ jobs:
       APP_CONFIG: ${{github.event.client_payload.variables.APP_CONFIG}}
       ssh: ${{github.event.client_payload.variables.ssh}}
       ssh_quick: ${{github.event.client_payload.variables.ssh_quick}}
+      SOURCE_URL: ${{github.event.client_payload.variables.SOURCE_URL}}
 
     steps:
       - name: 生成变量
@@ -147,14 +148,12 @@ jobs:
 
           # 这里挂载会影响到$GITHUB_WORKSPACE，不要在后续步骤挂载，最好在编译步骤开启就跑
 
-
       - name: ssh to action
         if: ${{ env.ssh_quick == 'true'}}
         env:
           CLOUDFLARED_TOKEN: ${{ secrets.CLOUDFLARED_TOKEN }}
         run: |
           /bin/bash $GITHUB_WORKSPACE/scripts/ssh.sh
-
 
       - name: Checkout
         run: |
@@ -163,7 +162,6 @@ jobs:
           git remote add origin https://github.com/$GITHUB_REPOSITORY
           git fetch
           git checkout -t origin/$CURRENT_BRANCH
-
 
       - name: Initialization environment
         env:
