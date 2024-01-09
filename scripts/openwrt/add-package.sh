@@ -13,3 +13,4 @@ cd package
 # svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic luci-app-amlogic
 
 git clone https://github.com/derisamedia/luci-theme-alpha.git
+git clone https://github.com/sirpdboy/luci-theme-kucat.git
