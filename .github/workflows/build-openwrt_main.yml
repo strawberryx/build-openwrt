@@ -8,8 +8,8 @@ on:
   #     - "scripts/openwrt/**"
   #   branches-ignore:
   #     - stable
-  schedule:
-    - cron: "0 19 * * *"
+  #schedule:
+  #  - cron: "0 19 * * *"
   workflow_dispatch:
     inputs:
       ready:
