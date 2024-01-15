@@ -107,7 +107,7 @@ jobs:
       #      备注：已知CPU型号（降序）：AMD EPYC 7763，8370C，8272CL，8171M，E5-2673
 
       - name: SSH 下取消多余工作流
-        if: ${{ (env.ssh == 'true' || env.ssh_quick == 'true')  && env.DEVICE != 'x86' }}
+        if: ${{ (env.ssh == 'true' || env.ssh_quick == 'true')  && env.DEVICE != 'x86-64' }}
         run: |
           curl -L \
           -X POST \
