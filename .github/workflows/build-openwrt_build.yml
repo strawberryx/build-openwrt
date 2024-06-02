@@ -56,7 +56,7 @@ jobs:
           fi
 
       # - name: Trigger Another Workflow
-      #   uses: peter-evans/repository-dispatch@v2
+      #   uses: peter-evans/repository-dispatch@v3
       #   if: ${{ env.RUNNER_PASS == 'false' }}
       #   with:
       #     event-type: trigger-build-openwrt_build

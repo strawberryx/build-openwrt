@@ -264,7 +264,7 @@ jobs:
           fi          
 
       - name: Trigger Another Workflow
-        uses: peter-evans/repository-dispatch@v2
+        uses: peter-evans/repository-dispatch@v3
         with:
           event-type: trigger-build-openwrt_build
           token: ${{ secrets.GITHUB_TOKEN }}
