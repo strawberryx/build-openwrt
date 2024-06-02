@@ -281,7 +281,7 @@ jobs:
           ./scripts/diffconfig.sh > defconfig
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: config-${{ env.DEVICE }}
           path: ${{ env.OPENWRT_PATH }}/defconfig
