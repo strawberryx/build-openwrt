@@ -349,7 +349,7 @@ jobs:
           echo "BIN_PATH=openwrt/${{ env.DEVICE }}/${{ env.CURRENT_BRANCH }}" >> $GITHUB_ENV
 
       - name: Upload firmware to release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -437,7 +437,7 @@ jobs:
           remove-skipped: true
 
       - name: Delete Older Releases
-        uses: dev-drprasad/delete-older-releases@v0.2.1
+        uses: dev-drprasad/delete-older-releases@v0.3.4
         with:
           keep_latest: 7
           delete_tag_pattern: download
