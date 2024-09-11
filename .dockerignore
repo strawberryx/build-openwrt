@@ -1,0 +1,6 @@
+.git
+.github
+configs?
+*.md
+img
+scripts
